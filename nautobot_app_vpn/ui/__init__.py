@@ -8,7 +8,6 @@ from .ipseccrypto import IPSecCryptoUIViewSet
 from .ipsectunnel import IPSECTunnelUIViewSet
 from .tunnelmonitor import TunnelMonitorProfileUIViewSet
 
-
 # Define what should be available when importing `ui`
 __all__ = [
     # ✅ UI ViewSets

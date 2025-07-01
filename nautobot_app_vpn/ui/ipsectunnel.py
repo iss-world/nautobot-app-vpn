@@ -1,15 +1,16 @@
 # nautobot_app_vpn/ui/ipsectunnel.py
 import logging
+
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
-
 from nautobot.apps.views import NautobotUIViewSet
 
-# Import models, forms, etc.
-from nautobot_app_vpn.models import IPSECTunnel, IKEGateway, IPSecCrypto, IPSecProxyID, TunnelMonitorProfile
-from nautobot_app_vpn.forms import IPSECTunnelForm, IPSecProxyIDFormSet, IPSECTunnelFilterForm
-from nautobot_app_vpn.filters import IPSECTunnelFilterSet
 from nautobot_app_vpn.api.serializers import IPSECTunnelSerializer
+from nautobot_app_vpn.filters import IPSECTunnelFilterSet
+from nautobot_app_vpn.forms import IPSecProxyIDFormSet, IPSECTunnelFilterForm, IPSECTunnelForm
+
+# Import models, forms, etc.
+from nautobot_app_vpn.models import IPSECTunnel
 from nautobot_app_vpn.tables import IPSECTunnelTable
 
 logger = logging.getLogger(__name__)
@@ -149,7 +150,7 @@ class IPSECTunnelUIViewSet(NautobotUIViewSet):
                     messages.warning(request, "No matching tunnels found for deletion.")
             except Exception as e:
                 logger.error(f"Error during bulk deletion of {model._meta.verbose_name_plural}: {e}")
-                messages.error(request, f"Error deleting tunnels: An unexpected error occurred.")
+                messages.error(request, "Error deleting tunnels: An unexpected error occurred.")
         else:
             messages.warning(request, "No tunnels selected for deletion.")
         return redirect(self.get_return_url(request))

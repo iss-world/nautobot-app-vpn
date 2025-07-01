@@ -1,15 +1,15 @@
 # nautobot_app_vpn/ui/ikegateway.py
 import logging
+
 from django.contrib import messages
 from django.shortcuts import redirect  # Keep redirect for bulk_destroy
-
 from nautobot.apps.views import NautobotUIViewSet
 
-from nautobot_app_vpn.models import IKEGateway
-from nautobot_app_vpn.forms.ikegateway import IKEGatewayForm, IKEGatewayFilterForm
-from nautobot_app_vpn.filters import IKEGatewayFilterSet
-from nautobot_app_vpn.tables import IKEGatewayTable
 from nautobot_app_vpn.api.serializers import IKEGatewaySerializer
+from nautobot_app_vpn.filters import IKEGatewayFilterSet
+from nautobot_app_vpn.forms.ikegateway import IKEGatewayFilterForm, IKEGatewayForm
+from nautobot_app_vpn.models import IKEGateway
+from nautobot_app_vpn.tables import IKEGatewayTable
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +53,7 @@ class IKEGatewayUIViewSet(NautobotUIViewSet):
                     messages.warning(request, "No matching gateways found for deletion.")
             except Exception as e:
                 logger.error(f"Error during bulk deletion of IKEGateway: {e}")
-                messages.error(request, f"Error deleting gateways: An unexpected error occurred.")
+                messages.error(request, "Error deleting gateways: An unexpected error occurred.")
         else:
             messages.warning(request, "No gateways selected for deletion.")
         return redirect(self.get_return_url(request))

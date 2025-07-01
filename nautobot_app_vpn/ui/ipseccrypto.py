@@ -1,15 +1,15 @@
 # nautobot_app_vpn/ui/ipseccrypto.py
 import logging
+
 from django.contrib import messages  # Keep for bulk_destroy messages
 from django.shortcuts import redirect  # Keep for bulk_destroy redirect
-
 from nautobot.apps.views import NautobotUIViewSet
 
-from nautobot_app_vpn.models import IPSecCrypto
-from nautobot_app_vpn.forms.ipseccrypto import IPSecCryptoForm, IPSecCryptoFilterForm
-from nautobot_app_vpn.filters import IPSecCryptoFilterSet
-from nautobot_app_vpn.tables import IPSecCryptoProfileTable
 from nautobot_app_vpn.api.serializers import IPSecCryptoSerializer
+from nautobot_app_vpn.filters import IPSecCryptoFilterSet
+from nautobot_app_vpn.forms.ipseccrypto import IPSecCryptoFilterForm, IPSecCryptoForm
+from nautobot_app_vpn.models import IPSecCrypto
+from nautobot_app_vpn.tables import IPSecCryptoProfileTable
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +49,7 @@ class IPSecCryptoUIViewSet(NautobotUIViewSet):
             except Exception as e:
                 logger.error(f"Error during bulk deletion of IPSecCrypto: {e}")
                 # Be careful about exposing raw exception details
-                messages.error(request, f"Error deleting profiles: An unexpected error occurred.")
+                messages.error(request, "Error deleting profiles: An unexpected error occurred.")
         else:
             messages.warning(request, "No profiles selected for deletion.")
         return redirect(self.get_return_url(request))

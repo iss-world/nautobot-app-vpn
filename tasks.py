@@ -33,6 +33,7 @@ def is_truthy(arg):
     Args:
         arg (str): Truthy string (True values are y, yes, t, true, on and 1; false values are n, no,
         f, false, off and 0. Raises ValueError if val is anything else.
+
     """
     if isinstance(arg, bool):
         return arg
@@ -118,6 +119,7 @@ def docker_compose(context, command, **kwargs):
         context (obj): Used to run specific commands
         command (str): Command string to append to the "docker compose ..." command, such as "build", "up", etc.
         **kwargs: Passed through to the context.run() call.
+
     """
     _ensure_creds_env_file(context)
     build_env = {
@@ -472,8 +474,7 @@ def migrate(context):
 
 @task(help={})
 def post_upgrade(context):
-    """
-    Performs Nautobot common post-upgrade operations using a single entrypoint.
+    """Performs Nautobot common post-upgrade operations using a single entrypoint.
 
     This will run the following management commands with default settings, in order:
 
@@ -815,6 +816,7 @@ def yamllint(context):
 
     Args:
         context (obj): Used to run specific commands
+
     """
     command = "yamllint . --format standard"
     run_command(context, command)

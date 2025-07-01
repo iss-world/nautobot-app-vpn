@@ -1,35 +1,32 @@
 # nautobot_app_vpn/api/viewsets.py
-from rest_framework import viewsets, filters, serializers
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, viewsets
 
-from nautobot.apps.views import NautobotUIViewSet  # Import if using Nautobot viewsets
-from nautobot.apps.filters import NautobotFilterSet  # Import if needed
-
+from nautobot_app_vpn.api.pagination import StandardResultsSetPagination
 from nautobot_app_vpn.api.permissions import IsAdminOrReadOnly
-
-# Import ALL necessary models
-from nautobot_app_vpn.models import IKECrypto, IPSecCrypto, IKEGateway, IPSECTunnel, IPSecProxyID, TunnelMonitorProfile
 
 # Import ALL necessary serializers
 from nautobot_app_vpn.api.serializers import (
     IKECryptoSerializer,
-    IPSecCryptoSerializer,
     IKEGatewaySerializer,  # Updated serializer
-    IPSECTunnelSerializer,  # Updated serializer
+    IPSecCryptoSerializer,
     IPSecProxyIDSerializer,
+    IPSECTunnelSerializer,  # Updated serializer
     TunnelMonitorProfileSerializer,
 )
 
 # Import ALL necessary filtersets
 from nautobot_app_vpn.filters import (
     IKECryptoFilterSet,
-    IPSecCryptoFilterSet,
     IKEGatewayFilterSet,  # Filterset might need update if filtering by bind_interface
-    IPSECTunnelFilterSet,  # Filterset might need update to remove bind_interface
+    IPSecCryptoFilterSet,
     IPSecProxyIDFilterSet,
+    IPSECTunnelFilterSet,  # Filterset might need update to remove bind_interface
     TunnelMonitorProfileFilterSet,
 )
-from nautobot_app_vpn.api.pagination import StandardResultsSetPagination
+
+# Import ALL necessary models
+from nautobot_app_vpn.models import IKECrypto, IKEGateway, IPSecCrypto, IPSecProxyID, IPSECTunnel, TunnelMonitorProfile
 
 # --- ViewSets for existing models (IKECrypto, IPSecCrypto) ---
 # These remain unchanged
@@ -180,15 +177,17 @@ class IPSecProxyIDViewSet(viewsets.ModelViewSet):
 
 # File: nautobot_app_vpn/api/viewsets.py
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 import logging
 import random
-from django.conf import settings
-from neo4j import GraphDatabase, exceptions as neo4j_exceptions  # Import Neo4j driver
 
-from nautobot.dcim.models import Device, Location, Platform  # Platform for FilterOptionsView
+from django.conf import settings
+from nautobot.dcim.models import Platform  # Platform for FilterOptionsView
+from neo4j import GraphDatabase  # Import Neo4j driver
+from neo4j import exceptions as neo4j_exceptions
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from nautobot_app_vpn.models import IPSECTunnel, VPNDashboard  # VPNDashboard for sync time
 
 # Removed: from nautobot_app_vpn.topology.builder import build_vpn_topology_graph_with_filters
@@ -197,8 +196,7 @@ logger = logging.getLogger(__name__)
 
 
 def latlon_to_xy(lat, lon, svg_width=2754, svg_height=1398):
-    """
-    Map latitude and longitude to SVG x, y coordinates.
+    """Map latitude and longitude to SVG x, y coordinates.
     Assumes equirectangular projection.
     """
     x = (lon + 180) * (svg_width / 360.0)
@@ -207,16 +205,14 @@ def latlon_to_xy(lat, lon, svg_width=2754, svg_height=1398):
 
 
 class VPNTopologyNeo4jView(APIView):
-    """
-    API view to return VPN topology nodes and edges for visualization,
+    """API view to return VPN topology nodes and edges for visualization,
     sourced from Neo4j, with support for filtering.
     """
 
     permission_classes = [IsAuthenticated]
 
     def _build_cypher_queries_and_params(self, filters_dict):
-        """
-        Builds Cypher queries and parameters for fetching nodes and edges based on request filters.
+        """Builds Cypher queries and parameters for fetching nodes and edges based on request filters.
         Returns: (nodes_query_string, edges_query_string, query_parameters_dict)
         """
         query_params = {}
@@ -501,8 +497,7 @@ class VPNTopologyNeo4jView(APIView):
 
 
 class VPNTopologyFilterOptionsView(APIView):
-    """
-    API view to return distinct filter options for countries, platforms, roles, etc.,
+    """API view to return distinct filter options for countries, platforms, roles, etc.,
     primarily based on data currently associated with IPSECTunnels in Nautobot's relational DB.
     """
 

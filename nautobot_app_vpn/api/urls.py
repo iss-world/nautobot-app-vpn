@@ -1,14 +1,15 @@
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from django.urls import path, include
+
 from nautobot_app_vpn.api.viewsets import (
     IKECryptoViewSet,
-    IPSecCryptoViewSet,
     IKEGatewayViewSet,
-    IPSECTunnelViewSet,
+    IPSecCryptoViewSet,
     IPSecProxyIDViewSet,
+    IPSECTunnelViewSet,
     TunnelMonitorProfileViewSet,
-    VPNTopologyNeo4jView,
     VPNTopologyFilterOptionsView,
+    VPNTopologyNeo4jView,
 )
 
 app_name = "nautobot_app_vpn_api"

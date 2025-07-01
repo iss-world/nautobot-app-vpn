@@ -1,16 +1,16 @@
 from django.db import models
-from nautobot.extras.models import StatusField, ChangeLoggedModel
 from nautobot.core.models.generics import PrimaryModel
+from nautobot.extras.models import ChangeLoggedModel, StatusField
+from nautobot.extras.utils import extras_features
+
 from nautobot_app_vpn.models.constants import (
-    EncryptionAlgorithms,
     AuthenticationAlgorithms,
     DiffieHellmanGroups,
+    EncryptionAlgorithms,
     IPSECProtocols,
     LifetimeUnits,
 )
-
 from nautobot_app_vpn.utils import get_default_status
-from nautobot.extras.utils import extras_features
 
 
 @extras_features(

@@ -1,6 +1,6 @@
 # nautobot_app_vpn/urls.py
 import logging
-from django.urls import path
+
 from nautobot.apps.urls import NautobotUIViewSetRouter
 
 # --- Import Specific Views ---
@@ -10,6 +10,7 @@ from nautobot_app_vpn.ui.ikegateway import IKEGatewayUIViewSet
 from nautobot_app_vpn.ui.ipseccrypto import IPSecCryptoUIViewSet
 from nautobot_app_vpn.ui.ipsectunnel import IPSECTunnelUIViewSet
 from nautobot_app_vpn.ui.tunnelmonitor import TunnelMonitorProfileUIViewSet
+
 # Removed PushVPNConfigViewSet import as it wasn't used in the original urls.py
 
 

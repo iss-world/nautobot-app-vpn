@@ -1,39 +1,34 @@
 # nautobot_app_vpn/filters.py
 import django_filters
-from django.db.models import Q
+from django_filters import BooleanFilter, CharFilter, ModelMultipleChoiceFilter
 from nautobot.apps.filters import (
     NautobotFilterSet,
     SearchFilter,
     StatusModelFilterSetMixin,
-    TagFilter,
-    MultiValueUUIDFilter,
 )
-from django_filters import ModelMultipleChoiceFilter, BooleanFilter, CharFilter
+from nautobot.dcim.models import Device, Interface, Location, Platform
 
-from nautobot.dcim.models import Device, Location, Interface, Platform
-from nautobot.extras.filters import StatusFilter
-from nautobot.extras.models import Status
 from nautobot_app_vpn.models import (
     IKECrypto,
-    IPSecCrypto,
     IKEGateway,
-    IPSECTunnel,
+    IPSecCrypto,
     IPSecProxyID,
-    TunnelMonitorProfile,
+    IPSECTunnel,
     TunnelMonitorActionChoices,
+    TunnelMonitorProfile,
     TunnelRoleChoices,  # Import RoleChoices
 )
 from nautobot_app_vpn.models.constants import (  # Shortened for brevity
-    EncryptionAlgorithms,
     AuthenticationAlgorithms,
     DiffieHellmanGroups,
-    IPSECProtocols,
-    IKEAuthenticationTypes,
-    LifetimeUnits,
-    IKEVersions,
-    IKEExchangeModes,
+    EncryptionAlgorithms,
     IdentificationTypes,
+    IKEAuthenticationTypes,
+    IKEExchangeModes,
+    IKEVersions,
     IPAddressTypes,
+    IPSECProtocols,
+    LifetimeUnits,
 )
 
 

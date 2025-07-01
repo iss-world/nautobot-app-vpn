@@ -1,30 +1,29 @@
 # nautobot_app_vpn/forms/ikegateway.py
-from django import forms
 import re
-from django.db import models
-from django.core.validators import MinLengthValidator, validate_ipv46_address
+
+from django import forms
 from django.core.exceptions import ValidationError as CoreValidationError
+from django.core.validators import MinLengthValidator
+from django.db import models
 
 # Import necessary Nautobot form components and models
 from nautobot.apps.forms import (
-    NautobotModelForm,
-    NautobotFilterForm,
-    DynamicModelMultipleChoiceField,  # Use Multiple Choice variant
-    DynamicModelChoiceField,  # Make sure this is imported
-    SmallTextarea,
     APISelectMultiple,  # Widget for multi-select dynamic fields
+    DynamicModelChoiceField,  # Make sure this is imported
+    DynamicModelMultipleChoiceField,  # Use Multiple Choice variant
+    NautobotFilterForm,
+    NautobotModelForm,
+    SmallTextarea,
 )
-from nautobot.dcim.models import Device, Location, Interface, Platform  # Need Location AND Interface
+from nautobot.dcim.models import Device, Interface, Location, Platform  # Need Location AND Interface
 from nautobot.extras.models import Status
 
 # Import local models and constants
-from nautobot_app_vpn.models import IKEGateway, IKECrypto
+from nautobot_app_vpn.models import IKECrypto, IKEGateway
 from nautobot_app_vpn.models.constants import (
-    IPAddressTypes,
-    IdentificationTypes,
-    IKEVersions,
-    IKEExchangeModes,
     IKEAuthenticationTypes,
+    IKEVersions,
+    IPAddressTypes,
 )
 
 # from nautobot.core.forms.widgets import APISelect
@@ -197,8 +196,7 @@ class IKEGatewayForm(NautobotModelForm):
                 self.fields["pre_shared_key"].widget.attrs["placeholder"] = "Leave blank to keep unchanged"
 
     def clean(self):
-        """
-        Custom form validation. Bypasses super().clean() due to M2M field issues.
+        """Custom form validation. Bypasses super().clean() due to M2M field issues.
         Manually triggers model validation via instance.full_clean().
         """
         # Keep super().clean() commented out

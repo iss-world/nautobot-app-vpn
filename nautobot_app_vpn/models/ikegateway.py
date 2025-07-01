@@ -1,21 +1,21 @@
 # nautobot_app_vpn/models/ikegateway.py
-from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+from nautobot.core.models.generics import PrimaryModel
 
 # Import Location model
 from nautobot.dcim.models import Device, Location, Platform
-from nautobot.extras.models import StatusField, ChangeLoggedModel
-from nautobot.core.models.generics import PrimaryModel
+from nautobot.extras.models import ChangeLoggedModel, StatusField
 from nautobot.extras.utils import extras_features
 
-from nautobot_app_vpn.models.ikecrypto import IKECrypto
 from nautobot_app_vpn.models.constants import (
-    IKEAuthenticationTypes,
-    IKEVersions,
-    IKEExchangeModes,
     IdentificationTypes,
+    IKEAuthenticationTypes,
+    IKEExchangeModes,
+    IKEVersions,
     IPAddressTypes,
 )
+from nautobot_app_vpn.models.ikecrypto import IKECrypto
 from nautobot_app_vpn.utils import get_default_status
 
 

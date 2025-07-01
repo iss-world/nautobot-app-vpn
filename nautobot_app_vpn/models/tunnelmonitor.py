@@ -1,9 +1,9 @@
 # nautobot_app_vpn/models/tunnelmonitor.py
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse  # Ensure reverse is imported
 from nautobot.core.models.generics import PrimaryModel
 from nautobot.extras.utils import extras_features
-from django.core.validators import MinValueValidator
 
 
 class TunnelMonitorActionChoices(models.TextChoices):

@@ -1,5 +1,5 @@
 # nautobot_app_vpn/navigation.py
-from nautobot.core.apps import NavMenuTab, NavMenuGroup, NavMenuItem
+from nautobot.core.apps import NavMenuGroup, NavMenuItem, NavMenuTab
 
 menu_items = [
     NavMenuTab(

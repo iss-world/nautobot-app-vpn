@@ -1,10 +1,10 @@
 import logging
 
-from .ikecrypto import IKECryptoForm, IKECryptoFilterForm
-from .ipseccrypto import IPSecCryptoForm, IPSecCryptoFilterForm
-from .ikegateway import IKEGatewayForm, IKEGatewayFilterForm
-from .ipsectunnel import IPSECTunnelForm, IPSecProxyIDForm, IPSecProxyIDFormSet, IPSECTunnelFilterForm
-from .tunnelmonitor import TunnelMonitorProfileForm, TunnelMonitorProfileFilterForm
+from .ikecrypto import IKECryptoFilterForm, IKECryptoForm
+from .ikegateway import IKEGatewayFilterForm, IKEGatewayForm
+from .ipseccrypto import IPSecCryptoFilterForm, IPSecCryptoForm
+from .ipsectunnel import IPSecProxyIDForm, IPSecProxyIDFormSet, IPSECTunnelFilterForm, IPSECTunnelForm
+from .tunnelmonitor import TunnelMonitorProfileFilterForm, TunnelMonitorProfileForm
 
 logger = logging.getLogger(__name__)
 

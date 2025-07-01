@@ -4,9 +4,9 @@ from nautobot.extras.models import StatusField
 from nautobot.extras.utils import extras_features
 
 from nautobot_app_vpn.models.constants import (
-    EncryptionAlgorithms,
     AuthenticationAlgorithms,
     DiffieHellmanGroups,
+    EncryptionAlgorithms,
     LifetimeUnits,
 )
 from nautobot_app_vpn.utils import get_default_status

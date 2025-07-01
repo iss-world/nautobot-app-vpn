@@ -2,8 +2,7 @@ from rest_framework.pagination import PageNumberPagination
 
 
 class StandardResultsSetPagination(PageNumberPagination):
-    """
-    Standard pagination for API endpoints.
+    """Standard pagination for API endpoints.
     - Supports dynamic page sizes via `?page_size=X`
     - Prevents excessive page loads with `max_page_size=100`
     - Defaults to 25 results per page for a better balance of performance and usability.
@@ -16,8 +15,7 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 
 class LargeResultsSetPagination(PageNumberPagination):
-    """
-    Large pagination class for bulk API requests.
+    """Large pagination class for bulk API requests.
     - Used for bulk exports or high-performance endpoints.
     """
 
@@ -27,8 +25,7 @@ class LargeResultsSetPagination(PageNumberPagination):
 
 
 class SmallResultsSetPagination(PageNumberPagination):
-    """
-    Smaller pagination for lightweight API endpoints.
+    """Smaller pagination for lightweight API endpoints.
     - Useful for quick-loading small lists.
     """
 

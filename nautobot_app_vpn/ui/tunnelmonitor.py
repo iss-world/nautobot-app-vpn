@@ -1,16 +1,17 @@
 # nautobot_app_vpn/ui/tunnelmonitor.py
 import logging
+
 from django.contrib import messages
 from django.shortcuts import redirect
-
 from nautobot.apps.views import NautobotUIViewSet
+
+from nautobot_app_vpn.api.serializers import TunnelMonitorProfileSerializer  # Ensure this exists
+from nautobot_app_vpn.filters import TunnelMonitorProfileFilterSet  # Ensure this exists
+from nautobot_app_vpn.forms import TunnelMonitorProfileFilterForm, TunnelMonitorProfileForm
 
 # Import corresponding model, form, filterset, table, serializer
 from nautobot_app_vpn.models import TunnelMonitorProfile
-from nautobot_app_vpn.forms import TunnelMonitorProfileForm, TunnelMonitorProfileFilterForm
-from nautobot_app_vpn.filters import TunnelMonitorProfileFilterSet  # Ensure this exists
 from nautobot_app_vpn.tables import TunnelMonitorProfileTable
-from nautobot_app_vpn.api.serializers import TunnelMonitorProfileSerializer  # Ensure this exists
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +58,7 @@ class TunnelMonitorProfileUIViewSet(NautobotUIViewSet):
                     messages.warning(request, "No matching profiles found for deletion.")
             except Exception as e:
                 logger.error(f"Error during bulk deletion of {model._meta.verbose_name_plural}: {e}")
-                messages.error(request, f"Error deleting profiles: An unexpected error occurred.")
+                messages.error(request, "Error deleting profiles: An unexpected error occurred.")
         else:
             messages.warning(request, "No profiles selected for deletion.")
         return redirect(self.get_return_url(request))

@@ -2,23 +2,21 @@
 import django_tables2 as tables
 from nautobot.apps.tables import (
     BaseTable,
-    ToggleColumn,
-    ButtonsColumn,
-    StatusTableMixin,
     BooleanColumn,
+    ButtonsColumn,
     LinkedCountColumn,  # Ensure LinkedCountColumn is imported
+    StatusTableMixin,
+    ToggleColumn,
 )
 
 # Import Location model for linking if desired
-from nautobot.dcim.models import Location, Device, Interface  # Added Interface
-
 # Import ALL necessary models
 from nautobot_app_vpn.models import (
     IKECrypto,
-    IPSecCrypto,
     IKEGateway,
-    IPSECTunnel,
+    IPSecCrypto,
     IPSecProxyID,
+    IPSECTunnel,
     TunnelMonitorProfile,
     VPNDashboard,
 )

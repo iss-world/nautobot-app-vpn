@@ -1,27 +1,28 @@
 # nautobot_app_vpn/api/serializers.py
-from nautobot.apps.api import BaseModelSerializer, ChoiceField, WritableNestedSerializer
+from nautobot.apps.api import BaseModelSerializer, ChoiceField
 
 # Import Location model
 from nautobot.dcim.models import Device, Interface, Location, Platform
 from nautobot.extras.models import Status
+from rest_framework import serializers
+
 from nautobot_app_vpn.models import (
     IKECrypto,
-    IPSecCrypto,
     IKEGateway,
-    IPSECTunnel,
+    IPSecCrypto,
     IPSecProxyID,
-    TunnelMonitorProfile,
+    IPSECTunnel,
     TunnelMonitorActionChoices,
-    VPNDashboard,
+    TunnelMonitorProfile,
     TunnelRoleChoices,
+    VPNDashboard,
 )
-from rest_framework import serializers
 from nautobot_app_vpn.models.constants import (
-    IPAddressTypes,
     IdentificationTypes,
-    IKEVersions,
-    IKEExchangeModes,
     IKEAuthenticationTypes,
+    IKEExchangeModes,
+    IKEVersions,
+    IPAddressTypes,
 )
 
 

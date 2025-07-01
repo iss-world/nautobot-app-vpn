@@ -1,9 +1,8 @@
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 
 class IsAdminOrReadOnly(BasePermission):
-    """
-    Allow only staff/superusers to modify data.
+    """Allow only staff/superusers to modify data.
     Read-only access is allowed for everyone.
     """
 
@@ -14,8 +13,7 @@ class IsAdminOrReadOnly(BasePermission):
 
 
 class IsOwnerOrAdmin(BasePermission):
-    """
-    Allow users to modify only objects they own.
+    """Allow users to modify only objects they own.
     Admins have full access.
     Assumes `obj.created_by` exists; otherwise, denies write access.
     """
@@ -33,8 +31,7 @@ class IsOwnerOrAdmin(BasePermission):
 
 
 class IsAuthenticatedOrAdmin(BasePermission):
-    """
-    Allow authenticated users to write.
+    """Allow authenticated users to write.
     Anonymous users get read-only access.
     """
 

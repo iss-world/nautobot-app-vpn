@@ -1,7 +1,8 @@
 from django import forms
-from nautobot.apps.forms import NautobotModelForm, NautobotFilterForm
-from nautobot.extras.models import Status
+from nautobot.apps.forms import NautobotFilterForm, NautobotModelForm
+
 from nautobot_app_vpn.models import IPSecCrypto
+
 # from nautobot.core.forms.widgets import APISelect
 
 

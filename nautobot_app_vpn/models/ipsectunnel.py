@@ -1,14 +1,16 @@
 # nautobot_app_vpn/models/ipsectunnel.py
-from django.db import models
 from django.core.exceptions import ValidationError  # Import ValidationError
+from django.db import models
 from nautobot.core.models.generics import PrimaryModel
-from nautobot.dcim.models import Device, Interface
+from nautobot.dcim.models import Device
 from nautobot.extras.models import StatusField  # Assuming Status model is used
 from nautobot.extras.utils import extras_features
+
+from nautobot_app_vpn.utils import get_default_status  # Assuming you have this util
+
 from .ikegateway import IKEGateway
 from .ipseccrypto import IPSecCrypto
 from .tunnelmonitor import TunnelMonitorProfile
-from nautobot_app_vpn.utils import get_default_status  # Assuming you have this util
 
 
 # --- ADDED Choices for Tunnel Role ---

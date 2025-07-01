@@ -1,15 +1,15 @@
 # === Production: nautobot_app_vpn/ui/dashboard.py ===
 import logging
-from django.views.generic import TemplateView
+
 from nautobot.apps.views import NautobotUIViewSet
+
 from nautobot_app_vpn.models import VPNDashboard
 
 logger = logging.getLogger(__name__)
 
 
 class VPNDashboardViewSet(NautobotUIViewSet):
-    """
-    Serves the new Cytoscape-based VPN dashboard.
+    """Serves the new Cytoscape-based VPN dashboard.
     """
 
     queryset = VPNDashboard.objects.none()

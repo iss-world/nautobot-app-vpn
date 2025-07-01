@@ -1,8 +1,8 @@
 # nautobot_app_vpn/forms/tunnelmonitor.py
 from django import forms
-from nautobot.apps.forms import NautobotModelForm, NautobotFilterForm, SmallTextarea  # Import necessary base forms
+from nautobot.apps.forms import NautobotFilterForm, NautobotModelForm  # Import necessary base forms
 
-from nautobot_app_vpn.models import TunnelMonitorProfile, TunnelMonitorActionChoices
+from nautobot_app_vpn.models import TunnelMonitorActionChoices, TunnelMonitorProfile
 
 
 class TunnelMonitorProfileForm(NautobotModelForm):

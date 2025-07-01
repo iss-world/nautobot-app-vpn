@@ -4,30 +4,27 @@ from django.forms.models import inlineformset_factory
 
 # Import necessary Nautobot components
 from nautobot.apps.forms import (
-    NautobotModelForm,
-    DynamicModelChoiceField,
-    BootstrapMixin,
-    NautobotFilterForm,
-    DynamicModelMultipleChoiceField,
     APISelectMultiple,  # Keep for 'devices' field
+    BootstrapMixin,
+    DynamicModelChoiceField,
+    DynamicModelMultipleChoiceField,
+    NautobotFilterForm,
+    NautobotModelForm,
 )
 from nautobot.dcim.models import Device, Interface
 
 # Corrected Imports Below:
 from nautobot.extras.models import Status
-from django.contrib.contenttypes.models import ContentType  # Correct import path
 
 # Import local models
 from nautobot_app_vpn.models import (
-    IPSECTunnel,
-    IPSecProxyID,
     IKEGateway,
     IPSecCrypto,
+    IPSecProxyID,
+    IPSECTunnel,
     TunnelMonitorProfile,
     TunnelRoleChoices,
 )
-
-from nautobot.core.forms.widgets import APISelect
 
 
 # 🔹 IPSec Tunnel Main Form (UPDATED - Removed bind_interface)

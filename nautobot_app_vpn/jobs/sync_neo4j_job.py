@@ -1,17 +1,19 @@
 # nautobot_app_vpn/jobs/neo4j_sync.py
 
+import json
 import logging
-from datetime import datetime, timezone as dt_timezone
 import random
 import re
-import json
+from datetime import UTC, datetime
+
 from django.conf import settings
 from django.db.models import Prefetch
-from neo4j import GraphDatabase, exceptions as neo4j_exceptions
-
+from nautobot.dcim.models import Device
 from nautobot.extras.jobs import Job
-from nautobot_app_vpn.models import IPSECTunnel, IKEGateway, VPNDashboard
-from nautobot.dcim.models import Device, Platform, Location
+from neo4j import GraphDatabase
+from neo4j import exceptions as neo4j_exceptions
+
+from nautobot_app_vpn.models import IKEGateway, IPSECTunnel, VPNDashboard
 
 logger = logging.getLogger(__name__)  # Module-level logger
 
@@ -67,8 +69,7 @@ class SyncNeo4jJob(Job):
     }
 
     def get_fallback_coords_by_country(self, country_code):
-        """
-        Get fallback (latitude, longitude) for a given country code.
+        """Get fallback (latitude, longitude) for a given country code.
         Returns a random cluster around the main city of the country,
         or a random global location if the country code is not recognized.
         """
@@ -138,7 +139,7 @@ class SyncNeo4jJob(Job):
                 driver.close()
             raise Exception(msg)
 
-        now_utc = datetime.now(dt_timezone.utc)
+        now_utc = datetime.now(UTC)
         processed_node_counts = {"DeviceGroup": 0, "ManualPeer": 0}
         edges_synced_count = 0
 
