@@ -1,0 +1,124 @@
+{# nautobot_app_vpn/templates/nautobot_app_vpn/ipsectunnel_edit.html #}
+{% extends 'generic/object_edit.html' %}
+{% load form_helpers %}
+{% load static %} {# Keep this load tag #}
+
+{% block form %}
+  {# Render the main IPSec Tunnel form #}
+  <div class="panel panel-default">
+    <div class="panel-heading"><strong>IPSec Tunnel</strong></div>
+    <div class="panel-body">
+      {% render_form form %}
+    </div>
+  </div>
+
+  {# Render the Proxy ID formset if it exists #}
+  {% if formset %}
+  <div class="panel panel-default">
+    <div class="panel-heading"><strong>Proxy IDs</strong></div>
+    <div class="panel-body">
+      {{ formset.management_form }} {# Required hidden fields for formset management #}
+      <div class="formset-container table-responsive" data-formset-prefix="{{ formset.prefix }}"> {# Added table-responsive #}
+        <table class="table table-hover table-formset">
+          <thead class="thead-light"> {# Added thead-light for better styling #}
+            <tr>
+              {# Render headers for each field in the Proxy ID form #}
+              {# This loop will now include the "Delete?" header automatically #}
+              {% for field in formset.empty_form.visible_fields %}
+                <th scope="col">{{ field.label }}</th>
+              {% endfor %}
+              {# Removed explicit Delete header - form.DELETE label should create it #}
+            </tr>
+          </thead>
+          <tbody id="{{ formset.prefix }}-formset-body">
+            {# Loop through existing forms in the formset #}
+            {% for form in formset %}
+              <tr class="dynamic-form proxy-id-form">
+                {{ form.id }} {# Render hidden ID field if editing existing items #}
+                {# This loop will render all fields, including the DELETE checkbox #}
+                {% for field in form.visible_fields %}
+                  <td>{% render_field field %}</td> {# Use render_field #}
+                {% endfor %}
+                 {# Render hidden fields specific to this form #}
+                 {% for field in form.hidden_fields %}
+                     {% if field.name != 'id' and field.name != 'DELETE' %}
+                         {{ field }}
+                     {% endif %}
+                 {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {# Button to add new forms dynamically #}
+        <button type="button" class="btn btn-sm btn-primary add-row" id="add-proxy-id">
+          <span class="mdi mdi-plus-thick" aria-hidden="true"></span> Add Proxy ID
+        </button>
+      </div> {# End formset-container #}
+
+      {# Hidden template for new forms used by JavaScript #}
+      {# This structure is expected by standard Django formset JS helpers #}
+      {# but we'll use it with our custom script #}
+      <div id="{{ formset.prefix }}-empty-form" class="empty-form" style="display: none;">
+        {# We need a temporary table structure here for the replace to work correctly #}
+        <table>
+            <tbody>
+                <tr class="dynamic-form proxy-id-form">
+                    {{ formset.empty_form.id }}
+                    {% for field in formset.empty_form.visible_fields %}
+                        <td>{% render_field field %}</td>
+                    {% endfor %}
+                    {% for field in formset.empty_form.hidden_fields %}
+                        {% if field.name != 'id' and field.name != 'DELETE' %}
+                            {{ field }}
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+      </div>
+
+    </div> {# End panel-body #}
+  </div> {# End panel #}
+
+  {# Removed the attempt to load Nautobot's default formset.js #}
+  {# <script src="{% static 'js/formset.js' %}?{{ settings.VERSION }}"></script> #}
+
+  {# Using custom Add Row script - UNCOMMENTED #}
+  <script>
+  // Custom Add Row script adapted for empty-form template
+  document.addEventListener("DOMContentLoaded", function () {
+      const formsetBody = document.getElementById("{{ formset.prefix }}-formset-body");
+      const addButton = document.getElementById("add-proxy-id"); // Use the button ID
+      const totalFormsInput = document.getElementById("id_{{ formset.prefix }}-TOTAL_FORMS");
+      // Get the HTML content of the hidden empty form template's *table row*
+      const emptyFormHtml = document.getElementById("{{ formset.prefix }}-empty-form").querySelector("tr.dynamic-form")?.outerHTML;
+
+      if (!formsetBody || !addButton || !totalFormsInput || !emptyFormHtml) {
+          console.warn("Formset Add Row script: Required elements not found.");
+          return; // Exit if essential elements are missing
+      }
+
+      addButton.addEventListener("click", function () {
+          const currentFormCount = parseInt(totalFormsInput.value);
+          // Replace '__prefix__' in the template HTML with the new form index
+          const newFormHtml = emptyFormHtml.replace(/__prefix__/g, currentFormCount);
+
+          // Create a temporary div/tbody to parse the HTML, then get the table row
+          const temp = document.createElement('tbody'); // Create a tbody to host the new row
+          temp.innerHTML = newFormHtml;
+          const newFormRow = temp.firstElementChild; // Get the <tr> element
+
+          if (newFormRow) {
+             formsetBody.appendChild(newFormRow); // Append the new row to the main table body
+             totalFormsInput.value = currentFormCount + 1; // Increment the TOTAL_FORMS count
+             // Optional: Initialize any dynamic widgets (like Select2) on the new row here
+             // e.g., $(newFormRow).find('.nautobot-select2').select2();
+          } else {
+              console.error("Formset Add Row script: Could not create new form row from template.");
+          }
+      });
+  });
+  </script>
+
+  {% endif %} {# End if formset #}
+{% endblock form %}
