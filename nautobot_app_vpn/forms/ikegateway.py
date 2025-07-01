@@ -86,7 +86,7 @@ class IKEGatewayForm(NautobotModelForm):
         model = IKEGateway
         fields = [
             "name", "description", "ike_version", "exchange_mode", # General
-            "bind_interface","local_ip_type", "local_ip", "local_devices", "local_locations","local_platform", "local_id_type", "local_id_value", # Local
+            "local_ip_type", "local_ip", "local_devices", "bind_interface", "local_locations","local_platform", "local_id_type", "local_id_value", # Local
             "peer_ip_type", "peer_ip", "peer_devices", "peer_device_manual", "peer_locations", "peer_location_manual", "peer_platform","peer_id_type", "peer_id_value", # Peer
             "authentication_type", "pre_shared_key", "ike_crypto_profile", # Auth
             "enable_passive_mode", "enable_nat_traversal", # Advanced
