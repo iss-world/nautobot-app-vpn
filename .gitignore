@@ -9,6 +9,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+development/neo4j_data/
+
 # C extensions
 *.so
 
