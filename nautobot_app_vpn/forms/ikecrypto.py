@@ -4,6 +4,7 @@ from nautobot.extras.models import Status
 from nautobot_app_vpn.models import IKECrypto
 # from nautobot.core.forms.widgets import APISelect
 
+
 class IKECryptoForm(NautobotModelForm):
     """Form for adding and editing IKE Crypto Profiles."""
 
@@ -27,7 +28,9 @@ class IKECryptoForm(NautobotModelForm):
         ]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Profile Name"}),
-            "description": forms.Textarea(attrs={"class": "form-control", "rows": 2, "placeholder": "Optional description"}),
+            "description": forms.Textarea(
+                attrs={"class": "form-control", "rows": 2, "placeholder": "Optional description"}
+            ),
             "dh_group": forms.Select(attrs={"class": "form-control"}),
             "encryption": forms.Select(attrs={"class": "form-control"}),
             "authentication": forms.Select(attrs={"class": "form-control"}),
@@ -46,8 +49,11 @@ class IKECryptoForm(NautobotModelForm):
 
 class IKECryptoFilterForm(NautobotFilterForm):
     """Filter form for IKE Crypto Profiles."""
-    
+
     model = IKECrypto
     fieldsets = (
-        ("IKE Crypto Filters", ("q", "encryption", "authentication", "dh_group", "lifetime", "lifetime_unit", "status")),
+        (
+            "IKE Crypto Filters",
+            ("q", "encryption", "authentication", "dh_group", "lifetime", "lifetime_unit", "status"),
+        ),
     )

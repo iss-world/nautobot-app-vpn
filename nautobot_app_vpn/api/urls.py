@@ -19,7 +19,7 @@ router.register(r"ikecrypto", IKECryptoViewSet, basename="ikecrypto")
 router.register(r"ipseccrypto", IPSecCryptoViewSet, basename="ipseccrypto")
 router.register(r"ikegateway", IKEGatewayViewSet, basename="ikegateway")
 router.register(r"ipsectunnel", IPSECTunnelViewSet, basename="ipsectunnel")
-router.register(r"ipsecproxyid", IPSecProxyIDViewSet, basename="ipsecproxyid") 
+router.register(r"ipsecproxyid", IPSecProxyIDViewSet, basename="ipsecproxyid")
 router.register(r"tunnel-monitor-profiles", TunnelMonitorProfileViewSet, basename="tunnelmonitorprofile")
 
 urlpatterns = [

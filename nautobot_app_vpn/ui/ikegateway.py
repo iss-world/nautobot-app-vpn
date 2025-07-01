@@ -1,7 +1,7 @@
 # nautobot_app_vpn/ui/ikegateway.py
 import logging
 from django.contrib import messages
-from django.shortcuts import redirect # Keep redirect for bulk_destroy
+from django.shortcuts import redirect  # Keep redirect for bulk_destroy
 
 from nautobot.apps.views import NautobotUIViewSet
 
@@ -18,16 +18,14 @@ class IKEGatewayUIViewSet(NautobotUIViewSet):
     """UIViewSet for IKE Gateways."""
 
     # Queryset with optimizations
-    queryset = IKEGateway.objects.select_related(
-        "ike_crypto_profile","bind_interface","status"
-    ).prefetch_related(
+    queryset = IKEGateway.objects.select_related("ike_crypto_profile", "bind_interface", "status").prefetch_related(
         "local_devices", "peer_devices", "local_locations", "peer_locations"
     )
 
     # Core NautobotUIViewSet attributes
     serializer_class = IKEGatewaySerializer
     table_class = IKEGatewayTable
-    form_class = IKEGatewayForm # Use the fixed form with workaround
+    form_class = IKEGatewayForm  # Use the fixed form with workaround
     filterset_class = IKEGatewayFilterSet
     filterset_form_class = IKEGatewayFilterForm
     default_return_url = "plugins:nautobot_app_vpn:ikegateway_list"
@@ -57,5 +55,5 @@ class IKEGatewayUIViewSet(NautobotUIViewSet):
                 logger.error(f"Error during bulk deletion of IKEGateway: {e}")
                 messages.error(request, f"Error deleting gateways: An unexpected error occurred.")
         else:
-           messages.warning(request, "No gateways selected for deletion.")
+            messages.warning(request, "No gateways selected for deletion.")
         return redirect(self.get_return_url(request))

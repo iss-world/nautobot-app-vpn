@@ -15,6 +15,4 @@ def get_valid_statuses():
     """
     Returns a queryset of valid status options for use in forms or validation.
     """
-    return Status.objects.filter(
-        name__in=["Active", "Planned", "Staging", "Decommissioned", "Down"]
-    )
+    return Status.objects.filter(name__in=["Active", "Planned", "Staging", "Decommissioned", "Down"])

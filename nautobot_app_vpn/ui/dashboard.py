@@ -11,6 +11,7 @@ class VPNDashboardViewSet(NautobotUIViewSet):
     """
     Serves the new Cytoscape-based VPN dashboard.
     """
+
     queryset = VPNDashboard.objects.none()
     template_name = "nautobot_app_vpn/vpn_dashboard_cyto.html"
 

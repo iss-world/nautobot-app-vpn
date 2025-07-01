@@ -1,7 +1,7 @@
 # nautobot_app_vpn/jobs/neo4j_sync.py
 
 import logging
-from datetime import datetime, timezone as dt_timezone 
+from datetime import datetime, timezone as dt_timezone
 import random
 import re
 import json
@@ -9,11 +9,12 @@ from django.conf import settings
 from django.db.models import Prefetch
 from neo4j import GraphDatabase, exceptions as neo4j_exceptions
 
-from nautobot.extras.jobs import Job 
+from nautobot.extras.jobs import Job
 from nautobot_app_vpn.models import IPSECTunnel, IKEGateway, VPNDashboard
 from nautobot.dcim.models import Device, Platform, Location
 
-logger = logging.getLogger(__name__) # Module-level logger
+logger = logging.getLogger(__name__)  # Module-level logger
+
 
 class SyncNeo4jJob(Job):
     class Meta:
@@ -81,21 +82,24 @@ class SyncNeo4jJob(Job):
             # Spread unknowns widely, never exactly at (0, 0)
             return (random.uniform(-50, 50), random.uniform(-180, 180))
 
-
     def run(self, **kwargs):
         # --- Logging Workaround Setup ---
-        has_logger_failure = hasattr(self.logger, 'failure')
-        has_logger_success = hasattr(self.logger, 'success')
+        has_logger_failure = hasattr(self.logger, "failure")
+        has_logger_success = hasattr(self.logger, "success")
 
         def log_job_failure(message):
             full_message = f"JOB_FAILURE: {message}"
-            if has_logger_failure: self.logger.failure(full_message)
-            else: self.logger.error(full_message)
-        
+            if has_logger_failure:
+                self.logger.failure(full_message)
+            else:
+                self.logger.error(full_message)
+
         def log_job_success(message):
             full_message = f"JOB_SUCCESS: {message}"
-            if has_logger_success: self.logger.success(full_message)
-            else: self.logger.info(full_message)
+            if has_logger_success:
+                self.logger.success(full_message)
+            else:
+                self.logger.info(full_message)
 
         log_job_info = self.logger.info
         log_job_warning = self.logger.warning
@@ -103,7 +107,7 @@ class SyncNeo4jJob(Job):
 
         log_job_info("VPN Topology to Neo4j sync job started.")
 
-        if not all(hasattr(settings, attr) for attr in ['NEO4J_URI', 'NEO4J_USER', 'NEO4J_PASSWORD']):
+        if not all(hasattr(settings, attr) for attr in ["NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"]):
             msg = "Neo4j connection settings (NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD) are not configured in Nautobot settings."
             log_job_failure(msg)
             raise Exception(msg)
@@ -111,27 +115,27 @@ class SyncNeo4jJob(Job):
         log_job_info(f"🔗 Connecting to Neo4j at {settings.NEO4J_URI}...")
         driver = None
         try:
-            driver = GraphDatabase.driver(
-                settings.NEO4J_URI,
-                auth=(settings.NEO4J_USER, settings.NEO4J_PASSWORD)
-            )
+            driver = GraphDatabase.driver(settings.NEO4J_URI, auth=(settings.NEO4J_USER, settings.NEO4J_PASSWORD))
             driver.verify_connectivity()
             log_job_info("Successfully connected to Neo4j.")
         except neo4j_exceptions.ServiceUnavailable as e:
             msg = f"Failed to connect to Neo4j: Service Unavailable. {e}"
             log_job_failure(msg)
-            if driver: driver.close()
+            if driver:
+                driver.close()
             raise Exception(msg)
         except neo4j_exceptions.AuthError as e:
             msg = f"Failed to connect to Neo4j: Authentication Error. {e}"
             log_job_failure(msg)
-            if driver: driver.close()
+            if driver:
+                driver.close()
             raise Exception(msg)
         except Exception as e:
             msg = f"Failed to connect to Neo4j: {e}"
             log_job_failure(msg)
             logger.error("Neo4j Connection Exception Details:", exc_info=True)
-            if driver: driver.close()
+            if driver:
+                driver.close()
             raise Exception(msg)
 
         now_utc = datetime.now(dt_timezone.utc)
@@ -139,33 +143,37 @@ class SyncNeo4jJob(Job):
         edges_synced_count = 0
 
         try:
-            with driver.session(database=getattr(settings, 'NEO4J_DATABASE', 'neo4j')) as session:
+            with driver.session(database=getattr(settings, "NEO4J_DATABASE", "neo4j")) as session:
                 log_job_info("🧹 Clearing existing VPNNode subgraph in Neo4j...")
                 try:
                     session.execute_write(lambda tx: tx.run("MATCH (n:VPNNode) DETACH DELETE n"))
                     log_job_info("Successfully cleared VPNNode subgraph.")
                 except Exception as e:
-                    msg = f"Failed to clear Neo4j subgraph: {e}"; log_job_failure(msg)
+                    msg = f"Failed to clear Neo4j subgraph: {e}"
+                    log_job_failure(msg)
                     logger.error("Neo4j Clear Subgraph Exception Details:", exc_info=True)
                     raise Exception(msg)
 
                 device_prefetch_qs = Device.objects.select_related(
-                    'platform', 'role', 'location', 'status', 'device_type', 
-                    'primary_ip4'
-                ).prefetch_related('tags')
+                    "platform", "role", "location", "status", "device_type", "primary_ip4"
+                ).prefetch_related("tags")
 
                 tunnels_qs = IPSECTunnel.objects.select_related(
-                    "ike_gateway", "ike_gateway__status",
-                    "ike_gateway__local_platform", "ike_gateway__peer_platform",
-                    "status", "monitor_profile", "tunnel_interface__device",
-                    "ipsec_crypto_profile" 
+                    "ike_gateway",
+                    "ike_gateway__status",
+                    "ike_gateway__local_platform",
+                    "ike_gateway__peer_platform",
+                    "status",
+                    "monitor_profile",
+                    "tunnel_interface__device",
+                    "ipsec_crypto_profile",
                 ).prefetch_related(
-                    Prefetch('ike_gateway__local_devices', queryset=device_prefetch_qs),
-                    Prefetch('ike_gateway__peer_devices', queryset=device_prefetch_qs),
+                    Prefetch("ike_gateway__local_devices", queryset=device_prefetch_qs),
+                    Prefetch("ike_gateway__peer_devices", queryset=device_prefetch_qs),
                     "proxy_ids",
                 )
 
-                neo4j_nodes_to_create = {} 
+                neo4j_nodes_to_create = {}
                 neo4j_edges_to_create = []
 
                 # Helper functions (see your version, which is already good)
@@ -179,21 +187,29 @@ class SyncNeo4jJob(Job):
                         return f"manual_peer:{manual_name.strip().replace(' ', '_').replace('/', '_').lower()}"
                     return None
 
-
                 def get_node_label(devices_list=None, manual_name=None):
                     if devices_list:
                         return " <-> ".join(sorted(d.name for d in devices_list))
                     return manual_name or "Unknown Peer"
 
                 def get_device_country(device_obj, manual_location_str=None):
-                    if device_obj and device_obj.location and hasattr(device_obj.location, 'custom_field_data'):
+                    if device_obj and device_obj.location and hasattr(device_obj.location, "custom_field_data"):
                         loc_cf = device_obj.location.custom_field_data
-                        country = loc_cf.get('country_code') or loc_cf.get('country')
-                        if country: return str(country).upper()
-                    if device_obj and device_obj.name: parts = device_obj.name.split("-"); return parts[0].upper() if parts else "UN"
-                    if manual_location_str: parts = manual_location_str.split(","); return parts[-1].strip().upper() if len(parts) > 1 else (parts[0].strip().upper() if parts and parts[0].strip() else "UN")
+                        country = loc_cf.get("country_code") or loc_cf.get("country")
+                        if country:
+                            return str(country).upper()
+                    if device_obj and device_obj.name:
+                        parts = device_obj.name.split("-")
+                        return parts[0].upper() if parts else "UN"
+                    if manual_location_str:
+                        parts = manual_location_str.split(",")
+                        return (
+                            parts[-1].strip().upper()
+                            if len(parts) > 1
+                            else (parts[0].strip().upper() if parts and parts[0].strip() else "UN")
+                        )
                     return "UN"
-                
+
                 def sanitize_filename(name):
                     """Replace spaces and slashes for safe file names."""
                     return re.sub(r"[^A-Za-z0-9_\-]", "_", name)
@@ -242,7 +258,9 @@ class SyncNeo4jJob(Job):
                             "icon_filename": icon_f,
                             "status": dev.status.name if dev.status else "Unknown",
                             "role": dev.role.name if dev.role else "Unknown",
-                            "primary_ip": str(dev.primary_ip4.address.ip) if dev.primary_ip4 and dev.primary_ip4.address else "",
+                            "primary_ip": str(dev.primary_ip4.address.ip)
+                            if dev.primary_ip4 and dev.primary_ip4.address
+                            else "",
                             "is_ha_pair": len(local_devs_group) > 1,
                             "model_name": dev.device_type.model if dev.device_type else "N/A",
                             "nautobot_device_pks": [str(d.pk) for d in local_devs_group],
@@ -281,7 +299,9 @@ class SyncNeo4jJob(Job):
                                 "icon_filename": icon_f,
                                 "status": dev.status.name if dev.status else "Unknown",
                                 "role": dev.role.name if dev.role else "Unknown",
-                                "primary_ip": str(dev.primary_ip4.address.ip) if dev.primary_ip4 and dev.primary_ip4.address else "",
+                                "primary_ip": str(dev.primary_ip4.address.ip)
+                                if dev.primary_ip4 and dev.primary_ip4.address
+                                else "",
                                 "is_ha_pair": len(peer_devs_group) > 1,
                                 "model_name": dev.device_type.model if dev.device_type else "N/A",
                                 "nautobot_device_pks": [str(d.pk) for d in peer_devs_group],
@@ -289,7 +309,9 @@ class SyncNeo4jJob(Job):
                             }
                             processed_node_counts["DeviceGroup"] += 1
 
-                    elif (gw.peer_device_manual and gw.peer_device_manual.strip()) or (gw.peer_location_manual and gw.peer_location_manual.strip()):
+                    elif (gw.peer_device_manual and gw.peer_device_manual.strip()) or (
+                        gw.peer_location_manual and gw.peer_location_manual.strip()
+                    ):
                         # Manual peer present (either device name or location)
                         manual_peer_label = (gw.peer_device_manual or gw.peer_location_manual).strip()
                         peer_node_id_val = f"manual_peer:{manual_peer_label.lower().replace(' ', '_')}"
@@ -336,8 +358,6 @@ class SyncNeo4jJob(Job):
                         logger.warning(f"No peer devices/manual peer data for tunnel {tunnel.name} ({tunnel.pk})")
                         continue
 
-
-
                     # --- Edge ---
                     if local_node_id_val and peer_node_id_val:
                         # Build a label for Cytoscape edge (optional: can be tunnel name, IKE version, status etc.)
@@ -356,9 +376,9 @@ class SyncNeo4jJob(Job):
                             "Local IP": str(gw.local_ip) if gw.local_ip else "N/A",
                             "Peer IP": str(gw.peer_ip) if gw.peer_ip else "N/A",
                             "Last Synced": now_utc.strftime("%Y-%m-%d %H:%M:%S UTC"),
-                            "Firewalls": ", ".join([
-                                d.name for d in local_devs_group + peer_devs_group if d and getattr(d, 'name', None)
-                            ]),
+                            "Firewalls": ", ".join(
+                                [d.name for d in local_devs_group + peer_devs_group if d and getattr(d, "name", None)]
+                            ),
                         }
 
                         edge_props = {
@@ -369,15 +389,17 @@ class SyncNeo4jJob(Job):
                             "role": str(tunnel.role) if tunnel.role else "Unknown",
                             "ike_gateway_name": gw.name or "N/A",
                             "ike_version": str(gw.ike_version) if gw.ike_version else "Unknown",
-                            "ipsec_profile_name": tunnel.ipsec_crypto_profile.name if tunnel.ipsec_crypto_profile else "N/A",
+                            "ipsec_profile_name": tunnel.ipsec_crypto_profile.name
+                            if tunnel.ipsec_crypto_profile
+                            else "N/A",
                             "tunnel_interface": tunnel.tunnel_interface.name if tunnel.tunnel_interface else "N/A",
                             "description": tunnel.description or "",
                             "synced_at_utc": now_utc.isoformat(),
                             "local_ip": str(gw.local_ip) if gw.local_ip else "N/A",
                             "peer_ip": str(gw.peer_ip) if gw.peer_ip else "N/A",
-                            "firewall_hostnames": ", ".join([
-                                d.name for d in local_devs_group + peer_devs_group if d and getattr(d, 'name', None)
-                            ]),
+                            "firewall_hostnames": ", ".join(
+                                [d.name for d in local_devs_group + peer_devs_group if d and getattr(d, "name", None)]
+                            ),
                             "tooltip_details_json": json.dumps(tooltip_details, ensure_ascii=False),
                             # No "tooltip_details": tooltip_details,  <-- don't include the raw dict!
                         }
@@ -385,11 +407,9 @@ class SyncNeo4jJob(Job):
                         for k, v in edge_props.items():
                             if isinstance(v, dict):
                                 edge_props[k] = json.dumps(v, ensure_ascii=False)
-                        neo4j_edges_to_create.append({
-                            "source_id": local_node_id_val,
-                            "target_id": peer_node_id_val,
-                            "properties": edge_props
-                        })
+                        neo4j_edges_to_create.append(
+                            {"source_id": local_node_id_val, "target_id": peer_node_id_val, "properties": edge_props}
+                        )
                         edges_synced_count += 1
 
                 # --- Bulk Node/Edge Upserts ---
@@ -397,48 +417,54 @@ class SyncNeo4jJob(Job):
                     log_job_info(f"Creating/updating {len(neo4j_nodes_to_create)} VPNNodes in Neo4j...")
                     node_payloads = list(neo4j_nodes_to_create.values())
                     session.execute_write(
-                        lambda tx: tx.run("""
+                        lambda tx: tx.run(
+                            """
                             UNWIND $nodes_batch AS node_props 
                             MERGE (n:VPNNode {id: node_props.id})
                             SET n = node_props
-                        """, {"nodes_batch": node_payloads})
+                        """,
+                            {"nodes_batch": node_payloads},
+                        )
                     )
                     log_job_debug(f"Processed {len(node_payloads)} nodes for Neo4j.")
 
                 if neo4j_edges_to_create:
                     log_job_info(f"Creating/updating {len(neo4j_edges_to_create)} TUNNEL relationships in Neo4j...")
                     session.execute_write(
-                        lambda tx: tx.run("""
+                        lambda tx: tx.run(
+                            """
                             UNWIND $edges_batch AS edge_data
                             MATCH (src:VPNNode {id: edge_data.source_id})
                             MATCH (dst:VPNNode {id: edge_data.target_id})
                             MERGE (src)-[r:TUNNEL {nautobot_tunnel_pk: edge_data.properties.nautobot_tunnel_pk}]->(dst)
                             SET r = edge_data.properties
-                        """, {"edges_batch": neo4j_edges_to_create})
+                        """,
+                            {"edges_batch": neo4j_edges_to_create},
+                        )
                     )
                     log_job_debug(f"Processed {len(neo4j_edges_to_create)} edges for Neo4j.")
-                
+
                 # --- Update Dashboard Meta ---
                 try:
                     dashboard, created = VPNDashboard.objects.get_or_create(
                         id=1,  # Singleton dashboard
                         defaults={
-                            'last_sync_time': now_utc,
-                            'last_sync_status': 'Success',
-                            'nodes_count': len(neo4j_nodes_to_create),
-                            'edges_count': len(neo4j_edges_to_create)
-                        }
+                            "last_sync_time": now_utc,
+                            "last_sync_status": "Success",
+                            "nodes_count": len(neo4j_nodes_to_create),
+                            "edges_count": len(neo4j_edges_to_create),
+                        },
                     )
                     if not created:
                         dashboard.last_sync_time = now_utc
-                        dashboard.last_sync_status = 'Success'
+                        dashboard.last_sync_status = "Success"
                         dashboard.nodes_count = len(neo4j_nodes_to_create)
                         dashboard.edges_count = len(neo4j_edges_to_create)
                         dashboard.save()
                     log_job_info("Updated VPNDashboard with sync status.")
                 except Exception as e:
                     log_job_warning(f"Failed to update VPNDashboard: {e}")
-                
+
                 log_job_success(
                     f"Neo4j sync complete. DeviceGroup Nodes: {processed_node_counts['DeviceGroup']}, "
                     f"ManualPeer Nodes: {processed_node_counts['ManualPeer']}, "
@@ -446,34 +472,36 @@ class SyncNeo4jJob(Job):
                 )
 
         except Exception as e:
-            msg = f"An error occurred during Neo4j sync operations: {e}"; 
+            msg = f"An error occurred during Neo4j sync operations: {e}"
             log_job_failure(msg)
             logger.error("Neo4j Sync Operation Exception Details:", exc_info=True)
-            
+
             # Update VPNDashboard with error status
             try:
                 dashboard, created = VPNDashboard.objects.get_or_create(
                     id=1,
                     defaults={
-                        'last_sync_time': now_utc,
-                        'last_sync_status': f'Error: {str(e)[:100]}...' if len(str(e)) > 100 else f'Error: {str(e)}',
-                        'nodes_count': 0,
-                        'edges_count': 0
-                    }
+                        "last_sync_time": now_utc,
+                        "last_sync_status": f"Error: {str(e)[:100]}..." if len(str(e)) > 100 else f"Error: {str(e)}",
+                        "nodes_count": 0,
+                        "edges_count": 0,
+                    },
                 )
                 if not created:
                     dashboard.last_sync_time = now_utc
-                    dashboard.last_sync_status = f'Error: {str(e)[:100]}...' if len(str(e)) > 100 else f'Error: {str(e)}'
+                    dashboard.last_sync_status = (
+                        f"Error: {str(e)[:100]}..." if len(str(e)) > 100 else f"Error: {str(e)}"
+                    )
                     dashboard.save()
             except Exception as dash_err:
                 log_job_warning(f"Failed to update VPNDashboard with error status: {dash_err}")
-            
-            raise Exception(msg) 
+
+            raise Exception(msg)
         finally:
-            if driver: 
+            if driver:
                 driver.close()
                 log_job_info("Neo4j connection closed.")
-        
+
         return (
             f"Neo4j sync finished. DeviceGroup Nodes: {processed_node_counts['DeviceGroup']}, "
             f"ManualPeer Nodes: {processed_node_counts['ManualPeer']}, "

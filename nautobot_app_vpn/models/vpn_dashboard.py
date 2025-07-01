@@ -2,6 +2,7 @@
 from django.db import models
 from nautobot.core.models import BaseModel
 
+
 class VPNDashboard(BaseModel):
     """Model to store VPN Dashboard statistics and metadata."""
 
@@ -17,16 +18,24 @@ class VPNDashboard(BaseModel):
     last_sync_status = models.CharField(
         max_length=50,
         # Consider adding "running", "skipped" to choices if needed based on job logic
-        choices=[("success", "Success"), ("failed", "Failed"), ("pending", "Pending"), ("running", "Running"), ("skipped", "Skipped")],
+        choices=[
+            ("success", "Success"),
+            ("failed", "Failed"),
+            ("pending", "Pending"),
+            ("running", "Running"),
+            ("skipped", "Skipped"),
+        ],
         default="pending",
-        help_text="Status of the last sync"
+        help_text="Status of the last sync",
     )
-    last_sync_time = models.DateTimeField(null=True, blank=True, help_text="Timestamp of last sync run started") # Changed help_text slightly
+    last_sync_time = models.DateTimeField(
+        null=True, blank=True, help_text="Timestamp of last sync run started"
+    )  # Changed help_text slightly
     last_push_status = models.CharField(
         max_length=50,
-        choices=[("success", "Success"), ("failed", "Failed"), ("pending", "Pending")], # Add running/skipped if needed
+        choices=[("success", "Success"), ("failed", "Failed"), ("pending", "Pending")],  # Add running/skipped if needed
         default="pending",
-        help_text="Status of last VPN configuration push"
+        help_text="Status of last VPN configuration push",
     )
     last_push_time = models.DateTimeField(null=True, blank=True, help_text="Timestamp of last successful config push")
 

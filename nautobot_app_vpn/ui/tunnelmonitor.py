@@ -8,11 +8,12 @@ from nautobot.apps.views import NautobotUIViewSet
 # Import corresponding model, form, filterset, table, serializer
 from nautobot_app_vpn.models import TunnelMonitorProfile
 from nautobot_app_vpn.forms import TunnelMonitorProfileForm, TunnelMonitorProfileFilterForm
-from nautobot_app_vpn.filters import TunnelMonitorProfileFilterSet # Ensure this exists
+from nautobot_app_vpn.filters import TunnelMonitorProfileFilterSet  # Ensure this exists
 from nautobot_app_vpn.tables import TunnelMonitorProfileTable
-from nautobot_app_vpn.api.serializers import TunnelMonitorProfileSerializer # Ensure this exists
+from nautobot_app_vpn.api.serializers import TunnelMonitorProfileSerializer  # Ensure this exists
 
 logger = logging.getLogger(__name__)
+
 
 class TunnelMonitorProfileUIViewSet(NautobotUIViewSet):
     """UIViewSet for managing Tunnel Monitor Profiles."""
@@ -27,7 +28,7 @@ class TunnelMonitorProfileUIViewSet(NautobotUIViewSet):
 
     # Define the default return URL (update in urls.py accordingly)
     default_return_url = "plugins:nautobot_app_vpn:tunnelmonitorprofile_list"
-    lookup_field = "pk" # Standard lookup
+    lookup_field = "pk"  # Standard lookup
 
     # No custom create/update needed for this simple model initially.
     # Add bulk delete for consistency if desired:
@@ -35,19 +36,21 @@ class TunnelMonitorProfileUIViewSet(NautobotUIViewSet):
         """Bulk delete selected Tunnel Monitor Profiles."""
         logger.debug(f"request.POST: {request.POST}")
         pks = request.POST.getlist("pk")
-        model = self.queryset.model # Get the model class
+        model = self.queryset.model  # Get the model class
 
         if pks:
             try:
                 queryset = model.objects.filter(pk__in=pks)
                 # Add protection logic if needed (e.g., check if profile is used by tunnels)
                 if queryset.filter(ipsec_tunnels__isnull=False).exists():
-                     messages.error(request, "Cannot delete profiles currently in use by IPSec Tunnels.")
-                     return redirect(self.get_return_url(request))
+                    messages.error(request, "Cannot delete profiles currently in use by IPSec Tunnels.")
+                    return redirect(self.get_return_url(request))
 
                 count = queryset.count()
                 if count > 0:
-                    logger.info(f"Deleting {count} {model._meta.verbose_name_plural}: {list(queryset.values_list('pk', flat=True))}")
+                    logger.info(
+                        f"Deleting {count} {model._meta.verbose_name_plural}: {list(queryset.values_list('pk', flat=True))}"
+                    )
                     queryset.delete()
                     messages.success(request, f"Deleted {count} {model._meta.verbose_name_plural}.")
                 else:

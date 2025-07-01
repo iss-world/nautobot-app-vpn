@@ -54,17 +54,20 @@ class LifetimeUnits(TextChoices):
     HOURS = "hours", "Hours"
     DAYS = "days", "Days"
 
+
 # 🔹 IKE Versions
 class IKEVersions(TextChoices):
     IKEV1 = "ikev1", "IKEv1"
     IKEV2 = "ikev2", "IKEv2"
-    IKEV2_PREFERRED = "ikev2-preferred", "IKEv2 Preferred" # Common practice
+    IKEV2_PREFERRED = "ikev2-preferred", "IKEv2 Preferred"  # Common practice
+
 
 # 🔹 IKE Exchange Modes (Primarily for IKEv1)
 class IKEExchangeModes(TextChoices):
     AUTO = "auto", "Auto"
     MAIN = "main", "Main"
     AGGRESSIVE = "aggressive", "Aggressive"
+
 
 # 🔹 Identification Types
 class IdentificationTypes(TextChoices):
@@ -73,6 +76,7 @@ class IdentificationTypes(TextChoices):
     USER_FQDN = "ufqdn", "User FQDN (Email Address)"
     KEY_ID = "keyid", "Key ID (String)"
     # Add others if necessary based on PAN-OS versions
+
 
 class IPAddressTypes(TextChoices):
     IP = "ip", "IP Address"

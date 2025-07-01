@@ -4,7 +4,7 @@ from django.urls import path
 from nautobot.apps.urls import NautobotUIViewSetRouter
 
 # --- Import Specific Views ---
-from nautobot_app_vpn.ui.dashboard import VPNDashboardViewSet 
+from nautobot_app_vpn.ui.dashboard import VPNDashboardViewSet
 from nautobot_app_vpn.ui.ikecrypto import IKECryptoUIViewSet
 from nautobot_app_vpn.ui.ikegateway import IKEGatewayUIViewSet
 from nautobot_app_vpn.ui.ipseccrypto import IPSecCryptoUIViewSet
@@ -46,4 +46,4 @@ urlpatterns = [
 
 
 # logger.info("✅ VPN Plugin URLs registered (Simplified)") # Original log message
-logger.info("✅ VPN Plugin URLs registered (Dashboard & Export paths added)") # Updated log message
+logger.info("✅ VPN Plugin URLs registered (Dashboard & Export paths added)")  # Updated log message

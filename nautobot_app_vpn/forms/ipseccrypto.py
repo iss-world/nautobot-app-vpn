@@ -29,7 +29,9 @@ class IPSecCryptoForm(NautobotModelForm):
         ]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Profile Name"}),
-            "description": forms.Textarea(attrs={"class": "form-control", "rows": 2, "placeholder": "Optional description"}),
+            "description": forms.Textarea(
+                attrs={"class": "form-control", "rows": 2, "placeholder": "Optional description"}
+            ),
             "encryption": forms.Select(attrs={"class": "form-control"}),
             "authentication": forms.Select(attrs={"class": "form-control"}),
             "dh_group": forms.Select(attrs={"class": "form-control"}),
@@ -52,14 +54,17 @@ class IPSecCryptoFilterForm(NautobotFilterForm):
 
     model = IPSecCrypto
     fieldsets = (
-        ("IPSec Crypto Profile Filters", (
-            "q",
-            "encryption",
-            "authentication",
-            "dh_group",
-            "protocol",
-            "lifetime",
-            "lifetime_unit",
-            "status",
-        )),
+        (
+            "IPSec Crypto Profile Filters",
+            (
+                "q",
+                "encryption",
+                "authentication",
+                "dh_group",
+                "protocol",
+                "lifetime",
+                "lifetime_unit",
+                "status",
+            ),
+        ),
     )

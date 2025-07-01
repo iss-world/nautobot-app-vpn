@@ -6,6 +6,7 @@ from nautobot.apps import NautobotAppConfig
 
 __version__ = metadata.version(__name__)
 
+
 class Nautobot_App_VpnConfig(NautobotAppConfig):
     """App configuration for the nautobot_app_vpn app."""
 
@@ -23,7 +24,6 @@ class Nautobot_App_VpnConfig(NautobotAppConfig):
     docs_view_name = "plugins:nautobot_app_vpn:docs"
     jobs = "nautobot_app_vpn.jobs"
 
-    
     def ready(self):
         super().ready()
         # ✅ Register jobs only when registry is ready

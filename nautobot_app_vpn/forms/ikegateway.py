@@ -4,106 +4,176 @@ import re
 from django.db import models
 from django.core.validators import MinLengthValidator, validate_ipv46_address
 from django.core.exceptions import ValidationError as CoreValidationError
+
 # Import necessary Nautobot form components and models
 from nautobot.apps.forms import (
     NautobotModelForm,
     NautobotFilterForm,
-    DynamicModelMultipleChoiceField, # Use Multiple Choice variant
-    DynamicModelChoiceField, # Make sure this is imported
+    DynamicModelMultipleChoiceField,  # Use Multiple Choice variant
+    DynamicModelChoiceField,  # Make sure this is imported
     SmallTextarea,
-    APISelectMultiple # Widget for multi-select dynamic fields
+    APISelectMultiple,  # Widget for multi-select dynamic fields
 )
-from nautobot.dcim.models import Device, Location, Interface, Platform # Need Location AND Interface
+from nautobot.dcim.models import Device, Location, Interface, Platform  # Need Location AND Interface
 from nautobot.extras.models import Status
+
 # Import local models and constants
 from nautobot_app_vpn.models import IKEGateway, IKECrypto
 from nautobot_app_vpn.models.constants import (
-    IPAddressTypes, IdentificationTypes, IKEVersions, IKEExchangeModes, IKEAuthenticationTypes
+    IPAddressTypes,
+    IdentificationTypes,
+    IKEVersions,
+    IKEExchangeModes,
+    IKEAuthenticationTypes,
 )
 
 # from nautobot.core.forms.widgets import APISelect
+
 
 class IKEGatewayForm(NautobotModelForm):
     """Form for adding and editing IKE Gateways."""
 
     # --- M2M Fields ---
     local_devices = DynamicModelMultipleChoiceField(
-        queryset=Device.objects.filter(platform__name="PanOS"), # Base queryset
+        queryset=Device.objects.filter(platform__name="PanOS"),  # Base queryset
         label="Local Devices",
-        required=True, # Restore requirement
-        widget=APISelectMultiple(attrs={"class": "form-control"})
+        required=True,  # Restore requirement
+        widget=APISelectMultiple(attrs={"class": "form-control"}),
     )
     peer_devices = DynamicModelMultipleChoiceField(
         queryset=Device.objects.all(),
         label="Peer Devices",
         required=False,
-        widget=APISelectMultiple(attrs={"class": "form-control"})
+        widget=APISelectMultiple(attrs={"class": "form-control"}),
     )
     local_locations = DynamicModelMultipleChoiceField(
         queryset=Location.objects.all(),
         label="Local Locations",
         required=False,
-        widget=APISelectMultiple(attrs={"class": "form-control"})
+        widget=APISelectMultiple(attrs={"class": "form-control"}),
     )
     peer_locations = DynamicModelMultipleChoiceField(
         queryset=Location.objects.all(),
         label="Peer Locations",
         required=False,
-        widget=APISelectMultiple(attrs={"class": "form-control"})
+        widget=APISelectMultiple(attrs={"class": "form-control"}),
     )
 
     # --- Standard Fields ---
-    local_ip_type = forms.ChoiceField(choices=[('', '---------')] + IPAddressTypes.choices, required=True, label="Local IP Type", widget=forms.Select(attrs={"class": "form-control"}))
-    peer_ip_type = forms.ChoiceField(choices=[('', '---------')] + IPAddressTypes.choices, required=True, label="Peer IP Type", widget=forms.Select(attrs={"class": "form-control"}))
-    pre_shared_key = forms.CharField(required=False, widget=forms.PasswordInput(render_value=False, attrs={"class": "form-control", "placeholder": "Enter pre-shared key (leave blank to keep unchanged)"}), help_text="Required for PSK authentication when creating. Stored securely if secrets backend is configured.", validators=[MinLengthValidator(8)])
-    peer_location_manual = forms.CharField(required=False, label="Manual Peer Location", widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter if Peer Location not in dropdown"}), help_text="Use this if the peer's location isn't an existing Nautobot Location.")
-    peer_device_manual = forms.CharField(required=False, label="Manual Peer Device", widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Specify if peer device(s) not selected"}))
-    ike_crypto_profile = forms.ModelChoiceField(queryset=IKECrypto.objects.all(), label="IKE Crypto Profile", required=True, widget=forms.Select(attrs={"class": "form-control"}))
+    local_ip_type = forms.ChoiceField(
+        choices=[("", "---------")] + IPAddressTypes.choices,
+        required=True,
+        label="Local IP Type",
+        widget=forms.Select(attrs={"class": "form-control"}),
+    )
+    peer_ip_type = forms.ChoiceField(
+        choices=[("", "---------")] + IPAddressTypes.choices,
+        required=True,
+        label="Peer IP Type",
+        widget=forms.Select(attrs={"class": "form-control"}),
+    )
+    pre_shared_key = forms.CharField(
+        required=False,
+        widget=forms.PasswordInput(
+            render_value=False,
+            attrs={"class": "form-control", "placeholder": "Enter pre-shared key (leave blank to keep unchanged)"},
+        ),
+        help_text="Required for PSK authentication when creating. Stored securely if secrets backend is configured.",
+        validators=[MinLengthValidator(8)],
+    )
+    peer_location_manual = forms.CharField(
+        required=False,
+        label="Manual Peer Location",
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Enter if Peer Location not in dropdown"}
+        ),
+        help_text="Use this if the peer's location isn't an existing Nautobot Location.",
+    )
+    peer_device_manual = forms.CharField(
+        required=False,
+        label="Manual Peer Device",
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Specify if peer device(s) not selected"}
+        ),
+    )
+    ike_crypto_profile = forms.ModelChoiceField(
+        queryset=IKECrypto.objects.all(),
+        label="IKE Crypto Profile",
+        required=True,
+        widget=forms.Select(attrs={"class": "form-control"}),
+    )
     # status = forms.ModelChoiceField(queryset=Status.objects.all(), required=True, label="Status", widget=forms.Select(attrs={"class": "form-control"}))
 
-
     bind_interface = DynamicModelChoiceField(
-        queryset=Interface.objects.all(), # Base queryset
+        queryset=Interface.objects.all(),  # Base queryset
         label="Bind Interface (Optional)",
         required=False,
         help_text="Select source interface for IKE traffic. Filtered by selected local devices.",
-        query_params={"device_id": "$local_devices"} # Filter by selected local devices
+        query_params={"device_id": "$local_devices"},  # Filter by selected local devices
     )
 
     local_platform = DynamicModelChoiceField(
-        queryset=Platform.objects.all(), # Shows all available platforms
+        queryset=Platform.objects.all(),  # Shows all available platforms
         label="Local Platform",
         required=False,
     )
     peer_platform = DynamicModelChoiceField(
         queryset=Platform.objects.all(),
         label="Peer Platform",
-        required=False, # Because model field has null=True, blank=True
+        required=False,  # Because model field has null=True, blank=True
     )
-
 
     class Meta:
         model = IKEGateway
         fields = [
-            "name", "description", "ike_version", "exchange_mode", # General
-            "local_ip_type", "local_ip", "local_devices", "bind_interface", "local_locations","local_platform", "local_id_type", "local_id_value", # Local
-            "peer_ip_type", "peer_ip", "peer_devices", "peer_device_manual", "peer_locations", "peer_location_manual", "peer_platform","peer_id_type", "peer_id_value", # Peer
-            "authentication_type", "pre_shared_key", "ike_crypto_profile", # Auth
-            "enable_passive_mode", "enable_nat_traversal", # Advanced
-            "enable_dpd", "dpd_interval", "dpd_retry", # DPD
-            "liveness_check_interval", # Liveness
-            "status", # Nautobot Status
+            "name",
+            "description",
+            "ike_version",
+            "exchange_mode",  # General
+            "local_ip_type",
+            "local_ip",
+            "local_devices",
+            "bind_interface",
+            "local_locations",
+            "local_platform",
+            "local_id_type",
+            "local_id_value",  # Local
+            "peer_ip_type",
+            "peer_ip",
+            "peer_devices",
+            "peer_device_manual",
+            "peer_locations",
+            "peer_location_manual",
+            "peer_platform",
+            "peer_id_type",
+            "peer_id_value",  # Peer
+            "authentication_type",
+            "pre_shared_key",
+            "ike_crypto_profile",  # Auth
+            "enable_passive_mode",
+            "enable_nat_traversal",  # Advanced
+            "enable_dpd",
+            "dpd_interval",
+            "dpd_retry",  # DPD
+            "liveness_check_interval",  # Liveness
+            "status",  # Nautobot Status
         ]
-        widgets = { # Define widgets for non-dynamic/customized fields
+        widgets = {  # Define widgets for non-dynamic/customized fields
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "description": SmallTextarea(attrs={"rows": 3}),
             "ike_version": forms.Select(attrs={"class": "form-control"}),
             "exchange_mode": forms.Select(attrs={"class": "form-control"}),
-            "local_ip": forms.TextInput(attrs={"class": "form-control", "placeholder": "Required if Type is IP or FQDN"}),
+            "local_ip": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Required if Type is IP or FQDN"}
+            ),
             "local_id_type": forms.Select(attrs={"class": "form-control", "required": False}),
             "local_id_value": forms.TextInput(attrs={"class": "form-control"}),
-            "peer_ip": forms.TextInput(attrs={"class": "form-control", "placeholder": "Required if Type is IP or FQDN"}),
-            "peer_device_manual": forms.TextInput(attrs={"class": "form-control", "placeholder": "Specify if peer device(s) not selected"}),
+            "peer_ip": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Required if Type is IP or FQDN"}
+            ),
+            "peer_device_manual": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Specify if peer device(s) not selected"}
+            ),
             "peer_id_type": forms.Select(attrs={"class": "form-control", "required": False}),
             "peer_id_value": forms.TextInput(attrs={"class": "form-control"}),
             "authentication_type": forms.Select(attrs={"class": "form-control"}),
@@ -122,9 +192,9 @@ class IKEGatewayForm(NautobotModelForm):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
             # Keep existing PSK logic
-            if 'pre_shared_key' in self.fields:
-                self.fields['pre_shared_key'].required = False
-                self.fields['pre_shared_key'].widget.attrs['placeholder'] = "Leave blank to keep unchanged"
+            if "pre_shared_key" in self.fields:
+                self.fields["pre_shared_key"].required = False
+                self.fields["pre_shared_key"].widget.attrs["placeholder"] = "Leave blank to keep unchanged"
 
     def clean(self):
         """
@@ -133,7 +203,7 @@ class IKEGatewayForm(NautobotModelForm):
         """
         # Keep super().clean() commented out
         # cleaned_data = super().clean()
-        cleaned_data = self.cleaned_data # Use self.cleaned_data directly
+        cleaned_data = self.cleaned_data  # Use self.cleaned_data directly
 
         if not cleaned_data:
             raise forms.ValidationError("Form data dictionary is unexpectedly empty.")
@@ -157,11 +227,11 @@ class IKEGatewayForm(NautobotModelForm):
 
         if auth_type == IKEAuthenticationTypes.PSK and is_new and not ps_key:
             self.add_error("pre_shared_key", "A Pre-Shared Key is required for PSK authentication when creating.")
-        
+
         def is_valid_ip_or_subnet_or_fqdn(val):
             # Match IPv4, IPv4/CIDR, IPv6, IPv6/CIDR, or a basic FQDN
-            ip_regex = r'^([0-9a-fA-F:.]+)(/\d{1,3})?$'
-            fqdn_regex = r'^([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+$'
+            ip_regex = r"^([0-9a-fA-F:.]+)(/\d{1,3})?$"
+            fqdn_regex = r"^([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+$"
             return re.match(ip_regex, val) or re.match(fqdn_regex, val)
 
         if local_ip_type == IPAddressTypes.IP:
@@ -173,8 +243,8 @@ class IKEGatewayForm(NautobotModelForm):
             if not local_ip:
                 self.add_error("local_ip", "Local FQDN value is required.")
         elif local_ip_type == IPAddressTypes.DYNAMIC and local_ip:
-            if not self.errors.get('local_ip'):
-                cleaned_data['local_ip'] = ""
+            if not self.errors.get("local_ip"):
+                cleaned_data["local_ip"] = ""
 
         if peer_ip_type == IPAddressTypes.IP:
             if not peer_ip:
@@ -185,8 +255,8 @@ class IKEGatewayForm(NautobotModelForm):
             if not peer_ip:
                 self.add_error("peer_ip", "Peer FQDN value is required.")
         elif peer_ip_type == IPAddressTypes.DYNAMIC and peer_ip:
-            if not self.errors.get('peer_ip'):
-                cleaned_data['peer_ip'] = ""
+            if not self.errors.get("peer_ip"):
+                cleaned_data["peer_ip"] = ""
         # --- End Existing Validation ---
 
         # --- ADDED: Validation for Bind Interface ---
@@ -194,18 +264,20 @@ class IKEGatewayForm(NautobotModelForm):
         local_devs = cleaned_data.get("local_devices")
         if bind_iface and local_devs:
             # Check if the selected bind_interface actually belongs to one of the selected local_devices
-            if not hasattr(bind_iface, 'device') or not bind_iface.device:
-                pass # Should not happen if interface has a device
+            if not hasattr(bind_iface, "device") or not bind_iface.device:
+                pass  # Should not happen if interface has a device
             elif bind_iface.device not in local_devs:
-                 self.add_error('bind_interface', 'Selected Bind Interface must belong to one of the selected Local Devices.')
+                self.add_error(
+                    "bind_interface", "Selected Bind Interface must belong to one of the selected Local Devices."
+                )
         # --- END ADDED ---
 
         # Manually Trigger Model Validation (Keep existing logic)
-        if self._errors: # Skip if form errors already exist
+        if self._errors:  # Skip if form errors already exist
             return cleaned_data
 
         temp_instance = self.instance if self.instance.pk else self.Meta.model()
-        m2m_fields = ['local_devices', 'peer_devices', 'local_locations', 'peer_locations']
+        m2m_fields = ["local_devices", "peer_devices", "local_locations", "peer_locations"]
         # Ensure 'bind_interface' is included in fields_to_set if it wasn't already
         fields_to_set = [f for f in self.Meta.fields if f not in m2m_fields]
 
@@ -216,16 +288,18 @@ class IKEGatewayForm(NautobotModelForm):
                     setattr(temp_instance, field_name, cleaned_data.get(field_name, False))
                 # Handle ForeignKey fields (like bind_interface)
                 elif isinstance(temp_instance._meta.get_field(field_name), models.ForeignKey):
-                     setattr(temp_instance, field_name, cleaned_data[field_name])
+                    setattr(temp_instance, field_name, cleaned_data[field_name])
                 else:
-                     setattr(temp_instance, field_name, cleaned_data[field_name])
+                    setattr(temp_instance, field_name, cleaned_data[field_name])
 
         try:
             # Exclude M2M fields and the new FK from model validation here
             # as FK relations are handled by the form field directly.
-            temp_instance.full_clean(exclude=m2m_fields + ['bind_interface']) # Exclude bind_interface from full_clean check
+            temp_instance.full_clean(
+                exclude=m2m_fields + ["bind_interface"]
+            )  # Exclude bind_interface from full_clean check
         except CoreValidationError as e:
-            self._update_errors(e) # Add model validation errors to the form
+            self._update_errors(e)  # Add model validation errors to the form
 
         return cleaned_data
 
@@ -234,19 +308,30 @@ class IKEGatewayForm(NautobotModelForm):
 class IKEGatewayFilterForm(NautobotFilterForm):
     model = IKEGateway
     q = forms.CharField(required=False, label="Search")
-    local_devices = DynamicModelMultipleChoiceField(queryset=Device.objects.filter(platform__name="PanOS"), required=False, label="Local Devices")
+    local_devices = DynamicModelMultipleChoiceField(
+        queryset=Device.objects.filter(platform__name="PanOS"), required=False, label="Local Devices"
+    )
     peer_devices = DynamicModelMultipleChoiceField(queryset=Device.objects.all(), required=False, label="Peer Devices")
-    local_locations = DynamicModelMultipleChoiceField(queryset=Location.objects.all(), required=False, label="Local Locations")
-    peer_locations = DynamicModelMultipleChoiceField(queryset=Location.objects.all(), required=False, label="Peer Locations")
+    local_locations = DynamicModelMultipleChoiceField(
+        queryset=Location.objects.all(), required=False, label="Local Locations"
+    )
+    peer_locations = DynamicModelMultipleChoiceField(
+        queryset=Location.objects.all(), required=False, label="Peer Locations"
+    )
     peer_location_manual = forms.CharField(required=False, label="Manual Peer Location")
-    ike_version = forms.ChoiceField(choices=[('', '---------')] + IKEVersions.choices, required=False)
-    authentication_type = forms.ChoiceField(choices=[('', '---------')] + IKEAuthenticationTypes.choices, required=False)
+    ike_version = forms.ChoiceField(choices=[("", "---------")] + IKEVersions.choices, required=False)
+    authentication_type = forms.ChoiceField(
+        choices=[("", "---------")] + IKEAuthenticationTypes.choices, required=False
+    )
     status = forms.ModelMultipleChoiceField(queryset=Status.objects.all(), required=False)
     # Optional: Add bind_interface filter
     # bind_interface = DynamicModelMultipleChoiceField(queryset=Interface.objects.all(), required=False, label="Bind Interface")
 
     fieldsets = (
         ("Search", ("q",)),
-        ("Identification", ("local_devices", "peer_devices", "local_locations", "peer_locations", "peer_location_manual")),
-        ("Parameters", ("ike_version", "authentication_type", "status","local_platform", "peer_platform")), 
+        (
+            "Identification",
+            ("local_devices", "peer_devices", "local_locations", "peer_locations", "peer_location_manual"),
+        ),
+        ("Parameters", ("ike_version", "authentication_type", "status", "local_platform", "peer_platform")),
     )

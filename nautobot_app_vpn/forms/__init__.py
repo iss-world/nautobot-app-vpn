@@ -19,7 +19,6 @@ __all__ = [
     "IPSecProxyIDForm",
     "IPSecProxyIDFormSet",
     "IPSECTunnelFilterForm",
-
     "TunnelMonitorProfileForm",
     "TunnelMonitorProfileFilterForm",
 ]
