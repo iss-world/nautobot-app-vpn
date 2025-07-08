@@ -1,4 +1,5 @@
 """Module for defining IKEGateway to forms used in the VPN plugin."""
+
 import re
 
 from django import forms

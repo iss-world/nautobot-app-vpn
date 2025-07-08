@@ -45,24 +45,13 @@ services:
     volumes:
       - "./nautobot_config.py:/opt/nautobot/nautobot_config.py"
       - "../:/source"
-
-  
   neo4j:
-    image: neo4j:5
+    image: "neo4j:5"
     ports:
-      - "7474:7474"   # Optional — browser access
-      - "7687:7687"   # ✅ Required — Bolt protocol
+      - "7474:7474"
+      - "7687:7687"
     environment:
       NEO4J_AUTH: "neo4j/testneo4j"
     volumes:
-      - ./neo4j_data:/data
-    restart: unless-stopped
-# To expose postgres (5432), myql (3306) on db service or redis (6379) to the host uncomment the
-# following. Ensure to match the 2 idented spaces which to have the service nested under services.
-# db:
-#   ports:
-#     - "5432:5432"
-#     - "3306:3306"
-# redis:
-#   ports:
-#     - "6379:6379"
+      - "./neo4j_data:/data"
+    restart: "unless-stopped"

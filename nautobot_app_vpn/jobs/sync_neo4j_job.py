@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)  # Module-level logger
 
 name = "Virtual Private Network (VPN)"
 
+
 class SyncNeo4jJob(Job):
     class Meta:
         name = "Sync VPN Topology to Neo4j"
