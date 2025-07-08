@@ -1,4 +1,4 @@
-# Nautobot VPN Plugin
+# Nautobot VPN APP
 
 &#x20;
 
@@ -12,7 +12,7 @@ A Nautobot plugin designed to model, visualize, and manage VPN infrastructure, i
 - Inline or default crypto profile selection
 - Dynamic tunnel provisioning form with interface auto-selection
 - Topology visualization via Neo4j + Cytoscape
-- Integration-ready with Nautobot Firewall Models
+
 
 ---
 

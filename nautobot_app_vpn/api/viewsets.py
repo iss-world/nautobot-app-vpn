@@ -1,35 +1,44 @@
-# nautobot_app_vpn/api/viewsets.py
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 
 from nautobot_app_vpn.api.pagination import StandardResultsSetPagination
 from nautobot_app_vpn.api.permissions import IsAdminOrReadOnly
 
-# Import ALL necessary serializers
+
 from nautobot_app_vpn.api.serializers import (
     IKECryptoSerializer,
-    IKEGatewaySerializer,  # Updated serializer
+    IKEGatewaySerializer,
     IPSecCryptoSerializer,
     IPSecProxyIDSerializer,
-    IPSECTunnelSerializer,  # Updated serializer
+    IPSECTunnelSerializer,
     TunnelMonitorProfileSerializer,
 )
 
-# Import ALL necessary filtersets
 from nautobot_app_vpn.filters import (
     IKECryptoFilterSet,
-    IKEGatewayFilterSet,  # Filterset might need update if filtering by bind_interface
+    IKEGatewayFilterSet,
     IPSecCryptoFilterSet,
     IPSecProxyIDFilterSet,
-    IPSECTunnelFilterSet,  # Filterset might need update to remove bind_interface
+    IPSECTunnelFilterSet,
     TunnelMonitorProfileFilterSet,
 )
 
-# Import ALL necessary models
-from nautobot_app_vpn.models import IKECrypto, IKEGateway, IPSecCrypto, IPSecProxyID, IPSECTunnel, TunnelMonitorProfile
+from nautobot_app_vpn.models import IKECrypto, IKEGateway, IPSecCrypto, IPSecProxyID, IPSECTunnel, TunnelMonitorProfile, VPNDashboard
 
-# --- ViewSets for existing models (IKECrypto, IPSecCrypto) ---
-# These remain unchanged
+import logging
+import random
+
+from django.conf import settings
+from nautobot.dcim.models import Platform
+from neo4j import GraphDatabase
+from neo4j import exceptions as neo4j_exceptions
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+
+
+logger = logging.getLogger(__name__)
 
 
 class IKECryptoViewSet(viewsets.ModelViewSet):
@@ -54,7 +63,7 @@ class IPSecCryptoViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
 
 
-# --- UPDATED: IKEGatewayViewSet ---
+
 class IKEGatewayViewSet(viewsets.ModelViewSet):
     # <<< UPDATED queryset: Added bind_interface to select_related >>>
     queryset = (
@@ -66,15 +75,14 @@ class IKEGatewayViewSet(viewsets.ModelViewSet):
         .prefetch_related("local_devices", "peer_devices", "local_locations", "peer_locations")
         .order_by("name")
     )
-    # <<< END UPDATED queryset >>>
+
 
     serializer_class = IKEGatewaySerializer  # Use updated serializer
     permission_classes = [IsAdminOrReadOnly]
-    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]  # Uncommented filter_backends
-    filterset_class = IKEGatewayFilterSet  # Filterset might need optional update
-    # <<< UPDATED ordering_fields: Added bind_interface__name (Optional) >>>
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
+    filterset_class = IKEGatewayFilterSet
     ordering_fields = ["name", "local_ip", "peer_ip", "bind_interface__name"]
-    # <<< UPDATED search_fields: Added bind_interface__name (Optional) >>>
+
     search_fields = [
         "name",
         "description",
@@ -94,7 +102,6 @@ class IKEGatewayViewSet(viewsets.ModelViewSet):
         serializer.save()
 
 
-# --- ADDED: TunnelMonitorProfileViewSet ---
 class TunnelMonitorProfileViewSet(viewsets.ModelViewSet):
     """API viewset for Tunnel Monitor Profiles."""
 
@@ -108,35 +115,32 @@ class TunnelMonitorProfileViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
 
 
-# --- UPDATED: IPSECTunnelViewSet ---
 class IPSECTunnelViewSet(viewsets.ModelViewSet):
     """API viewset for IPSec Tunnels."""
 
     # <<< UPDATED queryset: Removed bind_interface from select_related >>>
     queryset = (
         IPSECTunnel.objects.select_related(
-            # ForeignKeys go here:
             "ike_gateway",
             "ipsec_crypto_profile",
             "status",
-            "tunnel_interface",  # bind_interface REMOVED from here
+            "tunnel_interface",
             "monitor_profile",
         )
         .prefetch_related(
-            "devices",  # M2M field
-            "proxy_ids",  # M2M field (reverse relationship)
+            "devices",
+            "proxy_ids",
         )
         .order_by("name")
         .distinct()
     )
-    # <<< End UPDATED queryset >>>
 
-    serializer_class = IPSECTunnelSerializer  # Use updated serializer
+
+    serializer_class = IPSECTunnelSerializer
     permission_classes = [IsAdminOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
-    filterset_class = IPSECTunnelFilterSet  # Filterset might need optional update
+    filterset_class = IPSECTunnelFilterSet
 
-    # Ordering and search fields did not contain bind_interface, so no changes needed here
     ordering_fields = [
         "name",
         "ike_gateway__name",
@@ -163,7 +167,7 @@ class IPSECTunnelViewSet(viewsets.ModelViewSet):
         serializer.save()
 
 
-# IPSecProxyIDViewSet remains the same
+
 class IPSecProxyIDViewSet(viewsets.ModelViewSet):
     queryset = IPSecProxyID.objects.select_related("tunnel").order_by("tunnel__name")
     serializer_class = IPSecProxyIDSerializer
@@ -174,25 +178,6 @@ class IPSecProxyIDViewSet(viewsets.ModelViewSet):
     search_fields = ["local_subnet", "remote_subnet", "protocol"]
     pagination_class = StandardResultsSetPagination
 
-
-# File: nautobot_app_vpn/api/viewsets.py
-
-import logging
-import random
-
-from django.conf import settings
-from nautobot.dcim.models import Platform  # Platform for FilterOptionsView
-from neo4j import GraphDatabase  # Import Neo4j driver
-from neo4j import exceptions as neo4j_exceptions
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
-
-from nautobot_app_vpn.models import IPSECTunnel, VPNDashboard  # VPNDashboard for sync time
-
-# Removed: from nautobot_app_vpn.topology.builder import build_vpn_topology_graph_with_filters
-
-logger = logging.getLogger(__name__)
 
 
 def latlon_to_xy(lat, lon, svg_width=2754, svg_height=1398):
@@ -217,7 +202,7 @@ class VPNTopologyNeo4jView(APIView):
         """
         query_params = {}
 
-        # --- Node Filtering Logic ---
+
         node_match_clause = "MATCH (n:VPNNode)"
         node_where_clauses = []
 
@@ -227,7 +212,6 @@ class VPNTopologyNeo4jView(APIView):
 
         if filters_dict.get("platform"):
             platform_val = filters_dict["platform"]
-            # Assuming only platform_name is present in Neo4j node (update if you use slug as well)
             node_where_clauses.append("toLower(n.platform_name) CONTAINS toLower($platform)")
             query_params["platform"] = platform_val
 
@@ -250,14 +234,14 @@ class VPNTopologyNeo4jView(APIView):
             node_where_clauses.append("toLower(n.role) = toLower($device_role)")
             query_params["device_role"] = filters_dict["role"]
 
-        # Add other node property filters as needed...
+
 
         nodes_query_string = node_match_clause
         if node_where_clauses:
             nodes_query_string += " WHERE " + " AND ".join(node_where_clauses)
         nodes_query_string += " RETURN n"
 
-        # --- Edge Filtering Logic ---
+
         edges_query_string = (
             "MATCH (n1:VPNNode)-[r:TUNNEL]->(n2:VPNNode) WHERE n1.id IN $node_ids AND n2.id IN $node_ids"
         )
@@ -305,7 +289,7 @@ class VPNTopologyNeo4jView(APIView):
 
         try:
             with driver.session(database=getattr(settings, "NEO4J_DATABASE", "neo4j")) as session:
-                # --- 1. Find focus nodes (matching filter) ---
+
                 logger.debug(f"Executing Neo4j Node Query: {nodes_cypher} with params: {query_params_base}")
                 node_records = session.run(nodes_cypher, query_params_base)
                 focus_node_ids = set()
@@ -318,7 +302,7 @@ class VPNTopologyNeo4jView(APIView):
                     if node_id:
                         focus_node_ids.add(node_id)
                         if node_id not in temp_nodes_dict:
-                            # --- Usual node position logic ---
+
                             lat = node_properties.get("latitude")
                             lon = node_properties.get("longitude")
                             x = node_properties.get("x")
@@ -351,8 +335,6 @@ class VPNTopologyNeo4jView(APIView):
                                 node_obj["position"] = pos
                             temp_nodes_dict[node_id] = node_obj
 
-                # --- 2. Find all edges where EITHER side is a focus node ---
-                # This replaces the previous n1.id IN $node_ids AND n2.id IN $node_ids!
                 if focus_node_ids:
                     edge_query = """
                         MATCH (n1:VPNNode)-[r:TUNNEL]->(n2:VPNNode)
@@ -398,7 +380,7 @@ class VPNTopologyNeo4jView(APIView):
                             }
                         )
 
-                    # --- 3. Fetch all nodes involved in these edges (including those not in original filter) ---
+
                     if all_node_ids:
                         all_nodes_query = "MATCH (n:VPNNode) WHERE n.id IN $all_node_ids RETURN n"
                         all_nodes_records = session.run(all_nodes_query, {"all_node_ids": list(all_node_ids)})
@@ -407,7 +389,6 @@ class VPNTopologyNeo4jView(APIView):
                             node_properties = dict(node_data_neo)
                             node_id = node_properties.get("id")
                             if node_id and node_id not in temp_nodes_dict:
-                                # Same position logic as above
                                 lat = node_properties.get("latitude")
                                 lon = node_properties.get("longitude")
                                 x = node_properties.get("x")
@@ -444,7 +425,7 @@ class VPNTopologyNeo4jView(APIView):
 
                 formatted_nodes = list(temp_nodes_dict.values())
 
-            # --- Meta/dashboard logic unchanged ---
+
             graph_data_response = {
                 "nodes": formatted_nodes,
                 "edges": formatted_edges,
@@ -521,7 +502,7 @@ class VPNTopologyFilterOptionsView(APIView):
         locations = set()
         platforms_set = set()  # store (id, name)
 
-        # Query tunnels
+
         tunnels_qs = IPSECTunnel.objects.select_related(
             "ike_gateway", "status", "ike_gateway__local_platform", "ike_gateway__peer_platform"
         ).prefetch_related(
@@ -542,11 +523,11 @@ class VPNTopologyFilterOptionsView(APIView):
             if gw:
                 if gw.ike_version:
                     ike_versions.add(str(gw.ike_version))
-                # IKE Gateway platforms
+
                 for plat in [gw.local_platform, gw.peer_platform]:
                     if plat:
                         platforms_set.add((plat.id, plat.name))
-                # Devices
+
                 for dev_group in [gw.local_devices.all(), gw.peer_devices.all()]:
                     for dev in dev_group:
                         if dev and dev.name:
@@ -559,12 +540,12 @@ class VPNTopologyFilterOptionsView(APIView):
                         if dev and dev.platform:
                             platforms_set.add((dev.platform.id, dev.platform.name))
 
-        # All defined platforms in Nautobot (avoid duplicates)
+
         all_defined_platforms = Platform.objects.all().values("id", "name").distinct()
         for plat in all_defined_platforms:
             platforms_set.add((plat["id"], plat["name"]))
 
-        # Now create output list with id/name for each unique platform
+
         platforms_out = [
             {"id": pid, "name": n} for pid, n in sorted(platforms_set, key=lambda x: (x[1] or "", x[0] or "")) if n
         ]
