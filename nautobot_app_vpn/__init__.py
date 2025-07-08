@@ -14,7 +14,7 @@ class Nautobot_App_VpnConfig(NautobotAppConfig):
     name = "nautobot_app_vpn"
     verbose_name = "VPN"
     version = __version__
-    author = "ISS A/s NOC Team"
+    author = "ISS World Services @Powered by NOC"
     description = "Virtual Private Network"
     base_url = "nautobot_app_vpn"
     required_settings = []

@@ -2,7 +2,7 @@
 name = "nautobot_app_vpn"
 version = "1.0.0"
 description = "VPN APP"
-authors = ["ISS AS <gitso-network@group.issworld.com>"]
+authors = "ISS World Services @Powered by NOC"
 license = "Apache-2.0"
 readme = "README.md"
 homepage = "https://git.noc.issworld.com/narendra.polisetty/nautobot-app-vpn"

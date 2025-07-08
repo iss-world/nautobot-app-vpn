@@ -17,6 +17,7 @@ from nautobot_app_vpn.models import IKEGateway, IPSECTunnel, VPNDashboard
 
 logger = logging.getLogger(__name__)  # Module-level logger
 
+name = "Virtual Private Network (VPN)"
 
 class SyncNeo4jJob(Job):
     class Meta:
@@ -420,7 +421,7 @@ class SyncNeo4jJob(Job):
                     session.execute_write(
                         lambda tx: tx.run(
                             """
-                            UNWIND $nodes_batch AS node_props 
+                            UNWIND $nodes_batch AS node_props
                             MERGE (n:VPNNode {id: node_props.id})
                             SET n = node_props
                         """,

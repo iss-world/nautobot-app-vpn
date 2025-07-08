@@ -1,74 +1,133 @@
-# Nautobot App VPN
+# Nautobot VPN Plugin
 
-A Nautobot plugin for visualizing VPN topologies using Neo4j and Cytoscape.js.
+&#x20;
 
-## 🔧 Features
-
-- Neo4j-based dynamic VPN topology visualization
-- Interactive dashboard powered by Cytoscape.js
-- Flexible UI filters for location, device, platform, and more
-- One-click export to PNG or JSON
-
-> This plugin does **not** include Palo Alto-specific synchronization jobs. It is designed to be reusable and focused on topology visualization.
+A Nautobot plugin designed to model, visualize, and manage VPN infrastructure, including IPSec tunnels, IKE gateways, crypto profiles, and dynamic topology diagrams sourced from Neo4j.
 
 ---
 
-## 📦 Requirements
+## Key Features
 
-- Nautobot `>= 2.4.10`
-- Python `>=3.11,<3.12`
-- Neo4j `v5.x` running as a service
+- IKE Gateway and IPSec Tunnel modeling
+- Inline or default crypto profile selection
+- Dynamic tunnel provisioning form with interface auto-selection
+- Topology visualization via Neo4j + Cytoscape
+- Integration-ready with Nautobot Firewall Models
 
 ---
 
-## 🚀 Installation
+## Requirements
 
-### 1. Install the plugin
+- Nautobot >= 2.2.0
+- Python >= 3.8
+- Neo4j >= 5.0 (for topology view)
+
+---
+
+## Installation
+
+### 1. Install via pip
 
 ```bash
 pip install nautobot-app-vpn
+```
 
+### 2. Enable the plugin
 
+In your `nautobot_config.py`, add to `PLUGINS` and configure Neo4j settings:
 
-### Add the plugin to your nautobot_config.py
-
-# plugins
-PLUGINS = ["nautobot_app_vpn"]
+```python
+PLUGINS = [
+    "nautobot_app_vpn",
+    # ...
+]
 
 PLUGINS_CONFIG = {
-    "nautobot_app_vpn": {}
+    "nautobot_app_vpn": {
+        "neo4j": {
+            "uri": "bolt://neo4j:7687",
+            "user": "neo4j",
+            "password": "testneo4j",  # Change this
+        }
+    }
 }
+```
 
-# Neo4j connection (required for dashboard topology)
-NEO4J_URI = "bolt://neo4j:7687"
-NEO4J_USER = "neo4j"
-NEO4J_PASSWORD = "testneo4j"
+---
 
-2. Run database migrations
+## Docker/Compose Setup (Optional)
 
-nautobot-server migrate
+If you are using `docker-compose`, include this plugin in your `plugin_requirements.txt`:
 
-3. Add Neo4j to Docker Compose
-If you're running Nautobot via Docker Compose, add this service block:
+```text
+nautobot-app-vpn
+```
 
-  neo4j:
-    image: neo4j:5
-    ports:
-      - "7474:7474"   # Optional — browser access
-      - "7687:7687"   # ✅ Required — Bolt protocol
-    environment:
-      NEO4J_AUTH: "neo4j/testneo4j"
-    volumes:
-      - ./neo4j_data:/data
-    restart: unless-stopped
+Then rebuild Nautobot:
 
+```bash
+docker-compose build nautobot
+```
 
-🧠 Usage
-Navigate to VPN → VPN Dashboard in the Nautobot UI
+---
 
-Use filters to control visualization scope
+## Usage
 
-Click Export PNG or Export JSON as needed
+### Topology View
 
-Ensure you have run the SyncNeo4jJob from Jobs → VPN → Sync Neo4j to populate the graph.
+The plugin provides a Neo4j-powered dashboard under **Plugins > VPN Dashboard**, enabling visualization of active IPSec tunnels and their metadata.
 
+### Forms for Provisioning
+
+- Auto-select interfaces based on ISP zone tags
+- Auto-populate IPs from synced device data
+- Support dynamic IP tunnels
+- Create or select IKE/IPsec crypto profiles
+
+---
+
+## Screenshots
+
+> ![menu](image.png)
+![VPN Dashborad](image-1.png)
+![IKE Crypto](image-2.png)
+![IPsec Crypto](image-3.png)
+![IKE Gateway](image-4.png)
+![IPSec Tunnel](image-5.png)
+![Tunnel Monitor](image-6.png)
+---
+
+## Development
+
+### Clone and install in editable mode:
+
+```bash
+git clone https://github.com/npolisetty26/nautobot-app-vpn.git
+cd nautobot-app-vpn
+poetry install
+```
+
+### Run linters locally
+
+```bash
+ruff check .
+yamllint .
+```
+
+---
+
+## Contributing
+
+Pull requests are welcome! Please ensure code follows Nautobot plugin guidelines and passes all checks.
+
+---
+
+## License
+
+Apache License 2.0. See [LICENSE](LICENSE) for details.
+
+---
+
+## Author
+
+Maintained by [@npolisetty26](https://github.com/npolisetty26)
