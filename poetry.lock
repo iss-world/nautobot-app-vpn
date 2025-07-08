@@ -1666,7 +1666,7 @@ typing-extensions = ">=4.7.0"
 name = "pymdown-extensions"
 version = "10.16"
 description = "Extension pack for Python Markdown."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.9"
 
@@ -2178,7 +2178,7 @@ all = []
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.11,<3.12"
-content-hash = "42c838d4bafcc1ac8fec24f0953e087e8545fd83392fafc8ebb235e9ef00e8c0"
+content-hash = "133236f356bd5251a3d028a05ff990af70ea5236584edae4ad72811fab082bee"
 
 [metadata.files]
 amqp = []

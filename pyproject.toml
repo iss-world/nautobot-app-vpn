@@ -34,6 +34,7 @@ neo4j = "^5.0"
 django = "^4.2"
 djangorestframework = "^3.15"
 
+
 [tool.poetry.dev-dependencies]
 coverage = "*"
 django-debug-toolbar = "*"
@@ -65,6 +66,7 @@ griffe = "1.1.1"
 towncrier = ">=23.6.0,<=24.8.0"
 to-json-schema = "*"
 jsonschema = "*"
+pymdown-extensions = "^10.16"
 
 [tool.poetry.extras]
 all = [
