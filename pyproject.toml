@@ -2,7 +2,7 @@
 name = "nautobot_app_vpn"
 version = "1.0.0"
 description = "VPN APP"
-authors = "ISS World Services @Powered by NOC"
+authors = ["ISS World Services <GITSO-Network@group.issworld.com>"]
 license = "Apache-2.0"
 readme = "README.md"
 homepage = "https://git.noc.issworld.com/narendra.polisetty/nautobot-app-vpn"
@@ -29,11 +29,12 @@ include = [
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
-# Used for local development
 nautobot = ">=2.4.10,<2.5.0"
 neo4j = "^5.0"
+django = "^4.2"
+djangorestframework = "^3.15"
 
-[tool.poetry.group.dev.dependencies]
+[tool.poetry.dev-dependencies]
 coverage = "*"
 django-debug-toolbar = "*"
 invoke = "*"

@@ -1,3 +1,5 @@
+"""Enum constants used throughout the Nautobot VPN plugin."""
+
 from django.db.models import TextChoices
 
 

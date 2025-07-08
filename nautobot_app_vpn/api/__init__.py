@@ -1,7 +1,5 @@
-"""Nautobot VPN Plugin API Initialization.
-"""
+"""Initialize the Nautobot VPN plugin API package."""
 
-# Import all API modules for easy reference
 from .pagination import StandardResultsSetPagination
 from .permissions import IsAdminOrReadOnly
 from .serializers import (

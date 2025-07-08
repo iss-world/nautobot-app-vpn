@@ -29,7 +29,9 @@ from nautobot_app_vpn.models.constants import (
 # --- Nested Serializers ---
 # (No changes needed in Nested Serializers)
 class NestedDeviceSerializer(BaseModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name="dcim-api:device-detail")
+    url = serializers.HyperlinkedIdentityField(
+        view_name="dcim-api:device-detail"
+    )
 
     class Meta:
         model = Device
@@ -37,7 +39,9 @@ class NestedDeviceSerializer(BaseModelSerializer):
 
 
 class NestedLocationSerializer(BaseModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name="dcim-api:location-detail")
+    url = serializers.HyperlinkedIdentityField(
+        view_name="dcim-api:location-detail"
+    )
 
     class Meta:
         model = Location
@@ -45,7 +49,9 @@ class NestedLocationSerializer(BaseModelSerializer):
 
 
 class NestedStatusSerializer(BaseModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name="extras-api:status-detail")
+    url = serializers.HyperlinkedIdentityField(
+        view_name="extras-api:status-detail"
+    )
 
     class Meta:
         model = Status
@@ -53,7 +59,9 @@ class NestedStatusSerializer(BaseModelSerializer):
 
 
 class NestedIKECryptoSerializer(BaseModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ikecrypto-detail")
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:nautobot_app_vpn-api:ikecrypto-detail"
+    )
 
     class Meta:
         model = IKECrypto
@@ -61,7 +69,9 @@ class NestedIKECryptoSerializer(BaseModelSerializer):
 
 
 class NestedIPSecCryptoSerializer(BaseModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ipseccrypto-detail")
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:nautobot_app_vpn-api:ipseccrypto-detail"
+    )
 
     class Meta:
         model = IPSecCrypto
@@ -69,7 +79,9 @@ class NestedIPSecCryptoSerializer(BaseModelSerializer):
 
 
 class NestedIKEGatewaySerializer(BaseModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ikegateway-detail")
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:nautobot_app_vpn-api:ikegateway-detail"
+    )
 
     class Meta:
         model = IKEGateway
@@ -77,7 +89,9 @@ class NestedIKEGatewaySerializer(BaseModelSerializer):
 
 
 class NestedInterfaceSerializer(BaseModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name="dcim-api:interface-detail")
+    url = serializers.HyperlinkedIdentityField(
+        view_name="dcim-api:interface-detail"
+    )
     device = NestedDeviceSerializer(read_only=True)  # Show device for context
 
     class Meta:
@@ -86,7 +100,9 @@ class NestedInterfaceSerializer(BaseModelSerializer):
 
 
 class NestedIPSECTunnelSerializer(BaseModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ipsectunnel-detail")
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:nautobot_app_vpn-api:ipsectunnel-detail"
+    )
 
     class Meta:
         model = IPSECTunnel
@@ -96,7 +112,9 @@ class NestedIPSECTunnelSerializer(BaseModelSerializer):
 class NestedTunnelMonitorProfileSerializer(BaseModelSerializer):
     """Minimal serializer for related TunnelMonitorProfile objects."""
 
-    url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:tunnelmonitorprofile-detail")
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:nautobot_app_vpn-api:tunnelmonitorprofile-detail"
+    )
 
     class Meta:
         model = TunnelMonitorProfile
@@ -104,19 +122,20 @@ class NestedTunnelMonitorProfileSerializer(BaseModelSerializer):
 
 
 class NestedPlatformSerializer(BaseModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name="dcim-api:platform-detail")  # Standard view name for Platform
+    url = serializers.HyperlinkedIdentityField(
+        view_name="dcim-api:platform-detail"
+    )
 
     class Meta:
         model = Platform
         fields = ["id", "url", "display", "name"]
 
 
-# --- Main Serializers ---
 
-
-# (No changes needed in IKECryptoSerializer, IPSecCryptoSerializer, TunnelMonitorProfileSerializer, IPSecProxyIDSerializer, VPNDashboardSerializer)
 class IKECryptoSerializer(BaseModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ikecrypto-detail")
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:nautobot_app_vpn-api:ikecrypto-detail"
+    )
     status = NestedStatusSerializer(required=False, allow_null=True, read_only=True)
     status_id = serializers.PrimaryKeyRelatedField(
         queryset=Status.objects.all(), source="status", write_only=True, required=False, allow_null=True, label="Status"
@@ -144,7 +163,9 @@ class IKECryptoSerializer(BaseModelSerializer):
 
 
 class IPSecCryptoSerializer(BaseModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ipseccrypto-detail")
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:nautobot_app_vpn-api:ipseccrypto-detail"
+    )
     status = NestedStatusSerializer(required=False, allow_null=True, read_only=True)
     status_id = serializers.PrimaryKeyRelatedField(
         queryset=Status.objects.all(), source="status", write_only=True, required=False, allow_null=True, label="Status"
@@ -174,7 +195,9 @@ class IPSecCryptoSerializer(BaseModelSerializer):
 
 # --- IKEGatewaySerializer (UPDATED) ---
 class IKEGatewaySerializer(BaseModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ikegateway-detail")
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:nautobot_app_vpn-api:ikegateway-detail"
+    )
 
     # Read-only Nested Representations
     local_devices = NestedDeviceSerializer(many=True, read_only=True)

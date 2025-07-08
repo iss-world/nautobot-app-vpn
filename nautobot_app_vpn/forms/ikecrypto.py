@@ -1,3 +1,5 @@
+"""Module for defining IKECrypto forms used in the VPN plugin."""
+
 from django import forms
 from nautobot.apps.forms import NautobotFilterForm, NautobotModelForm
 
@@ -8,12 +10,6 @@ from nautobot_app_vpn.models import IKECrypto
 
 class IKECryptoForm(NautobotModelForm):
     """Form for adding and editing IKE Crypto Profiles."""
-
-    # status = forms.ModelChoiceField(
-    #     queryset=Status.objects.all(),
-    #     required=False,
-    #     help_text="Operational status of this IKE Crypto Profile.",
-    # )
 
     class Meta:
         model = IKECrypto
