@@ -179,7 +179,7 @@ zstd = ["zstandard (==0.23.0)"]
 
 [[package]]
 name = "certifi"
-version = "2025.6.15"
+version = "2025.7.9"
 description = "Python package for providing Mozilla's CA Bundle."
 category = "main"
 optional = false
@@ -1666,7 +1666,7 @@ typing-extensions = ">=4.7.0"
 name = "pymdown-extensions"
 version = "10.16"
 description = "Extension pack for Python Markdown."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.9"
 
@@ -2178,7 +2178,7 @@ all = []
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.11,<3.12"
-content-hash = "133236f356bd5251a3d028a05ff990af70ea5236584edae4ad72811fab082bee"
+content-hash = "e558f582f81248b6d699e4ccfe8873f4e20e4aeff2e45a7d753cec8415406561"
 
 [metadata.files]
 amqp = []
