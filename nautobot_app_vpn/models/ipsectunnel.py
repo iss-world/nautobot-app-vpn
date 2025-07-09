@@ -1,4 +1,5 @@
-# nautobot_app_vpn/models/ipsectunnel.py
+"""Models for IPSec Tunnel objects and associated attributes."""
+
 from django.core.exceptions import ValidationError  # Import ValidationError
 from django.db import models
 from nautobot.core.models.generics import PrimaryModel
@@ -13,15 +14,11 @@ from .ipseccrypto import IPSecCrypto
 from .tunnelmonitor import TunnelMonitorProfile
 
 
-# --- ADDED Choices for Tunnel Role ---
+
 class TunnelRoleChoices(models.TextChoices):
     PRIMARY = "primary", "Primary"
     SECONDARY = "secondary", "Secondary"
     TERTIARY = "tertiary", "Tertiary"
-    # Add others like 'Standalone' if needed, or leave blank if not part of HA/redundancy
-
-
-# --- END ADD ---
 
 
 @extras_features(
@@ -35,16 +32,16 @@ class TunnelRoleChoices(models.TextChoices):
     "webhooks",
 )
 class IPSECTunnel(PrimaryModel):
-    """IPSec Tunnel configuration potentially spanning multiple devices."""
+    """Model representing an IPSec Tunnel configuration."""
 
     name = models.CharField(max_length=100, help_text="Unique name for the IPSec Tunnel.")
     description = models.TextField(blank=True, null=True, help_text="Optional description.")
 
-    # --- MODIFIED: ForeignKey to ManyToManyField ---
+
     devices = models.ManyToManyField(
         Device, related_name="ipsec_tunnels", help_text="Firewall device(s) associated with this IPSec Tunnel (for HA)."
     )
-    # --- END MODIFICATION ---
+
 
     ike_gateway = models.ForeignKey(
         IKEGateway,
@@ -64,13 +61,7 @@ class IPSECTunnel(PrimaryModel):
         related_name="ipsec_tunnel_interfaces",
         help_text="Tunnel interface (e.g., tunnel.1) used. Should exist on *all* associated devices.",
     )
-    # bind_interface = models.ForeignKey(
-    #     "dcim.Interface", on_delete=models.SET_NULL, blank=True, null=True,
-    #     related_name="ipsec_tunnel_binds",
-    #     help_text="Optional binding to a specific source interface (must exist on devices)."
-    # )
 
-    # --- ADDED Optional Tunnel Monitor Fields ---
     enable_tunnel_monitor = models.BooleanField(default=False, help_text="Enable tunnel monitoring.")
     monitor_destination_ip = models.CharField(
         max_length=255,
@@ -87,9 +78,7 @@ class IPSECTunnel(PrimaryModel):
         null=True,
         help_text="Tunnel Monitor Profile to use.",
     )
-    # --- END Tunnel Monitor Fields ---
 
-    # --- ADDED Tunnel Role Field ---
     role = models.CharField(
         max_length=50,
         choices=TunnelRoleChoices.choices,
@@ -97,7 +86,7 @@ class IPSECTunnel(PrimaryModel):
         null=True,  # Allow null in DB
         help_text="Role of this tunnel if part of a redundant setup (e.g., Primary, Backup).",
     )
-    # --- END ADD ---
+
 
     status = StatusField(
         on_delete=models.PROTECT, related_name="%(app_label)s_%(class)s_related", default=get_default_status
@@ -107,7 +96,6 @@ class IPSECTunnel(PrimaryModel):
     class Meta:
         verbose_name = "IPSec Tunnel"
         verbose_name_plural = "IPSec Tunnels"
-        # Added role to ordering
         ordering = ["name", "role"]
 
     def __str__(self):
@@ -117,7 +105,6 @@ class IPSECTunnel(PrimaryModel):
     def device_names(self):
         return ", ".join([dev.name for dev in self.devices.all()])
 
-    # Add model-level validation if needed
     def clean(self):
         super().clean()
         if self.enable_tunnel_monitor:
@@ -131,9 +118,10 @@ class IPSECTunnel(PrimaryModel):
                 )
 
 
-# IPSecProxyID model remains unchanged
+
 class IPSecProxyID(models.Model):
-    # ... (keep definition as before) ...
+    """Model representing an IPSec Proxy ID configuration."""
+
     tunnel = models.ForeignKey(IPSECTunnel, on_delete=models.CASCADE, related_name="proxy_ids")
     local_subnet = models.CharField(max_length=50, blank=True, null=True)
     remote_subnet = models.CharField(max_length=50, blank=True, null=True)

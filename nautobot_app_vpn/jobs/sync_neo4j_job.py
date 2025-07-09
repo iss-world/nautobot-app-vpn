@@ -1,4 +1,4 @@
-# nautobot_app_vpn/jobs/neo4j_sync.py
+"""Job to synchronize VPN topology into Neo4j."""
 
 import json
 import logging
@@ -21,6 +21,8 @@ name = "Virtual Private Network (VPN)"
 
 
 class SyncNeo4jJob(Job):
+    """Job to sync VPN topology to Neo4j."""
+
     class Meta:
         name = "Sync VPN Topology to Neo4j"
         description = "Pushes VPN device/tunnel relationships to Neo4j for graph visualization."
@@ -86,7 +88,8 @@ class SyncNeo4jJob(Job):
             return (random.uniform(-50, 50), random.uniform(-180, 180))
 
     def run(self, **kwargs):
-        # --- Logging Workaround Setup ---
+        """Main job execution logic."""
+
         has_logger_failure = hasattr(self.logger, "failure")
         has_logger_success = hasattr(self.logger, "success")
 
@@ -179,14 +182,13 @@ class SyncNeo4jJob(Job):
                 neo4j_nodes_to_create = {}
                 neo4j_edges_to_create = []
 
-                # Helper functions (see your version, which is already good)
+
 
                 def get_node_id(devices_list=None, manual_name=None):
                     if devices_list:
                         # Device group, sort by PKs for stability
                         return f"group:{'|'.join(sorted(str(d.pk) for d in devices_list))}"
                     elif manual_name:
-                        # Deduplicate globally by manual_name
                         return f"manual_peer:{manual_name.strip().replace(' ', '_').replace('/', '_').lower()}"
                     return None
 
@@ -228,7 +230,7 @@ class SyncNeo4jJob(Job):
 
                     peer_devs_group = list(gw.peer_devices.all())
 
-                    # --- Local Node ---
+
                     local_node_id_val = get_node_id(devices_list=local_devs_group)
                     if local_node_id_val and local_node_id_val not in neo4j_nodes_to_create:
                         dev = local_devs_group[0]

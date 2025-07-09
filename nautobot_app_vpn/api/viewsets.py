@@ -1,6 +1,18 @@
+"""API viewsets for the Nautobot VPN plugin."""
+
+import logging
+import random
+from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
+from neo4j import GraphDatabase
+from neo4j import exceptions as neo4j_exceptions
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
+
+from nautobot.dcim.models import Platform
 from nautobot_app_vpn.api.pagination import StandardResultsSetPagination
 from nautobot_app_vpn.api.permissions import IsAdminOrReadOnly
 
@@ -34,22 +46,14 @@ from nautobot_app_vpn.models import (
     VPNDashboard,
 )
 
-import logging
-import random
-
-from django.conf import settings
-from nautobot.dcim.models import Platform
-from neo4j import GraphDatabase
-from neo4j import exceptions as neo4j_exceptions
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
-
+from nautobot.core.api.views import ModelViewSet
 
 logger = logging.getLogger(__name__)
 
 
 class IKECryptoViewSet(viewsets.ModelViewSet):
+    """API endpoint for managing IKE Crypto Profiles."""
+
     queryset = IKECrypto.objects.all().order_by("name")
     serializer_class = IKECryptoSerializer
     permission_classes = [IsAdminOrReadOnly]
@@ -61,6 +65,8 @@ class IKECryptoViewSet(viewsets.ModelViewSet):
 
 
 class IPSecCryptoViewSet(viewsets.ModelViewSet):
+    """API endpoint for managing IPSec Crypto Profiles."""
+
     queryset = IPSecCrypto.objects.all().order_by("name")
     serializer_class = IPSecCryptoSerializer
     permission_classes = [IsAdminOrReadOnly]
@@ -72,7 +78,8 @@ class IPSecCryptoViewSet(viewsets.ModelViewSet):
 
 
 class IKEGatewayViewSet(viewsets.ModelViewSet):
-    # <<< UPDATED queryset: Added bind_interface to select_related >>>
+    """API viewset for IKE Gateways."""
+
     queryset = (
         IKEGateway.objects.select_related(
             "ike_crypto_profile",
@@ -173,6 +180,8 @@ class IPSECTunnelViewSet(viewsets.ModelViewSet):
 
 
 class IPSecProxyIDViewSet(viewsets.ModelViewSet):
+    """API viewset for IPSec Proxy IDs."""
+
     queryset = IPSecProxyID.objects.select_related("tunnel").order_by("tunnel__name")
     serializer_class = IPSecProxyIDSerializer
     permission_classes = [IsAdminOrReadOnly]
@@ -193,11 +202,11 @@ def latlon_to_xy(lat, lon, svg_width=2754, svg_height=1398):
 
 
 class VPNTopologyNeo4jView(APIView):
-    serializer_class = DummySerializer
     """API view to return VPN topology nodes and edges for visualization,
     sourced from Neo4j, with support for filtering.
     """
 
+    serializer_class = DummySerializer
     permission_classes = [IsAuthenticated]
 
     def _build_cypher_queries_and_params(self, filters_dict):
@@ -474,11 +483,11 @@ class VPNTopologyNeo4jView(APIView):
 
 
 class VPNTopologyFilterOptionsView(APIView):
-    serializer_class = DummySerializer
+
     """API view to return distinct filter options for countries, platforms, roles, etc.,
     primarily based on data currently associated with IPSECTunnels in Nautobot's relational DB.
     """
-
+    serializer_class = DummySerializer
     permission_classes = [IsAuthenticated]
 
     def _get_device_country_from_name(self, device_name):

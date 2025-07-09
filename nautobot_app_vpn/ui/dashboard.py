@@ -1,4 +1,5 @@
-# === Production: nautobot_app_vpn/ui/dashboard.py ===
+"""UI view definitions for the VPN plugin dashboard."""
+
 import logging
 
 from nautobot.apps.views import NautobotUIViewSet
@@ -9,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class VPNDashboardViewSet(NautobotUIViewSet):
-    """Serves the new Cytoscape-based VPN dashboard."""
+    """Defines the dashboard tab for the VPN plugin."""
 
     queryset = VPNDashboard.objects.none()
     template_name = "nautobot_app_vpn/vpn_dashboard_cyto.html"

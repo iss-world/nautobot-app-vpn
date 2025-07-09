@@ -1,4 +1,5 @@
-# nautobot_app_vpn/navigation.py
+"""Plugin navigation menu definition for Nautobot VPN app."""
+
 from nautobot.core.apps import NavMenuGroup, NavMenuItem, NavMenuTab
 
 menu_items = [

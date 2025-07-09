@@ -1,4 +1,5 @@
-# nautobot_app_vpn/models/tunnelmonitor.py
+"""Models related to IPSec Tunnel Monitor profiles."""
+
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse  # Ensure reverse is imported
@@ -20,6 +21,8 @@ class TunnelMonitorActionChoices(models.TextChoices):
     "webhooks",
 )
 class TunnelMonitorProfile(PrimaryModel):
+    """Model representing a tunnel monitoring profile."""
+
     name = models.CharField(max_length=100, unique=True, help_text="Unique name for the Tunnel Monitor Profile.")
     action = models.CharField(
         max_length=20,
@@ -45,7 +48,4 @@ class TunnelMonitorProfile(PrimaryModel):
         return self.name
 
     def get_absolute_url(self):
-        # --- CORRECTED URL Name ---
-        # Use the name shown in show_urls (without _detail)
         return reverse("plugins:nautobot_app_vpn:tunnelmonitorprofile", kwargs={"pk": self.pk})
-        # --- END CORRECTION ---

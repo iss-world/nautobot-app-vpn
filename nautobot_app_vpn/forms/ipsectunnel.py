@@ -1,9 +1,9 @@
-"""Module for defining IPsec Tunnel forms used in the VPN plugin."""
+"""Forms for managing IPSec Tunnels in the Nautobot VPN app."""
 
 from django import forms
 from django.forms.models import inlineformset_factory
 
-# Import necessary Nautobot components
+
 from nautobot.apps.forms import (
     APISelectMultiple,  # Keep for 'devices' field
     BootstrapMixin,
@@ -13,8 +13,6 @@ from nautobot.apps.forms import (
     NautobotModelForm,
 )
 from nautobot.dcim.models import Device, Interface
-
-# Corrected Imports Below:
 from nautobot.extras.models import Status
 
 # Import local models
@@ -28,9 +26,9 @@ from nautobot_app_vpn.models import (
 )
 
 
-# 🔹 IPSec Tunnel Main Form (UPDATED - Removed bind_interface)
+
 class IPSECTunnelForm(NautobotModelForm):
-    """Form for configuring IPSec Tunnels."""
+    """Form for creating and editing IPSec Tunnel configurations."""
 
     devices = DynamicModelMultipleChoiceField(
         queryset=Device.objects.filter(platform__name="PanOS"),  # Filter by platform name is safer
@@ -63,8 +61,7 @@ class IPSECTunnelForm(NautobotModelForm):
         required=True,
         widget=forms.Select(attrs={"class": "form-control"}),
     )
-    # --- REMOVED bind_interface DynamicModelChoiceField ---
-    # bind_interface = DynamicModelChoiceField(...) # This section is deleted
+
 
     role = forms.ChoiceField(
         choices=TunnelRoleChoices.choices,
@@ -84,7 +81,7 @@ class IPSECTunnelForm(NautobotModelForm):
         required=False,
         widget=forms.Select(attrs={"class": "form-control"}),
     )
-    # status = DynamicModelChoiceField(...) # Keep commented out or implement as needed
+
 
     class Meta:
         model = IPSECTunnel
@@ -107,8 +104,10 @@ class IPSECTunnelForm(NautobotModelForm):
             # No widget needed for bind_interface as it's removed
         }
 
-    # --- Main clean method ---
+
     def clean(self):
+        """Ensure selected interface exists and is valid."""
+
         super().clean()  # Call super().clean() first
         cleaned_data = getattr(self, "cleaned_data", None)
         if cleaned_data is None:
@@ -124,33 +123,20 @@ class IPSECTunnelForm(NautobotModelForm):
             if not profile:
                 self.add_error("monitor_profile", "This field is required when tunnel monitoring is enabled.")
 
-        # --- REMOVED bind_interface validation logic ---
         tunnel_iface = cleaned_data.get("tunnel_interface")
-        # bind_iface = cleaned_data.get("bind_interface") # Removed
-        # # Check comparing tunnel_iface and bind_iface is removed
-        # if tunnel_iface and bind_iface and tunnel_iface == bind_iface:
-        #     self.add_error(...) # Removed
 
-        # Check for tunnel_interface device ownership (Keep this)
         devices = cleaned_data.get("devices")
         if tunnel_iface and devices:
             if not hasattr(tunnel_iface, "device") or not tunnel_iface.device:
-                pass  # Interface might not have a device assigned (less common for tunnels)
+                pass
             elif tunnel_iface.device not in devices:
                 self.add_error("tunnel_interface", "Selected Tunnel Interface does not belong to chosen device(s).")
 
-        # --- REMOVED bind_interface device ownership check ---
-        # if bind_iface and devices:
-        #    (...) self.add_error('bind_interface', ...) # Removed
-
-        # Important: Return the cleaned_data dictionary
         return cleaned_data
 
-    # --- END main clean method ---
 
-
-# 🔹 Proxy ID Entry Form (Keep as is)
 class IPSecProxyIDForm(BootstrapMixin, forms.ModelForm):
+    """Form for creating and editing IPSec Proxy-ID entries."""
     class Meta:
         model = IPSecProxyID
         fields = [
@@ -189,7 +175,6 @@ class IPSecProxyIDForm(BootstrapMixin, forms.ModelForm):
         return cleaned_data
 
 
-# 🔹 Inline formset for use in UI view (Keep as is)
 IPSecProxyIDFormSet = inlineformset_factory(
     parent_model=IPSECTunnel,
     model=IPSecProxyID,
@@ -199,8 +184,10 @@ IPSecProxyIDFormSet = inlineformset_factory(
 )
 
 
-# 🔹 IPSec Tunnel Filter Form (Keep as is, no bind_interface was present)
+
 class IPSECTunnelFilterForm(NautobotFilterForm):
+    """Filter form for IPSECTunnel objects."""
+
     model = IPSECTunnel
     role = forms.MultipleChoiceField(choices=TunnelRoleChoices.choices, required=False)
     devices = DynamicModelMultipleChoiceField(queryset=Device.objects.all(), required=False, label="Devices")

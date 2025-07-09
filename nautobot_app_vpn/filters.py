@@ -1,4 +1,5 @@
-# nautobot_app_vpn/filters.py
+"""FilterSet classes for Nautobot VPN plugin models."""
+
 import django_filters
 from django_filters import BooleanFilter, CharFilter, ModelMultipleChoiceFilter
 from nautobot.apps.filters import (
@@ -33,7 +34,8 @@ from nautobot_app_vpn.models.constants import (  # Shortened for brevity
 
 
 class BaseFilterSet(StatusModelFilterSetMixin, NautobotFilterSet):
-    # UPDATED: Removed "description": "icontains" from filter_predicates
+    """FilterSet for Base model."""
+
     q = SearchFilter(
         filter_predicates={
             "name": "icontains",
@@ -43,6 +45,8 @@ class BaseFilterSet(StatusModelFilterSetMixin, NautobotFilterSet):
 
 
 class IKECryptoFilterSet(BaseFilterSet):
+    """FilterSet for IKECrypto model."""
+
     dh_group = django_filters.MultipleChoiceFilter(choices=DiffieHellmanGroups.choices)
     encryption = django_filters.MultipleChoiceFilter(choices=EncryptionAlgorithms.choices)
     authentication = django_filters.MultipleChoiceFilter(choices=AuthenticationAlgorithms.choices)
@@ -66,6 +70,8 @@ class IKECryptoFilterSet(BaseFilterSet):
 
 
 class IPSecCryptoFilterSet(BaseFilterSet):
+    """FilterSet for IPSecCrypto model."""
+
     encryption = django_filters.MultipleChoiceFilter(choices=EncryptionAlgorithms.choices)
     authentication = django_filters.MultipleChoiceFilter(choices=AuthenticationAlgorithms.choices)
     dh_group = django_filters.MultipleChoiceFilter(choices=DiffieHellmanGroups.choices)
@@ -91,6 +97,8 @@ class IPSecCryptoFilterSet(BaseFilterSet):
 
 
 class IKEGatewayFilterSet(BaseFilterSet):
+    """FilterSet for IKEGateway model."""
+
     local_devices = ModelMultipleChoiceFilter(
         field_name="local_devices", queryset=Device.objects.all(), label="Local Devices"
     )
@@ -169,13 +177,12 @@ class IKEGatewayFilterSet(BaseFilterSet):
         ]
 
     def do_nothing_filter(self, queryset, name, value):
-        # This method is called for 'limit', 'offset', 'depth', and 'exclude_m2m'
-        # because of the 'method' argument in their definitions.
-        # It simply returns the queryset unchanged, preventing errors.
         return queryset
 
 
 class TunnelMonitorProfileFilterSet(NautobotFilterSet):
+    """FilterSet for TunnelMonitorProfile model."""
+
     # Explicitly define q filter here
     q = SearchFilter(filter_predicates={"name": "icontains"}, label="Search")
     action = django_filters.MultipleChoiceFilter(choices=TunnelMonitorActionChoices.choices, label="Action")
@@ -188,15 +195,15 @@ class TunnelMonitorProfileFilterSet(NautobotFilterSet):
         fields = ["id", "name", "action", "interval", "threshold"]
 
 
-class IPSECTunnelFilterSet(BaseFilterSet):  # Keep BaseFilterSet for Status
-    # Add role filter
+class IPSECTunnelFilterSet(BaseFilterSet):
+    """FilterSet for IPSECTunnel model."""
+
+
     role = django_filters.MultipleChoiceFilter(choices=TunnelRoleChoices.choices, label="Tunnel Role")
-    # Keep existing filters
     devices = ModelMultipleChoiceFilter(queryset=Device.objects.all(), label="Devices")
     ike_gateway = ModelMultipleChoiceFilter(queryset=IKEGateway.objects.all(), label="IKE Gateway")
     ipsec_crypto_profile = ModelMultipleChoiceFilter(queryset=IPSecCrypto.objects.all(), label="IPSec Crypto Profile")
     tunnel_interface = ModelMultipleChoiceFilter(queryset=Interface.objects.all(), label="Tunnel Interface")
-    # bind_interface = ModelMultipleChoiceFilter(queryset=Interface.objects.all(), label="Bind Interface")
     enable_tunnel_monitor = BooleanFilter(label="Monitor Enabled")
     monitor_destination_ip = django_filters.CharFilter(lookup_expr="icontains", label="Monitor Destination IP")
     monitor_profile = ModelMultipleChoiceFilter(queryset=TunnelMonitorProfile.objects.all(), label="Monitor Profile")
@@ -222,6 +229,8 @@ class IPSECTunnelFilterSet(BaseFilterSet):  # Keep BaseFilterSet for Status
 
 
 class IPSecProxyIDFilterSet(NautobotFilterSet):
+    """FilterSet for IPSecProxyID model."""
+
     tunnel = ModelMultipleChoiceFilter(queryset=IPSECTunnel.objects.all(), label="IPSec Tunnel")
     local_subnet = django_filters.CharFilter(lookup_expr="icontains")
     remote_subnet = django_filters.CharFilter(lookup_expr="icontains")

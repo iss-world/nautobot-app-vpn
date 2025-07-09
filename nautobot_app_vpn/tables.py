@@ -1,16 +1,16 @@
-# nautobot_app_vpn/tables.py
+"""Table definitions for Nautobot VPN plugin."""
+
 import django_tables2 as tables
 from nautobot.apps.tables import (
     BaseTable,
     BooleanColumn,
     ButtonsColumn,
-    LinkedCountColumn,  # Ensure LinkedCountColumn is imported
+    LinkedCountColumn,
     StatusTableMixin,
     ToggleColumn,
 )
 
-# Import Location model for linking if desired
-# Import ALL necessary models
+
 from nautobot_app_vpn.models import (
     IKECrypto,
     IKEGateway,
@@ -23,6 +23,8 @@ from nautobot_app_vpn.models import (
 
 
 class IKECryptoProfileTable(StatusTableMixin, BaseTable):
+    """Table for listing IKE Crypto Profiles."""
+
     pk = ToggleColumn()
     name = tables.Column(linkify=True)
     actions = ButtonsColumn(model=IKECrypto)
@@ -45,6 +47,7 @@ class IKECryptoProfileTable(StatusTableMixin, BaseTable):
 
 
 class IPSecCryptoProfileTable(StatusTableMixin, BaseTable):
+    """Table for listing IPSec Crypto Profiles."""
     pk = ToggleColumn()
     name = tables.Column(linkify=True)
     actions = ButtonsColumn(model=IPSecCrypto)
@@ -68,6 +71,8 @@ class IPSecCryptoProfileTable(StatusTableMixin, BaseTable):
 
 
 class IKEGatewayTable(StatusTableMixin, BaseTable):
+    """Table for listing IKE Gateways."""
+
     pk = ToggleColumn()
     name = tables.Column(linkify=True)
     local_devices_display = tables.Column(accessor="local_device_names", verbose_name="Local Devices")
@@ -147,10 +152,12 @@ class IKEGatewayTable(StatusTableMixin, BaseTable):
         order_by = ("name",)
 
 
-class TunnelMonitorProfileTable(BaseTable):  # No StatusMixin unless model has status
+class TunnelMonitorProfileTable(BaseTable):
+    """Table for listing Tunnel Monitor Profiles."""
+
     pk = ToggleColumn()
     name = tables.Column(linkify=True)
-    action = tables.Column(accessor="get_action_display")  # Use get_FIELD_display for choices
+    action = tables.Column(accessor="get_action_display")
     interval = tables.Column(verbose_name="Interval (s)")
     threshold = tables.Column(verbose_name="Threshold")
     ipsectunnel_count = LinkedCountColumn(
@@ -167,10 +174,12 @@ class TunnelMonitorProfileTable(BaseTable):  # No StatusMixin unless model has s
 
 
 class IPSECTunnelTable(StatusTableMixin, BaseTable):
+    """Table for listing IPSec Tunnels."""
+
     pk = ToggleColumn()
     name = tables.Column(linkify=True)
     devices_display = tables.Column(accessor="device_names", verbose_name="Devices")
-    role = tables.Column(order_by=("role"))  # Use get_FIELD_display for choices
+    role = tables.Column(order_by=("role"))
     ike_gateway = tables.Column(linkify=True)
     ipsec_crypto_profile = tables.Column(linkify=True)
     tunnel_interface = tables.Column(linkify=True)
@@ -181,25 +190,25 @@ class IPSECTunnelTable(StatusTableMixin, BaseTable):
 
     class Meta(BaseTable.Meta):
         model = IPSECTunnel
-        # Added 'role' to fields
+
         fields = (
             "pk",
             "name",
             "role",
             "devices_display",
-            "ike_gateway",  # Added role
+            "ike_gateway",
             "ipsec_crypto_profile",
             "tunnel_interface",
             "enable_tunnel_monitor",
-            "monitor_destination_ip",  # Keep in available fields
+            "monitor_destination_ip",
             "monitor_profile",
             "proxy_id_count",
             "status",
             "description",
             "actions",
-            "devices",  # devices M2M field itself if needed
+            "devices",
         )
-        # Added 'role' to default columns
+
         default_columns = (
             "pk",
             "name",
@@ -216,7 +225,9 @@ class IPSECTunnelTable(StatusTableMixin, BaseTable):
         order_by = ("name", "role")
 
 
-class IPSecProxyIDTable(BaseTable):  # No StatusMixin needed
+class IPSecProxyIDTable(BaseTable):
+    """Table for listing IPSec Proxy IDs."""
+
     pk = ToggleColumn()
     tunnel = tables.Column(linkify=True)
     actions = ButtonsColumn(model=IPSecProxyID, pk_field="id")  # Changed pk_field to 'id'
@@ -243,7 +254,8 @@ class IPSecProxyIDTable(BaseTable):  # No StatusMixin needed
         )
 
 
-class VPNDashboardTable(BaseTable):  # No StatusMixin needed
+class VPNDashboardTable(BaseTable):
+    """Table for listing VPN Dashboard."""
     pk = ToggleColumn()
     name = tables.Column(linkify=True)
     actions = ButtonsColumn(model=VPNDashboard)

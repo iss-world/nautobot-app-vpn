@@ -1,4 +1,5 @@
-# nautobot_app_vpn/models/ikegateway.py
+"""Model definition for IKE Gateway configuration."""
+
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from nautobot.core.models.generics import PrimaryModel
@@ -30,7 +31,7 @@ from nautobot_app_vpn.utils import get_default_status
     "webhooks",
 )
 class IKEGateway(PrimaryModel, ChangeLoggedModel):
-    """IKE Gateway configuration potentially spanning multiple devices."""
+    """Model definition for IKE Gateway configuration."""
 
     name = models.CharField(
         max_length=100,

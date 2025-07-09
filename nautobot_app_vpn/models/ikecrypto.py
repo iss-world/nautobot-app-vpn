@@ -1,3 +1,5 @@
+"""Model definitions for IKE Crypto Profiles used in VPN configurations."""
+
 from django.db import models
 from nautobot.core.models.generics import PrimaryModel
 from nautobot.extras.models import StatusField
@@ -23,7 +25,7 @@ from nautobot_app_vpn.utils import get_default_status
     "webhooks",
 )
 class IKECrypto(PrimaryModel):
-    """Global IKE Crypto Profile shared across firewalls."""
+    """IKE Crypto profile model for defining encryption and authentication parameters."""
 
     name = models.CharField(max_length=100, unique=True, help_text="Unique name for the IKE Crypto Profile")
     description = models.TextField(blank=True, help_text="Optional free-form description or usage notes")

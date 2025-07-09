@@ -1,3 +1,5 @@
+"""Initialize Nautobot VPN plugin models package."""
+
 import logging
 
 from .constants import (
@@ -23,7 +25,6 @@ from .vpn_dashboard import VPNDashboard
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    # Models
     "IKECrypto",
     "IKEGateway",
     "IPSecCrypto",
@@ -32,7 +33,6 @@ __all__ = [
     "TunnelRoleChoices",
     "VPNDashboard",
     "TunnelMonitorProfile",
-    # Enum Constants
     "EncryptionAlgorithms",
     "AuthenticationAlgorithms",
     "DiffieHellmanGroups",

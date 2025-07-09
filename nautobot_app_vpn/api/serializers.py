@@ -1,4 +1,4 @@
-# nautobot_app_vpn/api/serializers.py
+"""Serializers for Nautobot VPN Plugin."""
 from nautobot.apps.api import BaseModelSerializer, ChoiceField
 
 # Import Location model
@@ -30,10 +30,13 @@ from nautobot_app_vpn.models.constants import (
 
 
 class DummySerializer(serializers.Serializer):
+    """Dummy serializer placeholder."""
     dummy = serializers.CharField()
 
 
 class VPNNestedDeviceSerializer(BaseModelSerializer):
+    """Nested serializer for referencing a Device object."""
+
     url = serializers.HyperlinkedIdentityField(view_name="dcim-api:device-detail")
 
     class Meta:
@@ -42,6 +45,8 @@ class VPNNestedDeviceSerializer(BaseModelSerializer):
 
 
 class VPNNestedLocationSerializer(BaseModelSerializer):
+    """Nested serializer for referencing a Location object."""
+
     url = serializers.HyperlinkedIdentityField(view_name="dcim-api:location-detail")
 
     class Meta:
@@ -50,6 +55,8 @@ class VPNNestedLocationSerializer(BaseModelSerializer):
 
 
 class VPNNestedStatusSerializer(BaseModelSerializer):
+    """Nested serializer for referencing a Status object."""
+
     url = serializers.HyperlinkedIdentityField(view_name="extras-api:status-detail")
 
     class Meta:
@@ -58,6 +65,8 @@ class VPNNestedStatusSerializer(BaseModelSerializer):
 
 
 class VPNNestedIKECryptoSerializer(BaseModelSerializer):
+    """Nested serializer for referencing an IKECrypto object."""
+
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ikecrypto-detail")
 
     class Meta:
@@ -66,6 +75,8 @@ class VPNNestedIKECryptoSerializer(BaseModelSerializer):
 
 
 class VPNNestedIPSecCryptoSerializer(BaseModelSerializer):
+    """Nested serializer for referencing an IPSecCrypto object."""
+
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ipseccrypto-detail")
 
     class Meta:
@@ -74,6 +85,8 @@ class VPNNestedIPSecCryptoSerializer(BaseModelSerializer):
 
 
 class VPNNestedIKEGatewaySerializer(BaseModelSerializer):
+    """Nested serializer for referencing an IKEGateway object."""
+
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ikegateway-detail")
 
     class Meta:
@@ -82,6 +95,8 @@ class VPNNestedIKEGatewaySerializer(BaseModelSerializer):
 
 
 class VPNNestedInterfaceSerializer(BaseModelSerializer):
+    """Nested serializer for referencing an Interface object."""
+
     url = serializers.HyperlinkedIdentityField(view_name="dcim-api:interface-detail")
     device = VPNNestedDeviceSerializer(read_only=True)  # Show device for context
 
@@ -91,6 +106,8 @@ class VPNNestedInterfaceSerializer(BaseModelSerializer):
 
 
 class VPNNestedIPSECTunnelSerializer(BaseModelSerializer):
+    """Minimal serializer for related IPSECTunnel objects."""
+
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ipsectunnel-detail")
 
     class Meta:
@@ -109,6 +126,8 @@ class VPNNestedTunnelMonitorProfileSerializer(BaseModelSerializer):
 
 
 class VPNNestedPlatformSerializer(BaseModelSerializer):
+    """Nested serializer for referencing a Platform object."""
+
     url = serializers.HyperlinkedIdentityField(view_name="dcim-api:platform-detail")
 
     class Meta:
@@ -117,6 +136,7 @@ class VPNNestedPlatformSerializer(BaseModelSerializer):
 
 
 class IKECryptoSerializer(BaseModelSerializer):
+    """Serializer for IKECrypto objects."""
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ikecrypto-detail")
     status = VPNNestedStatusSerializer(required=False, allow_null=True, read_only=True)
     status_id = serializers.PrimaryKeyRelatedField(
@@ -145,6 +165,7 @@ class IKECryptoSerializer(BaseModelSerializer):
 
 
 class IPSecCryptoSerializer(BaseModelSerializer):
+    """Serializer for IPSecCrypto objects."""
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ipseccrypto-detail")
     status = VPNNestedStatusSerializer(required=False, allow_null=True, read_only=True)
     status_id = serializers.PrimaryKeyRelatedField(
@@ -173,8 +194,10 @@ class IPSecCryptoSerializer(BaseModelSerializer):
         read_only_fields = ["id", "display", "url", "status", "created", "last_updated"]
 
 
-# --- IKEGatewaySerializer (UPDATED) ---
+
 class IKEGatewaySerializer(BaseModelSerializer):
+    """Serializer for IKEGateway objects."""
+
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ikegateway-detail")
 
     # Read-only Nested Representations
@@ -233,7 +256,7 @@ class IKEGatewaySerializer(BaseModelSerializer):
     status_id = serializers.PrimaryKeyRelatedField(
         queryset=Status.objects.all(), source="status", write_only=True, required=False, allow_null=True, label="Status"
     )
-    # <<< ADDED: bind_interface writeable ID selector
+
     bind_interface_id = serializers.PrimaryKeyRelatedField(
         queryset=Interface.objects.all(),
         source="bind_interface",
@@ -275,7 +298,6 @@ class IKEGatewaySerializer(BaseModelSerializer):
 
     class Meta:
         model = IKEGateway
-        # <<< UPDATED: Added bind_interface fields
         fields = [
             "id",
             "display",
@@ -311,7 +333,7 @@ class IKEGatewaySerializer(BaseModelSerializer):
             "ike_crypto_profile",
             "ike_crypto_profile_id",
             "bind_interface",
-            "bind_interface_id",  # Added here
+            "bind_interface_id",
             "enable_passive_mode",
             "enable_nat_traversal",
             "enable_dpd",
@@ -324,7 +346,7 @@ class IKEGatewaySerializer(BaseModelSerializer):
             "created",
             "last_updated",
         ]
-        # <<< UPDATED: Added bind_interface to read_only
+
         read_only_fields = [
             "id",
             "display",
@@ -332,7 +354,7 @@ class IKEGatewaySerializer(BaseModelSerializer):
             "local_devices",
             "peer_devices",
             "local_locations",
-            "peer_locations",  # Keep M2M nested as read-only
+            "peer_locations",
             "ike_crypto_profile",
             "status",
             "bind_interface",
@@ -344,13 +366,11 @@ class IKEGatewaySerializer(BaseModelSerializer):
         ]
 
     def validate(self, data):
-        # Keep existing validation
         peer_locations = data.get("peer_locations")
         peer_location_manual = data.get("peer_location_manual")
         if peer_locations and peer_location_manual:
             raise serializers.ValidationError("Specify Peer Locations *or* Manual Peer Location, not both.")
-        # Add validation for bind_interface vs local_devices if needed via API
-        bind_iface_id = data.get("bind_interface")  # Note: source='bind_interface' maps the ID field to this name
+        bind_iface_id = data.get("bind_interface")
         local_device_ids = data.get("local_devices")
         if bind_iface_id and local_device_ids:
             try:
@@ -366,7 +386,7 @@ class IKEGatewaySerializer(BaseModelSerializer):
         return data
 
 
-# --- TunnelMonitorProfileSerializer (No changes) ---
+
 class TunnelMonitorProfileSerializer(BaseModelSerializer):
     """Serializer for Tunnel Monitor Profiles."""
 
@@ -379,8 +399,10 @@ class TunnelMonitorProfileSerializer(BaseModelSerializer):
         read_only_fields = ["id", "display", "url", "created", "last_updated"]
 
 
-# --- IPSecProxyIDSerializer (No changes) ---
+
 class IPSecProxyIDSerializer(BaseModelSerializer):
+    """Serializer for IPSec Proxy IDs."""
+
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ipsecproxyid-detail")
     tunnel = VPNNestedIPSECTunnelSerializer(read_only=True)
     tunnel_id = serializers.PrimaryKeyRelatedField(
@@ -409,7 +431,7 @@ class IPSecProxyIDSerializer(BaseModelSerializer):
         read_only_fields = ["id", "url", "display", "tunnel"]
 
 
-# --- VPNDashboardSerializer (No changes) ---
+
 class VPNDashboardSerializer(BaseModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:vpndashboard-detail")
 
@@ -433,23 +455,22 @@ class VPNDashboardSerializer(BaseModelSerializer):
         read_only_fields = ["id", "url", "display", "created", "last_updated"]
 
 
-# --- IPSECTunnelSerializer (UPDATED - Removed bind_interface) ---
+
 class IPSECTunnelSerializer(BaseModelSerializer):
+    """Serializer for IPSECTunnel objects."""
+
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ipsectunnel-detail")
 
-    # --- Read-only Nested Representations ---
     devices = VPNNestedDeviceSerializer(many=True, read_only=True)
     ike_gateway = VPNNestedIKEGatewaySerializer(read_only=True, required=False, allow_null=True)
     ipsec_crypto_profile = VPNNestedIPSecCryptoSerializer(read_only=True, required=False, allow_null=True)
     status = VPNNestedStatusSerializer(read_only=True, required=False, allow_null=True)
     tunnel_interface = VPNNestedInterfaceSerializer(read_only=True, required=False, allow_null=True)
-    # --- REMOVED: bind_interface read-only nested representation ---
-    # bind_interface = VPNNestedInterfaceSerializer(read_only=True, required=False, allow_null=True)
     monitor_profile = VPNNestedTunnelMonitorProfileSerializer(read_only=True, required=False, allow_null=True)
     proxy_ids = IPSecProxyIDSerializer(many=True, read_only=True)
     role = ChoiceField(choices=TunnelRoleChoices.choices, required=False, allow_null=True)
 
-    # --- Writeable Related Field Selectors ---
+
     device_ids = serializers.PrimaryKeyRelatedField(
         queryset=Device.objects.all(),
         source="devices",
@@ -485,8 +506,7 @@ class IPSECTunnelSerializer(BaseModelSerializer):
         allow_null=False,
         label="Tunnel Interface",
     )
-    # --- REMOVED: bind_interface writeable ID selector ---
-    # bind_interface_id = serializers.PrimaryKeyRelatedField(...) # Removed
+
     monitor_profile_id = serializers.PrimaryKeyRelatedField(
         queryset=TunnelMonitorProfile.objects.all(),
         source="monitor_profile",
@@ -495,11 +515,10 @@ class IPSECTunnelSerializer(BaseModelSerializer):
         allow_null=True,
         label="Monitor Profile (ID)",
     )
-    # Role is handled by ChoiceField above for reads, and directly by model field name for writes
+
 
     class Meta:
         model = IPSECTunnel
-        # --- UPDATED: Removed bind_interface fields ---
         fields = [
             "id",
             "display",
@@ -514,22 +533,19 @@ class IPSECTunnelSerializer(BaseModelSerializer):
             "ipsec_crypto_profile_id",
             "tunnel_interface",
             "tunnel_interface_id",
-            # "bind_interface", "bind_interface_id", # Removed
             "role",
             "proxy_ids",
-            # Tunnel Monitor fields
             "enable_tunnel_monitor",
             "monitor_destination_ip",
             "monitor_profile",
             "monitor_profile_id",
-            # Metadata
             "status",
             "status_id",
             "last_sync",
             "created",
             "last_updated",
         ]
-        # --- UPDATED Read Only Fields ---
+
         read_only_fields = [
             "id",
             "display",
@@ -538,7 +554,7 @@ class IPSECTunnelSerializer(BaseModelSerializer):
             "ike_gateway",
             "ipsec_crypto_profile",
             "status",
-            "tunnel_interface",  # "bind_interface", Removed
+            "tunnel_interface",
             "monitor_profile",
             "proxy_ids",
             "created",
@@ -546,7 +562,7 @@ class IPSECTunnelSerializer(BaseModelSerializer):
             "last_sync",
         ]
 
-    # Keep existing validation for monitor fields
+
     def validate(self, data):
         monitor_enabled = data.get(
             "enable_tunnel_monitor", getattr(self.instance, "enable_tunnel_monitor", False) if self.instance else False
@@ -555,24 +571,24 @@ class IPSECTunnelSerializer(BaseModelSerializer):
             "monitor_destination_ip", getattr(self.instance, "monitor_destination_ip", None) if self.instance else None
         )
         profile_id_submitted = "monitor_profile_id" in data
-        # profile = data.get('monitor_profile', getattr(self.instance, 'monitor_profile', None) if self.instance else None) # Not needed for this validation
+
 
         if monitor_enabled:
             if not dest_ip:
                 raise serializers.ValidationError(
                     {"monitor_destination_ip": "Destination IP is required when tunnel monitoring is enabled."}
                 )
-            # Check submitted ID for profile
+
             if profile_id_submitted and data.get("monitor_profile_id") is None:
                 raise serializers.ValidationError(
                     {"monitor_profile_id": "Monitor Profile is required when tunnel monitoring is enabled."}
                 )
-            # Check for create case if profile ID is missing entirely
+
             if not self.instance and "monitor_profile_id" not in data:
                 raise serializers.ValidationError(
                     {"monitor_profile_id": "Monitor Profile is required when tunnel monitoring is enabled."}
                 )
-            # Check for update case where profile is being removed while monitor is enabled
+
             if self.instance and profile_id_submitted and data.get("monitor_profile_id") is None and monitor_enabled:
                 raise serializers.ValidationError(
                     {"monitor_profile_id": "Cannot remove Monitor Profile while tunnel monitoring is enabled."}

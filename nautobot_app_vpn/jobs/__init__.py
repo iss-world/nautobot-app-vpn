@@ -1,3 +1,3 @@
-# File: nautobot_app_vpn/jobs/__init__.py
+"""Nautobot VPN plugin job package initializer."""
 
 __all__ = []

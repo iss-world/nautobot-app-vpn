@@ -1,21 +1,15 @@
-"""Module for defining IPsecCrypto forms used in the VPN plugin."""
+"""Forms for managing IPSec Crypto profiles in the Nautobot VPN app."""
 
 from django import forms
 from nautobot.apps.forms import NautobotFilterForm, NautobotModelForm
 
 from nautobot_app_vpn.models import IPSecCrypto
 
-# from nautobot.core.forms.widgets import APISelect
 
 
 class IPSecCryptoForm(NautobotModelForm):
     """Form for adding and editing IPSec Crypto Profiles."""
 
-    # status = forms.ModelChoiceField(
-    #     queryset=Status.objects.all(),
-    #     required=False,
-    #     help_text="Operational status of this IPSec Crypto Profile.",
-    # )
 
     class Meta:
         model = IPSecCrypto
@@ -53,7 +47,7 @@ class IPSecCryptoForm(NautobotModelForm):
 
 
 class IPSecCryptoFilterForm(NautobotFilterForm):
-    """Filter form for IPSec Crypto Profiles."""
+    """Import form for bulk uploading IPSec Crypto profiles."""
 
     model = IPSecCrypto
     fieldsets = (

@@ -1,4 +1,5 @@
-# nautobot_app_vpn/ui/ipsectunnel.py
+"""UI views for IPsec Tunnel management in the VPN plugin."""
+
 import logging
 
 from django.contrib import messages
@@ -17,21 +18,21 @@ logger = logging.getLogger(__name__)
 
 
 class IPSECTunnelUIViewSet(NautobotUIViewSet):
-    """UIViewSet for IPSec Tunnels with support for formsets."""
+    """UI ViewSet for managing IPsec Tunnel objects."""
 
-    # --- CORRECTED queryset definition ---
+
     queryset = IPSECTunnel.objects.select_related(
-        # ForeignKeys go here:
+
         "ike_gateway",
         "ipsec_crypto_profile",
         "status",
         "tunnel_interface",
         "monitor_profile",
     ).prefetch_related(
-        "devices",  # M2M field (Changed from device)
-        "proxy_ids",  # M2M field (reverse relationship)
+        "devices",
+        "proxy_ids",
     )
-    # --- End CORRECTED queryset ---
+
 
     serializer_class = IPSECTunnelSerializer
     table_class = IPSECTunnelTable
@@ -40,12 +41,12 @@ class IPSECTunnelUIViewSet(NautobotUIViewSet):
     filterset_form_class = IPSECTunnelFilterForm
     default_return_url = "plugins:nautobot_app_vpn:ipsectunnel_list"
 
-    # Keep custom create/update methods for formset handling
-    # ... (create and update methods remain as previously defined) ...
+
     def create(self, request, *args, **kwargs):
         """Handle creation of IPSec Tunnel and its associated Proxy IDs."""
+
         object_type = self.form_class._meta.model._meta.verbose_name
-        template_name = f"{self.form_class._meta.model._meta.app_label}/ipsectunnel_edit.html"  # Adjust if needed
+        template_name = f"{self.form_class._meta.model._meta.app_label}/ipsectunnel_edit.html"
 
         form = self.form_class(request.POST or None)
         formset = IPSecProxyIDFormSet(request.POST or None, prefix="proxy_ids")
@@ -53,7 +54,7 @@ class IPSECTunnelUIViewSet(NautobotUIViewSet):
         if request.method == "POST":
             if form.is_valid():
                 try:
-                    instance = form.save()  # Should handle M2M 'devices' correctly
+                    instance = form.save()
                     formset.instance = instance
 
                     if formset.is_valid():
@@ -92,6 +93,7 @@ class IPSECTunnelUIViewSet(NautobotUIViewSet):
 
     def update(self, request, *args, **kwargs):
         """Handle updates to IPSec Tunnel and its associated Proxy IDs."""
+
         instance = get_object_or_404(self.queryset, pk=kwargs["pk"])
         object_type = self.form_class._meta.model._meta.verbose_name
         template_name = f"{self.form_class._meta.model._meta.app_label}/ipsectunnel_edit.html"
@@ -130,9 +132,10 @@ class IPSECTunnelUIViewSet(NautobotUIViewSet):
             },
         )
 
-    # Keep bulk_destroy if needed
+
     def bulk_destroy(self, request):
-        # ... (Keep existing bulk_destroy logic) ...
+        """Handle bulk deletion of IPsec Tunnel objects."""
+
         logger.debug(f"request.POST: {request.POST}")
         pks = request.POST.getlist("pk")
         model = self.queryset.model

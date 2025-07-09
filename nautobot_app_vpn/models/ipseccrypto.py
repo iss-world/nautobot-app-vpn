@@ -1,3 +1,5 @@
+"""Models for IPsec Crypto profiles used in VPN configuration."""
+
 from django.db import models
 from nautobot.core.models.generics import PrimaryModel
 from nautobot.extras.models import ChangeLoggedModel, StatusField

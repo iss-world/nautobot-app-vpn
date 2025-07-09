@@ -1,4 +1,4 @@
-"""Module for defining Tunnel Monitor forms used in the VPN plugin."""
+"""Forms for managing Tunnel Monitor Profiles in the Nautobot VPN app."""
 
 from django import forms
 from nautobot.apps.forms import NautobotFilterForm, NautobotModelForm  # Import necessary base forms
@@ -29,7 +29,7 @@ class TunnelMonitorProfileForm(NautobotModelForm):
 
 
 class TunnelMonitorProfileFilterForm(NautobotFilterForm):
-    """Filter form for Tunnel Monitor Profiles."""
+    """Form for importing Tunnel Monitor Profiles in bulk."""
 
     model = TunnelMonitorProfile
     action = forms.MultipleChoiceField(choices=TunnelMonitorActionChoices.choices, required=False)

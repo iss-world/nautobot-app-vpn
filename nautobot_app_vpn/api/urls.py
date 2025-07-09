@@ -1,3 +1,5 @@
+"""API URL declarations for the Nautobot VPN app."""
+
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
@@ -14,7 +16,7 @@ from nautobot_app_vpn.api.viewsets import (
 
 app_name = "nautobot_app_vpn_api"
 
-# 🔥 API Router (Handles all endpoints)
+# Register your API routes here
 router = DefaultRouter()
 router.register(r"ikecrypto", IKECryptoViewSet, basename="ikecrypto")
 router.register(r"ipseccrypto", IPSecCryptoViewSet, basename="ipseccrypto")

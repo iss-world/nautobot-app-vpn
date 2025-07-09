@@ -1,4 +1,5 @@
-# models/vpn_dashboard.py
+"""Register custom VPN dashboard views for the Nautobot App VPN plugin."""
+
 from django.db import models
 from nautobot.core.models import BaseModel
 

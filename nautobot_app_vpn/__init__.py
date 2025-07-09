@@ -8,7 +8,7 @@ from nautobot.apps import NautobotAppConfig
 __version__ = metadata.version(__name__)
 
 
-class Nautobot_App_VpnConfig(NautobotAppConfig):
+class NautobotAppVpnConfig(NautobotAppConfig):
     """App configuration for the nautobot_app_vpn app."""
 
     name = "nautobot_app_vpn"
@@ -38,4 +38,4 @@ class Nautobot_App_VpnConfig(NautobotAppConfig):
 
 
 # Required for Nautobot to detect the plugin
-config = Nautobot_App_VpnConfig
+config = NautobotAppVpnConfig

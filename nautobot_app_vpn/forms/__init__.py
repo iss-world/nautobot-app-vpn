@@ -1,10 +1,12 @@
+"""Form initializers for nautobot-app-vpn plugin."""
+
 import logging
 
-from .ikecrypto import IKECryptoFilterForm, IKECryptoForm
-from .ikegateway import IKEGatewayFilterForm, IKEGatewayForm
-from .ipseccrypto import IPSecCryptoFilterForm, IPSecCryptoForm
-from .ipsectunnel import IPSecProxyIDForm, IPSecProxyIDFormSet, IPSECTunnelFilterForm, IPSECTunnelForm
-from .tunnelmonitor import TunnelMonitorProfileFilterForm, TunnelMonitorProfileForm
+from nautobot_app_vpn.forms.ikecrypto import IKECryptoFilterForm, IKECryptoForm
+from nautobot_app_vpn.forms.ikegateway import IKEGatewayFilterForm, IKEGatewayForm
+from nautobot_app_vpn.forms.ipseccrypto import IPSecCryptoFilterForm, IPSecCryptoForm
+from nautobot_app_vpn.forms.ipsectunnel import IPSecProxyIDForm, IPSecProxyIDFormSet, IPSECTunnelFilterForm, IPSECTunnelForm
+from nautobot_app_vpn.forms.tunnelmonitor import TunnelMonitorProfileFilterForm, TunnelMonitorProfileForm
 
 logger = logging.getLogger(__name__)
 

@@ -1,3 +1,5 @@
+"""Initialize Nautobot VPN plugin views/UI package."""
+
 import logging
 
 # Import all UI ViewSets for easy reference
