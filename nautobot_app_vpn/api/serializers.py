@@ -27,8 +27,11 @@ from nautobot_app_vpn.models.constants import (
 
 
 # --- Nested Serializers ---
-# (No changes needed in Nested Serializers)
-class NestedDeviceSerializer(BaseModelSerializer):
+
+class DummySerializer(serializers.Serializer):
+    dummy = serializers.CharField()
+
+class VPNNestedDeviceSerializer(BaseModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="dcim-api:device-detail")
 
     class Meta:
@@ -36,7 +39,7 @@ class NestedDeviceSerializer(BaseModelSerializer):
         fields = ["id", "url", "display", "name"]
 
 
-class NestedLocationSerializer(BaseModelSerializer):
+class VPNNestedLocationSerializer(BaseModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="dcim-api:location-detail")
 
     class Meta:
@@ -44,7 +47,7 @@ class NestedLocationSerializer(BaseModelSerializer):
         fields = ["id", "url", "display", "name"]
 
 
-class NestedStatusSerializer(BaseModelSerializer):
+class VPNNestedStatusSerializer(BaseModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="extras-api:status-detail")
 
     class Meta:
@@ -52,7 +55,7 @@ class NestedStatusSerializer(BaseModelSerializer):
         fields = ["id", "url", "display", "name", "color"]
 
 
-class NestedIKECryptoSerializer(BaseModelSerializer):
+class VPNNestedIKECryptoSerializer(BaseModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ikecrypto-detail")
 
     class Meta:
@@ -60,7 +63,7 @@ class NestedIKECryptoSerializer(BaseModelSerializer):
         fields = ["id", "url", "display", "name"]
 
 
-class NestedIPSecCryptoSerializer(BaseModelSerializer):
+class VPNNestedIPSecCryptoSerializer(BaseModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ipseccrypto-detail")
 
     class Meta:
@@ -68,7 +71,7 @@ class NestedIPSecCryptoSerializer(BaseModelSerializer):
         fields = ["id", "url", "display", "name"]
 
 
-class NestedIKEGatewaySerializer(BaseModelSerializer):
+class VPNNestedIKEGatewaySerializer(BaseModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ikegateway-detail")
 
     class Meta:
@@ -76,16 +79,16 @@ class NestedIKEGatewaySerializer(BaseModelSerializer):
         fields = ["id", "url", "display", "name"]
 
 
-class NestedInterfaceSerializer(BaseModelSerializer):
+class VPNNestedInterfaceSerializer(BaseModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="dcim-api:interface-detail")
-    device = NestedDeviceSerializer(read_only=True)  # Show device for context
+    device = VPNNestedDeviceSerializer(read_only=True)  # Show device for context
 
     class Meta:
         model = Interface
         fields = ["id", "url", "display", "name", "device"]  # Added device
 
 
-class NestedIPSECTunnelSerializer(BaseModelSerializer):
+class VPNNestedIPSECTunnelSerializer(BaseModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ipsectunnel-detail")
 
     class Meta:
@@ -93,7 +96,7 @@ class NestedIPSECTunnelSerializer(BaseModelSerializer):
         fields = ["id", "url", "display", "name"]
 
 
-class NestedTunnelMonitorProfileSerializer(BaseModelSerializer):
+class VPNNestedTunnelMonitorProfileSerializer(BaseModelSerializer):
     """Minimal serializer for related TunnelMonitorProfile objects."""
 
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:tunnelmonitorprofile-detail")
@@ -103,7 +106,7 @@ class NestedTunnelMonitorProfileSerializer(BaseModelSerializer):
         fields = ["id", "url", "display", "name"]
 
 
-class NestedPlatformSerializer(BaseModelSerializer):
+class VPNNestedPlatformSerializer(BaseModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="dcim-api:platform-detail")
 
     class Meta:
@@ -113,7 +116,7 @@ class NestedPlatformSerializer(BaseModelSerializer):
 
 class IKECryptoSerializer(BaseModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ikecrypto-detail")
-    status = NestedStatusSerializer(required=False, allow_null=True, read_only=True)
+    status = VPNNestedStatusSerializer(required=False, allow_null=True, read_only=True)
     status_id = serializers.PrimaryKeyRelatedField(
         queryset=Status.objects.all(), source="status", write_only=True, required=False, allow_null=True, label="Status"
     )
@@ -141,7 +144,7 @@ class IKECryptoSerializer(BaseModelSerializer):
 
 class IPSecCryptoSerializer(BaseModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ipseccrypto-detail")
-    status = NestedStatusSerializer(required=False, allow_null=True, read_only=True)
+    status = VPNNestedStatusSerializer(required=False, allow_null=True, read_only=True)
     status_id = serializers.PrimaryKeyRelatedField(
         queryset=Status.objects.all(), source="status", write_only=True, required=False, allow_null=True, label="Status"
     )
@@ -173,16 +176,16 @@ class IKEGatewaySerializer(BaseModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ikegateway-detail")
 
     # Read-only Nested Representations
-    local_devices = NestedDeviceSerializer(many=True, read_only=True)
-    peer_devices = NestedDeviceSerializer(many=True, read_only=True, required=False)
-    local_locations = NestedLocationSerializer(many=True, read_only=True, required=False)
-    peer_locations = NestedLocationSerializer(many=True, read_only=True, required=False)
-    ike_crypto_profile = NestedIKECryptoSerializer(read_only=True, required=False, allow_null=True)
-    status = NestedStatusSerializer(read_only=True, required=False, allow_null=True)
+    local_devices = VPNNestedDeviceSerializer(many=True, read_only=True)
+    peer_devices = VPNNestedDeviceSerializer(many=True, read_only=True, required=False)
+    local_locations = VPNNestedLocationSerializer(many=True, read_only=True, required=False)
+    peer_locations = VPNNestedLocationSerializer(many=True, read_only=True, required=False)
+    ike_crypto_profile = VPNNestedIKECryptoSerializer(read_only=True, required=False, allow_null=True)
+    status = VPNNestedStatusSerializer(read_only=True, required=False, allow_null=True)
     # <<< ADDED: bind_interface read-only nested representation
-    bind_interface = NestedInterfaceSerializer(read_only=True, required=False, allow_null=True)
-    local_platform = NestedPlatformSerializer(read_only=True, required=False, allow_null=True)
-    peer_platform = NestedPlatformSerializer(read_only=True, required=False, allow_null=True)
+    bind_interface = VPNNestedInterfaceSerializer(read_only=True, required=False, allow_null=True)
+    local_platform = VPNNestedPlatformSerializer(read_only=True, required=False, allow_null=True)
+    peer_platform = VPNNestedPlatformSerializer(read_only=True, required=False, allow_null=True)
 
     # Writeable Related Field Selectors
     local_device_ids = serializers.PrimaryKeyRelatedField(
@@ -377,7 +380,7 @@ class TunnelMonitorProfileSerializer(BaseModelSerializer):
 # --- IPSecProxyIDSerializer (No changes) ---
 class IPSecProxyIDSerializer(BaseModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ipsecproxyid-detail")
-    tunnel = NestedIPSECTunnelSerializer(read_only=True)
+    tunnel = VPNNestedIPSECTunnelSerializer(read_only=True)
     tunnel_id = serializers.PrimaryKeyRelatedField(
         queryset=IPSECTunnel.objects.all(),
         source="tunnel",
@@ -433,14 +436,14 @@ class IPSECTunnelSerializer(BaseModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ipsectunnel-detail")
 
     # --- Read-only Nested Representations ---
-    devices = NestedDeviceSerializer(many=True, read_only=True)
-    ike_gateway = NestedIKEGatewaySerializer(read_only=True, required=False, allow_null=True)
-    ipsec_crypto_profile = NestedIPSecCryptoSerializer(read_only=True, required=False, allow_null=True)
-    status = NestedStatusSerializer(read_only=True, required=False, allow_null=True)
-    tunnel_interface = NestedInterfaceSerializer(read_only=True, required=False, allow_null=True)
+    devices = VPNNestedDeviceSerializer(many=True, read_only=True)
+    ike_gateway = VPNNestedIKEGatewaySerializer(read_only=True, required=False, allow_null=True)
+    ipsec_crypto_profile = VPNNestedIPSecCryptoSerializer(read_only=True, required=False, allow_null=True)
+    status = VPNNestedStatusSerializer(read_only=True, required=False, allow_null=True)
+    tunnel_interface = VPNNestedInterfaceSerializer(read_only=True, required=False, allow_null=True)
     # --- REMOVED: bind_interface read-only nested representation ---
-    # bind_interface = NestedInterfaceSerializer(read_only=True, required=False, allow_null=True)
-    monitor_profile = NestedTunnelMonitorProfileSerializer(read_only=True, required=False, allow_null=True)
+    # bind_interface = VPNNestedInterfaceSerializer(read_only=True, required=False, allow_null=True)
+    monitor_profile = VPNNestedTunnelMonitorProfileSerializer(read_only=True, required=False, allow_null=True)
     proxy_ids = IPSecProxyIDSerializer(many=True, read_only=True)
     role = ChoiceField(choices=TunnelRoleChoices.choices, required=False, allow_null=True)
 

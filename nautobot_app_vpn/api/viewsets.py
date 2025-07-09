@@ -12,6 +12,7 @@ from nautobot_app_vpn.api.serializers import (
     IPSecProxyIDSerializer,
     IPSECTunnelSerializer,
     TunnelMonitorProfileSerializer,
+    DummySerializer,
 )
 
 from nautobot_app_vpn.filters import (
@@ -192,6 +193,7 @@ def latlon_to_xy(lat, lon, svg_width=2754, svg_height=1398):
 
 
 class VPNTopologyNeo4jView(APIView):
+    serializer_class = DummySerializer
     """API view to return VPN topology nodes and edges for visualization,
     sourced from Neo4j, with support for filtering.
     """
@@ -472,6 +474,7 @@ class VPNTopologyNeo4jView(APIView):
 
 
 class VPNTopologyFilterOptionsView(APIView):
+    serializer_class = DummySerializer
     """API view to return distinct filter options for countries, platforms, roles, etc.,
     primarily based on data currently associated with IPSECTunnels in Nautobot's relational DB.
     """
