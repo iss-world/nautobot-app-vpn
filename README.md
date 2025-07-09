@@ -88,13 +88,21 @@ The plugin provides a Neo4j-powered dashboard under **Plugins > VPN Dashboard**,
 
 ## Screenshots
 
-![VPN Menu](image.png)
-![VPN Dashborad](image-1.png)
-![IKE Crypto](image-2.png)
-![IPsec Crypto](image-3.png)
-![IKE Gateway](image-4.png)
-![IPSec Tunnel](image-5.png)
-![Tunnel Monitor](image-6.png)
+![VPN Menu](images/image.png)
+
+![VPN Dashboard](images/image-1.png)
+
+![IKE Crypto](images/image-2.png)
+
+![IPsec Crypto](images/image-3.png)
+
+![IKE Gateway](images/image-4.png)
+
+![IPSec Tunnel](images/image-5.png)
+
+![Tunnel Monitor](images/image-6.png)
+
+
 ---
 
 ## Development
