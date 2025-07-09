@@ -27,7 +27,6 @@ class IPSecCryptoUIViewSet(NautobotUIViewSet):
     filterset_form_class = IPSecCryptoFilterForm
     default_return_url = "plugins:nautobot_app_vpn:ipseccrypto_list"
 
-
     def bulk_destroy(self, request):
         """Bulk delete selected IPSec Crypto Profiles."""
         logger.debug(f"request.POST: {request.POST}")

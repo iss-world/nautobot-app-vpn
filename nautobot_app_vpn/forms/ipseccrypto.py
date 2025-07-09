@@ -6,10 +6,8 @@ from nautobot.apps.forms import NautobotFilterForm, NautobotModelForm
 from nautobot_app_vpn.models import IPSecCrypto
 
 
-
 class IPSecCryptoForm(NautobotModelForm):
     """Form for adding and editing IPSec Crypto Profiles."""
-
 
     class Meta:
         model = IPSecCrypto

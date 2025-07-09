@@ -20,9 +20,7 @@ logger = logging.getLogger(__name__)
 class IPSECTunnelUIViewSet(NautobotUIViewSet):
     """UI ViewSet for managing IPsec Tunnel objects."""
 
-
     queryset = IPSECTunnel.objects.select_related(
-
         "ike_gateway",
         "ipsec_crypto_profile",
         "status",
@@ -33,14 +31,12 @@ class IPSECTunnelUIViewSet(NautobotUIViewSet):
         "proxy_ids",
     )
 
-
     serializer_class = IPSECTunnelSerializer
     table_class = IPSECTunnelTable
     form_class = IPSECTunnelForm
     filterset_class = IPSECTunnelFilterSet
     filterset_form_class = IPSECTunnelFilterForm
     default_return_url = "plugins:nautobot_app_vpn:ipsectunnel_list"
-
 
     def create(self, request, *args, **kwargs):
         """Handle creation of IPSec Tunnel and its associated Proxy IDs."""
@@ -131,7 +127,6 @@ class IPSECTunnelUIViewSet(NautobotUIViewSet):
                 "editing": True,
             },
         )
-
 
     def bulk_destroy(self, request):
         """Handle bulk deletion of IPsec Tunnel objects."""

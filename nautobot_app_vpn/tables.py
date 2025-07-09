@@ -48,6 +48,7 @@ class IKECryptoProfileTable(StatusTableMixin, BaseTable):
 
 class IPSecCryptoProfileTable(StatusTableMixin, BaseTable):
     """Table for listing IPSec Crypto Profiles."""
+
     pk = ToggleColumn()
     name = tables.Column(linkify=True)
     actions = ButtonsColumn(model=IPSecCrypto)
@@ -256,6 +257,7 @@ class IPSecProxyIDTable(BaseTable):
 
 class VPNDashboardTable(BaseTable):
     """Table for listing VPN Dashboard."""
+
     pk = ToggleColumn()
     name = tables.Column(linkify=True)
     actions = ButtonsColumn(model=VPNDashboard)

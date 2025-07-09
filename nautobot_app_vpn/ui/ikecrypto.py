@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 class IKECryptoUIViewSet(NautobotUIViewSet):
     """UI ViewSet for IKE Crypto profiles."""
+
     model = IKECrypto
     queryset = IKECrypto.objects.all()
     filterset_class = IKECryptoFilterSet
@@ -25,7 +26,6 @@ class IKECryptoUIViewSet(NautobotUIViewSet):
     table_class = IKECryptoProfileTable
     serializer_class = IKECryptoSerializer
     default_return_url = "plugins:nautobot_app_vpn:ikecrypto_list"
-
 
     def bulk_destroy(self, request):
         """Handle bulk deletion of IKECrypto objects with logging and feedback."""

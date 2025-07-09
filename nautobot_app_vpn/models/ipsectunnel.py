@@ -14,7 +14,6 @@ from .ipseccrypto import IPSecCrypto
 from .tunnelmonitor import TunnelMonitorProfile
 
 
-
 class TunnelRoleChoices(models.TextChoices):
     PRIMARY = "primary", "Primary"
     SECONDARY = "secondary", "Secondary"
@@ -37,11 +36,9 @@ class IPSECTunnel(PrimaryModel):
     name = models.CharField(max_length=100, help_text="Unique name for the IPSec Tunnel.")
     description = models.TextField(blank=True, null=True, help_text="Optional description.")
 
-
     devices = models.ManyToManyField(
         Device, related_name="ipsec_tunnels", help_text="Firewall device(s) associated with this IPSec Tunnel (for HA)."
     )
-
 
     ike_gateway = models.ForeignKey(
         IKEGateway,
@@ -87,7 +84,6 @@ class IPSECTunnel(PrimaryModel):
         help_text="Role of this tunnel if part of a redundant setup (e.g., Primary, Backup).",
     )
 
-
     status = StatusField(
         on_delete=models.PROTECT, related_name="%(app_label)s_%(class)s_related", default=get_default_status
     )
@@ -116,7 +112,6 @@ class IPSECTunnel(PrimaryModel):
                 raise ValidationError(
                     {"monitor_profile": "Monitor Profile is required when tunnel monitoring is enabled."}
                 )
-
 
 
 class IPSecProxyID(models.Model):

@@ -483,10 +483,10 @@ class VPNTopologyNeo4jView(APIView):
 
 
 class VPNTopologyFilterOptionsView(APIView):
-
     """API view to return distinct filter options for countries, platforms, roles, etc.,
     primarily based on data currently associated with IPSECTunnels in Nautobot's relational DB.
     """
+
     serializer_class = DummySerializer
     permission_classes = [IsAuthenticated]
 

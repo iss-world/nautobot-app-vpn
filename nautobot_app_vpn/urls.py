@@ -27,7 +27,6 @@ router.register("dashboard", VPNDashboardViewSet, basename="vpn_dashboard")
 
 
 urlpatterns = [
-
     *router.urls,
 ]
 

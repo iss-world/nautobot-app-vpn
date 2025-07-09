@@ -198,7 +198,6 @@ class TunnelMonitorProfileFilterSet(NautobotFilterSet):
 class IPSECTunnelFilterSet(BaseFilterSet):
     """FilterSet for IPSECTunnel model."""
 
-
     role = django_filters.MultipleChoiceFilter(choices=TunnelRoleChoices.choices, label="Tunnel Role")
     devices = ModelMultipleChoiceFilter(queryset=Device.objects.all(), label="Devices")
     ike_gateway = ModelMultipleChoiceFilter(queryset=IKEGateway.objects.all(), label="IKE Gateway")

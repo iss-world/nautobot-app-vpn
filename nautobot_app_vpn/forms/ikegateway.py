@@ -28,10 +28,8 @@ from nautobot_app_vpn.models.constants import (
 )
 
 
-
 class IKEGatewayForm(NautobotModelForm):
     """Form for creating and editing IKE Gateway profiles."""
-
 
     local_devices = DynamicModelMultipleChoiceField(
         queryset=Device.objects.filter(platform__name="PanOS"),  # Base queryset
@@ -57,7 +55,6 @@ class IKEGatewayForm(NautobotModelForm):
         required=False,
         widget=APISelectMultiple(attrs={"class": "form-control"}),
     )
-
 
     local_ip_type = forms.ChoiceField(
         choices=[("", "---------")] + IPAddressTypes.choices,
@@ -101,7 +98,6 @@ class IKEGatewayForm(NautobotModelForm):
         required=True,
         widget=forms.Select(attrs={"class": "form-control"}),
     )
-
 
     bind_interface = DynamicModelChoiceField(
         queryset=Interface.objects.all(),  # Base queryset
@@ -190,7 +186,6 @@ class IKEGatewayForm(NautobotModelForm):
         """Customize initialization for dynamic field options."""
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
-
             if "pre_shared_key" in self.fields:
                 self.fields["pre_shared_key"].required = False
                 self.fields["pre_shared_key"].widget.attrs["placeholder"] = "Leave blank to keep unchanged"

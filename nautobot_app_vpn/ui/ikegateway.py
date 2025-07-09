@@ -18,7 +18,6 @@ logger = logging.getLogger(__name__)
 class IKEGatewayUIViewSet(NautobotUIViewSet):
     """UI ViewSet for managing IKE Gateway objects."""
 
-
     queryset = IKEGateway.objects.select_related("ike_crypto_profile", "bind_interface", "status").prefetch_related(
         "local_devices", "peer_devices", "local_locations", "peer_locations"
     )
@@ -30,7 +29,6 @@ class IKEGatewayUIViewSet(NautobotUIViewSet):
     filterset_class = IKEGatewayFilterSet
     filterset_form_class = IKEGatewayFilterForm
     default_return_url = "plugins:nautobot_app_vpn:ikegateway_list"
-
 
     def bulk_destroy(self, request):
         """Bulk delete selected IKE Gateways."""

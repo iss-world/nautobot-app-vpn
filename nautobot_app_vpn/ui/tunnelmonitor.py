@@ -20,7 +20,6 @@ logger = logging.getLogger(__name__)
 class TunnelMonitorProfileUIViewSet(NautobotUIViewSet):
     """UI ViewSet for managing Tunnel Monitor Profile objects."""
 
-
     queryset = TunnelMonitorProfile.objects.all()
     serializer_class = TunnelMonitorProfileSerializer
     table_class = TunnelMonitorProfileTable
@@ -28,10 +27,8 @@ class TunnelMonitorProfileUIViewSet(NautobotUIViewSet):
     filterset_class = TunnelMonitorProfileFilterSet
     filterset_form_class = TunnelMonitorProfileFilterForm
 
-
     default_return_url = "plugins:nautobot_app_vpn:tunnelmonitorprofile_list"
     lookup_field = "pk"
-
 
     def bulk_destroy(self, request):
         """Handle bulk deletion of Tunnel Monitor Profile objects."""

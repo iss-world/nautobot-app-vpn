@@ -1,4 +1,5 @@
 """Serializers for Nautobot VPN Plugin."""
+
 from nautobot.apps.api import BaseModelSerializer, ChoiceField
 
 # Import Location model
@@ -31,6 +32,7 @@ from nautobot_app_vpn.models.constants import (
 
 class DummySerializer(serializers.Serializer):
     """Dummy serializer placeholder."""
+
     dummy = serializers.CharField()
 
 
@@ -137,6 +139,7 @@ class VPNNestedPlatformSerializer(BaseModelSerializer):
 
 class IKECryptoSerializer(BaseModelSerializer):
     """Serializer for IKECrypto objects."""
+
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ikecrypto-detail")
     status = VPNNestedStatusSerializer(required=False, allow_null=True, read_only=True)
     status_id = serializers.PrimaryKeyRelatedField(
@@ -166,6 +169,7 @@ class IKECryptoSerializer(BaseModelSerializer):
 
 class IPSecCryptoSerializer(BaseModelSerializer):
     """Serializer for IPSecCrypto objects."""
+
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ipseccrypto-detail")
     status = VPNNestedStatusSerializer(required=False, allow_null=True, read_only=True)
     status_id = serializers.PrimaryKeyRelatedField(
@@ -192,7 +196,6 @@ class IPSecCryptoSerializer(BaseModelSerializer):
             "last_updated",
         ]
         read_only_fields = ["id", "display", "url", "status", "created", "last_updated"]
-
 
 
 class IKEGatewaySerializer(BaseModelSerializer):
@@ -386,7 +389,6 @@ class IKEGatewaySerializer(BaseModelSerializer):
         return data
 
 
-
 class TunnelMonitorProfileSerializer(BaseModelSerializer):
     """Serializer for Tunnel Monitor Profiles."""
 
@@ -397,7 +399,6 @@ class TunnelMonitorProfileSerializer(BaseModelSerializer):
         model = TunnelMonitorProfile
         fields = ["id", "display", "url", "name", "action", "interval", "threshold", "created", "last_updated"]
         read_only_fields = ["id", "display", "url", "created", "last_updated"]
-
 
 
 class IPSecProxyIDSerializer(BaseModelSerializer):
@@ -431,7 +432,6 @@ class IPSecProxyIDSerializer(BaseModelSerializer):
         read_only_fields = ["id", "url", "display", "tunnel"]
 
 
-
 class VPNDashboardSerializer(BaseModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:vpndashboard-detail")
 
@@ -455,7 +455,6 @@ class VPNDashboardSerializer(BaseModelSerializer):
         read_only_fields = ["id", "url", "display", "created", "last_updated"]
 
 
-
 class IPSECTunnelSerializer(BaseModelSerializer):
     """Serializer for IPSECTunnel objects."""
 
@@ -469,7 +468,6 @@ class IPSECTunnelSerializer(BaseModelSerializer):
     monitor_profile = VPNNestedTunnelMonitorProfileSerializer(read_only=True, required=False, allow_null=True)
     proxy_ids = IPSecProxyIDSerializer(many=True, read_only=True)
     role = ChoiceField(choices=TunnelRoleChoices.choices, required=False, allow_null=True)
-
 
     device_ids = serializers.PrimaryKeyRelatedField(
         queryset=Device.objects.all(),
@@ -516,7 +514,6 @@ class IPSECTunnelSerializer(BaseModelSerializer):
         label="Monitor Profile (ID)",
     )
 
-
     class Meta:
         model = IPSECTunnel
         fields = [
@@ -562,7 +559,6 @@ class IPSECTunnelSerializer(BaseModelSerializer):
             "last_sync",
         ]
 
-
     def validate(self, data):
         monitor_enabled = data.get(
             "enable_tunnel_monitor", getattr(self.instance, "enable_tunnel_monitor", False) if self.instance else False
@@ -571,7 +567,6 @@ class IPSECTunnelSerializer(BaseModelSerializer):
             "monitor_destination_ip", getattr(self.instance, "monitor_destination_ip", None) if self.instance else None
         )
         profile_id_submitted = "monitor_profile_id" in data
-
 
         if monitor_enabled:
             if not dest_ip:

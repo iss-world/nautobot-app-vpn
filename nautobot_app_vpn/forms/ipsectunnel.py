@@ -26,7 +26,6 @@ from nautobot_app_vpn.models import (
 )
 
 
-
 class IPSECTunnelForm(NautobotModelForm):
     """Form for creating and editing IPSec Tunnel configurations."""
 
@@ -62,7 +61,6 @@ class IPSECTunnelForm(NautobotModelForm):
         widget=forms.Select(attrs={"class": "form-control"}),
     )
 
-
     role = forms.ChoiceField(
         choices=TunnelRoleChoices.choices,
         required=False,  # Make role optional
@@ -81,7 +79,6 @@ class IPSECTunnelForm(NautobotModelForm):
         required=False,
         widget=forms.Select(attrs={"class": "form-control"}),
     )
-
 
     class Meta:
         model = IPSECTunnel
@@ -103,7 +100,6 @@ class IPSECTunnelForm(NautobotModelForm):
             "description": forms.Textarea(attrs={"rows": 3, "class": "form-control"}),
             # No widget needed for bind_interface as it's removed
         }
-
 
     def clean(self):
         """Ensure selected interface exists and is valid."""
@@ -137,6 +133,7 @@ class IPSECTunnelForm(NautobotModelForm):
 
 class IPSecProxyIDForm(BootstrapMixin, forms.ModelForm):
     """Form for creating and editing IPSec Proxy-ID entries."""
+
     class Meta:
         model = IPSecProxyID
         fields = [
@@ -182,7 +179,6 @@ IPSecProxyIDFormSet = inlineformset_factory(
     extra=1,
     can_delete=True,
 )
-
 
 
 class IPSECTunnelFilterForm(NautobotFilterForm):

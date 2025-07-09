@@ -182,8 +182,6 @@ class SyncNeo4jJob(Job):
                 neo4j_nodes_to_create = {}
                 neo4j_edges_to_create = []
 
-
-
                 def get_node_id(devices_list=None, manual_name=None):
                     if devices_list:
                         # Device group, sort by PKs for stability
@@ -229,7 +227,6 @@ class SyncNeo4jJob(Job):
                         continue
 
                     peer_devs_group = list(gw.peer_devices.all())
-
 
                     local_node_id_val = get_node_id(devices_list=local_devs_group)
                     if local_node_id_val and local_node_id_val not in neo4j_nodes_to_create:
