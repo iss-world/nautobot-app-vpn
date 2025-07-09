@@ -88,19 +88,19 @@ The plugin provides a Neo4j-powered dashboard under **Plugins > VPN Dashboard**,
 
 ## Screenshots
 
-![VPN Menu](docs/images/image.png)
+![VPN Menu](https://raw.githubusercontent.com/npolisetty26/nautobot-app-vpn/main/docs/images/image.png)
 
-![VPN Dashboard](docs/images/image-1.png)
+![VPN Dashboard](https://raw.githubusercontent.com/npolisetty26/nautobot-app-vpn/main/docs/images/image-1.png)
 
-![IKE Crypto](docs/images/image-2.png)
+![IKE Crypto](https://raw.githubusercontent.com/npolisetty26/nautobot-app-vpn/main/docs/images/image-2.png)
 
-![IPsec Crypto](docs/images/image-3.png)
+![IPsec Crypto](https://raw.githubusercontent.com/npolisetty26/nautobot-app-vpn/main/docs/images/image-3.png)
 
-![IKE Gateway](docs/images/image-4.png)
+![IKE Gateway](https://raw.githubusercontent.com/npolisetty26/nautobot-app-vpn/main/docs/images/image-4.png)
 
-![IPSec Tunnel](docs/images/image-5.png)
+![IPSec Tunnel](https://raw.githubusercontent.com/npolisetty26/nautobot-app-vpn/main/docs/images/image-5.png)
 
-![Tunnel Monitor](docs/images/image-6.png)
+![Tunnel Monitor](https://raw.githubusercontent.com/npolisetty26/nautobot-app-vpn/main/docs/images/image-6.png)
 
 ---
 
