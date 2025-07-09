@@ -29,7 +29,7 @@ include = [
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
-nautobot = ">=2.4.10,<2.5.0"
+nautobot = {version = "2.4.10", python = "3.11"}
 neo4j = "^5.0"
 django = "^4.2"
 djangorestframework = "^3.15"
