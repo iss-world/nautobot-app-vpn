@@ -28,8 +28,10 @@ from nautobot_app_vpn.models.constants import (
 
 # --- Nested Serializers ---
 
+
 class DummySerializer(serializers.Serializer):
     dummy = serializers.CharField()
+
 
 class VPNNestedDeviceSerializer(BaseModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="dcim-api:device-detail")
