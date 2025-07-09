@@ -46,8 +46,6 @@ from nautobot_app_vpn.models import (
     VPNDashboard,
 )
 
-from nautobot.core.api.views import ModelViewSet
-
 logger = logging.getLogger(__name__)
 
 
