@@ -1,7 +1,7 @@
 ---
 nautobot_app_vpn:
   project_name: "nautobot_app_vpn"
-  nautobot_ver: "2.0.0"
+  nautobot_ver: "2.4.10"
   local: false
   python_ver: "3.11"
   compose_dir: "development"

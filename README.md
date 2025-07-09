@@ -131,7 +131,7 @@ Pull requests are welcome! Please ensure code follows Nautobot plugin guidelines
 
 ## License
 
-Apache License 2.0. See [LICENSE](LICENSE) for details.
+Apache License 2.0. See [LICENSE](https://github.com/npolisetty26/nautobot-app-vpn/blob/main/LICENSE) for details.
 
 ---
 
