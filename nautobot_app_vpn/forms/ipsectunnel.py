@@ -1,4 +1,5 @@
 """Forms for managing IPSec Tunnels in the Nautobot VPN app."""
+# pylint: disable=too-many-ancestors, too-few-public-methods, too-many-locals, too-many-branches, too-many-statements
 
 from django import forms
 from django.forms.models import inlineformset_factory
@@ -82,19 +83,7 @@ class IPSECTunnelForm(NautobotModelForm):
 
     class Meta:
         model = IPSECTunnel
-        fields = [
-            "name",
-            "description",
-            "devices",
-            "ike_gateway",
-            "ipsec_crypto_profile",
-            "tunnel_interface",  # "bind_interface", removed from here
-            "role",
-            "enable_tunnel_monitor",
-            "monitor_destination_ip",
-            "monitor_profile",
-            "status",
-        ]
+        fields = "__all__"
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "description": forms.Textarea(attrs={"rows": 3, "class": "form-control"}),
@@ -109,7 +98,7 @@ class IPSECTunnelForm(NautobotModelForm):
         if cleaned_data is None:
             return None
 
-        # Validation for tunnel monitoring fields (Keep this)
+
         monitor_enabled = cleaned_data.get("enable_tunnel_monitor")
         dest_ip = cleaned_data.get("monitor_destination_ip")
         profile = cleaned_data.get("monitor_profile")

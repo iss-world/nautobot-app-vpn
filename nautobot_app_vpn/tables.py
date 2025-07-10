@@ -1,4 +1,5 @@
 """Table definitions for Nautobot VPN plugin."""
+# pylint: disable=too-few-public-methods
 
 import django_tables2 as tables
 from nautobot.apps.tables import (
@@ -180,7 +181,7 @@ class IPSECTunnelTable(StatusTableMixin, BaseTable):
     pk = ToggleColumn()
     name = tables.Column(linkify=True)
     devices_display = tables.Column(accessor="device_names", verbose_name="Devices")
-    role = tables.Column(order_by=("role"))
+    role = tables.Column(order_by="role")
     ike_gateway = tables.Column(linkify=True)
     ipsec_crypto_profile = tables.Column(linkify=True)
     tunnel_interface = tables.Column(linkify=True)
@@ -216,7 +217,7 @@ class IPSECTunnelTable(StatusTableMixin, BaseTable):
             "role",
             "devices_display",
             "ike_gateway",
-            "ipsec_crypto_profile",  # Added role
+            "ipsec_crypto_profile",
             "tunnel_interface",
             "enable_tunnel_monitor",
             "status",
@@ -231,7 +232,7 @@ class IPSecProxyIDTable(BaseTable):
 
     pk = ToggleColumn()
     tunnel = tables.Column(linkify=True)
-    actions = ButtonsColumn(model=IPSecProxyID, pk_field="id")  # Changed pk_field to 'id'
+    actions = ButtonsColumn(model=IPSecProxyID, pk_field="id")
 
     class Meta(BaseTable.Meta):
         model = IPSecProxyID

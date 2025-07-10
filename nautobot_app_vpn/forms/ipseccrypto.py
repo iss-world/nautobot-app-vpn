@@ -1,4 +1,5 @@
 """Forms for managing IPSec Crypto profiles in the Nautobot VPN app."""
+# pylint: disable=too-many-ancestors, too-few-public-methods, too-many-locals, too-many-branches, too-many-statements
 
 from django import forms
 from nautobot.apps.forms import NautobotFilterForm, NautobotModelForm
@@ -11,17 +12,7 @@ class IPSecCryptoForm(NautobotModelForm):
 
     class Meta:
         model = IPSecCrypto
-        fields = [
-            "name",
-            "description",
-            "encryption",
-            "authentication",
-            "dh_group",
-            "protocol",
-            "lifetime",
-            "lifetime_unit",
-            "status",
-        ]
+        fields = "__all__"
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Profile Name"}),
             "description": forms.Textarea(

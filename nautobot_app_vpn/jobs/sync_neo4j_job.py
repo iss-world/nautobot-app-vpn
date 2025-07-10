@@ -1,4 +1,6 @@
 """Job to synchronize VPN topology into Neo4j."""
+# pylint: disable=too-many-statements, too-many-branches, too-many-locals, too-few-public-methods, duplicate-code
+# noqa: PLR0915, PLR0912, PLR0914
 
 import json
 import logging
@@ -116,9 +118,9 @@ class SyncNeo4jJob(Job):
         if not all(hasattr(settings, attr) for attr in ["NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"]):
             msg = "Neo4j connection settings (NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD) are not configured in Nautobot settings."
             log_job_failure(msg)
-            raise Exception(msg)
+            raise RuntimeError(msg)
 
-        log_job_info(f"🔗 Connecting to Neo4j at {settings.NEO4J_URI}...")
+        log_job_info("🔗 Connecting to Neo4j at %s...", settings.NEO4J_URI)
         driver = None
         try:
             driver = GraphDatabase.driver(settings.NEO4J_URI, auth=(settings.NEO4J_USER, settings.NEO4J_PASSWORD))
@@ -129,20 +131,20 @@ class SyncNeo4jJob(Job):
             log_job_failure(msg)
             if driver:
                 driver.close()
-            raise Exception(msg)
+            raise RuntimeError(msg)
         except neo4j_exceptions.AuthError as e:
             msg = f"Failed to connect to Neo4j: Authentication Error. {e}"
             log_job_failure(msg)
             if driver:
                 driver.close()
-            raise Exception(msg)
+            raise RuntimeError(msg)
         except Exception as e:
             msg = f"Failed to connect to Neo4j: {e}"
             log_job_failure(msg)
-            logger.error("Neo4j Connection Exception Details:", exc_info=True)
+            logger.error("Neo4j Connection Exception Details: %s", e, exc_info=True)
             if driver:
                 driver.close()
-            raise Exception(msg)
+            raise RuntimeError(msg)
 
         now_utc = datetime.now(UTC)
         processed_node_counts = {"DeviceGroup": 0, "ManualPeer": 0}
@@ -157,8 +159,8 @@ class SyncNeo4jJob(Job):
                 except Exception as e:
                     msg = f"Failed to clear Neo4j subgraph: {e}"
                     log_job_failure(msg)
-                    logger.error("Neo4j Clear Subgraph Exception Details:", exc_info=True)
-                    raise Exception(msg)
+                    logger.error("Neo4j Clear Subgraph Exception Details: %s", exc, exc_info=True)
+                    raise RuntimeError(msg)
 
                 device_prefetch_qs = Device.objects.select_related(
                     "platform", "role", "location", "status", "device_type", "primary_ip4"
@@ -357,7 +359,8 @@ class SyncNeo4jJob(Job):
                             }
                             processed_node_counts["DeviceGroup"] += 1
                     else:
-                        logger.warning(f"No peer devices/manual peer data for tunnel {tunnel.name} ({tunnel.pk})")
+                        logger.warning("No peer devices/manual peer data for tunnel %s (%s)", tunnel.name, tunnel.pk)
+
                         continue
 
                     # --- Edge ---
@@ -416,7 +419,7 @@ class SyncNeo4jJob(Job):
 
                 # --- Bulk Node/Edge Upserts ---
                 if neo4j_nodes_to_create:
-                    log_job_info(f"Creating/updating {len(neo4j_nodes_to_create)} VPNNodes in Neo4j...")
+                    log_job_info("Creating/updating %s VPNNodes in Neo4j...", len(neo4j_nodes_to_create))
                     node_payloads = list(neo4j_nodes_to_create.values())
                     session.execute_write(
                         lambda tx: tx.run(
@@ -428,10 +431,10 @@ class SyncNeo4jJob(Job):
                             {"nodes_batch": node_payloads},
                         )
                     )
-                    log_job_debug(f"Processed {len(node_payloads)} nodes for Neo4j.")
+                    log_job_debug("Processed %s nodes for Neo4j.", len(node_payloads))
 
                 if neo4j_edges_to_create:
-                    log_job_info(f"Creating/updating {len(neo4j_edges_to_create)} TUNNEL relationships in Neo4j...")
+                    log_job_info("Creating/updating %s TUNNEL relationships in Neo4j...", len(neo4j_edges_to_create))
                     session.execute_write(
                         lambda tx: tx.run(
                             """
@@ -444,7 +447,7 @@ class SyncNeo4jJob(Job):
                             {"edges_batch": neo4j_edges_to_create},
                         )
                     )
-                    log_job_debug(f"Processed {len(neo4j_edges_to_create)} edges for Neo4j.")
+                    log_job_debug("Processed %s edges for Neo4j.", len(neo4j_edges_to_create))
 
                 # --- Update Dashboard Meta ---
                 try:
@@ -465,7 +468,7 @@ class SyncNeo4jJob(Job):
                         dashboard.save()
                     log_job_info("Updated VPNDashboard with sync status.")
                 except Exception as e:
-                    log_job_warning(f"Failed to update VPNDashboard: {e}")
+                    log_job_warning("Failed to update VPNDashboard: %s", e)
 
                 log_job_success(
                     f"Neo4j sync complete. DeviceGroup Nodes: {processed_node_counts['DeviceGroup']}, "
@@ -496,9 +499,9 @@ class SyncNeo4jJob(Job):
                     )
                     dashboard.save()
             except Exception as dash_err:
-                log_job_warning(f"Failed to update VPNDashboard with error status: {dash_err}")
+                log_job_warning("Failed to update VPNDashboard with error status: %s", dash_err)
 
-            raise Exception(msg)
+            raise RuntimeError(msg)
         finally:
             if driver:
                 driver.close()

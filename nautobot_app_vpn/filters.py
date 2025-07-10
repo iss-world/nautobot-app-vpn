@@ -1,4 +1,5 @@
 """FilterSet classes for Nautobot VPN plugin models."""
+# pylint: disable=too-many-ancestors
 
 import django_filters
 from django_filters import BooleanFilter, CharFilter, ModelMultipleChoiceFilter
@@ -19,7 +20,7 @@ from nautobot_app_vpn.models import (
     TunnelMonitorProfile,
     TunnelRoleChoices,  # Import RoleChoices
 )
-from nautobot_app_vpn.models.constants import (  # Shortened for brevity
+from nautobot_app_vpn.models.constants import (
     AuthenticationAlgorithms,
     DiffieHellmanGroups,
     EncryptionAlgorithms,
@@ -55,18 +56,7 @@ class IKECryptoFilterSet(BaseFilterSet):
 
     class Meta:
         model = IKECrypto
-        fields = [
-            "id",
-            "q",
-            "name",
-            "description",
-            "dh_group",
-            "encryption",
-            "authentication",
-            "lifetime",
-            "lifetime_unit",
-            "status",
-        ]
+        fields = "__all__"
 
 
 class IPSecCryptoFilterSet(BaseFilterSet):
@@ -81,20 +71,7 @@ class IPSecCryptoFilterSet(BaseFilterSet):
 
     class Meta:
         model = IPSecCrypto
-        fields = [
-            "id",
-            "q",
-            "name",
-            "description",
-            "encryption",
-            "authentication",
-            "dh_group",
-            "protocol",
-            "lifetime",
-            "lifetime_unit",
-            "status",
-        ]
-
+        fields = "__all__"
 
 class IKEGatewayFilterSet(BaseFilterSet):
     """FilterSet for IKEGateway model."""
@@ -142,41 +119,10 @@ class IKEGatewayFilterSet(BaseFilterSet):
 
     class Meta:
         model = IKEGateway
-        fields = [
-            "id",
-            "q",
-            "name",
-            "description",
-            "local_devices",
-            "peer_devices",
-            "local_locations",
-            "peer_locations",
-            "peer_location_manual",
-            "bind_interface",
-            "local_ip",
-            "peer_ip",
-            "authentication_type",
-            "ike_crypto_profile",
-            "status",
-            "ike_version",
-            "exchange_mode",
-            "local_ip_type",
-            "peer_ip_type",
-            "local_id_type",
-            "peer_id_type",
-            "peer_device_manual",
-            "enable_passive_mode",
-            "enable_nat_traversal",
-            "enable_dpd",
-            "local_platform",
-            "peer_platform",
-            "limit",
-            "offset",
-            "depth",
-            "exclude_m2m",
-        ]
+        fields = "__all__"
 
-    def do_nothing_filter(self, queryset, name, value):
+    def do_nothing_filter(self, queryset, name, value): # noqa: ARG002
+        """No-op filter method to absorb unsupported filter fields."""
         return queryset
 
 
@@ -192,7 +138,7 @@ class TunnelMonitorProfileFilterSet(NautobotFilterSet):
     class Meta:
         model = TunnelMonitorProfile
         # 'q' is defined above, 'status' not applicable
-        fields = ["id", "name", "action", "interval", "threshold"]
+        fields = "__all__"
 
 
 class IPSECTunnelFilterSet(BaseFilterSet):
@@ -209,22 +155,7 @@ class IPSECTunnelFilterSet(BaseFilterSet):
 
     class Meta:
         model = IPSECTunnel
-        # Add 'role' to fields list
-        fields = [
-            "id",
-            "q",
-            "name",
-            "description",
-            "devices",
-            "ike_gateway",
-            "ipsec_crypto_profile",
-            "tunnel_interface",
-            "role",  # Added role
-            "enable_tunnel_monitor",
-            "monitor_destination_ip",
-            "monitor_profile",
-            "status",
-        ]
+        fields = "__all__"
 
 
 class IPSecProxyIDFilterSet(NautobotFilterSet):
@@ -239,4 +170,4 @@ class IPSecProxyIDFilterSet(NautobotFilterSet):
 
     class Meta:
         model = IPSecProxyID
-        fields = ["id", "tunnel", "local_subnet", "remote_subnet", "protocol", "local_port", "remote_port"]
+        fields = "__all__"

@@ -1,6 +1,5 @@
 """App declaration for nautobot_app_vpn."""
 
-# Metadata is inherited from Nautobot. If not including Nautobot in the environment, this should be added
 from importlib import metadata
 
 from nautobot.apps import NautobotAppConfig
@@ -27,10 +26,8 @@ class NautobotAppVpnConfig(NautobotAppConfig):
 
     def ready(self):
         super().ready()
-        # ✅ Register jobs only when registry is ready
-        from nautobot.apps import jobs
-
-        from .jobs.sync_neo4j_job import SyncNeo4jJob
+        from nautobot.apps import jobs  # noqa: C0415
+        from .jobs.sync_neo4j_job import SyncNeo4jJob  # noqa: C0415
 
         jobs.register_jobs(
             SyncNeo4jJob,
@@ -38,4 +35,4 @@ class NautobotAppVpnConfig(NautobotAppConfig):
 
 
 # Required for Nautobot to detect the plugin
-config = NautobotAppVpnConfig
+config = NautobotAppVpnConfig # noqa: C0103

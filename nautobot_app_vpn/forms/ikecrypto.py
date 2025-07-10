@@ -1,11 +1,11 @@
 """Forms for managing IKECrypto profiles in the Nautobot VPN app."""
+# pylint: disable=too-many-ancestors, too-few-public-methods, too-many-locals, too-many-branches, too-many-statements
+
 
 from django import forms
 from nautobot.apps.forms import NautobotFilterForm, NautobotModelForm
-
 from nautobot_app_vpn.models import IKECrypto
 
-# from nautobot.core.forms.widgets import APISelect
 
 
 class IKECryptoForm(NautobotModelForm):
@@ -13,16 +13,7 @@ class IKECryptoForm(NautobotModelForm):
 
     class Meta:
         model = IKECrypto
-        fields = [
-            "name",
-            "description",
-            "dh_group",
-            "encryption",
-            "authentication",
-            "lifetime",
-            "lifetime_unit",
-            "status",
-        ]
+        fields = "__all__"
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Profile Name"}),
             "description": forms.Textarea(

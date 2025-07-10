@@ -1,16 +1,18 @@
 """API viewsets for the Nautobot VPN plugin."""
+# pylint: disable=too-many-ancestors, too-many-locals, too-many-branches, too-many-statements, too-many-nested-blocks
 
 import logging
 import random
 from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
+
 from rest_framework import filters, viewsets
-from neo4j import GraphDatabase
-from neo4j import exceptions as neo4j_exceptions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from neo4j import GraphDatabase
+from neo4j import exceptions as neo4j_exceptions
 
 from nautobot.dcim.models import Platform
 from nautobot_app_vpn.api.pagination import StandardResultsSetPagination
@@ -105,11 +107,13 @@ class IKEGatewayViewSet(viewsets.ModelViewSet):
     ]
     pagination_class = StandardResultsSetPagination
 
-    # Simplified perform_create/update (no changes needed here)
+
     def perform_create(self, serializer):
+        """Create a new VPN object via API."""
         serializer.save()
 
     def perform_update(self, serializer):
+        """Update a new VPN object via API."""
         serializer.save()
 
 
@@ -171,9 +175,11 @@ class IPSECTunnelViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
 
     def perform_create(self, serializer):
+        """Create a new VPN object via API."""
         serializer.save()
 
     def perform_update(self, serializer):
+        """Update a new VPN object via API."""
         serializer.save()
 
 
@@ -274,7 +280,7 @@ class VPNTopologyNeo4jView(APIView):
         return nodes_query_string, edges_query_string, query_params
 
     def get(self, request):
-        logger.info(f"Neo4j VPN Topology GET request from user {request.user} with filters: {request.GET.dict()}")
+        logger.info("Neo4j VPN Topology GET request from user %s with filters: %s", request.user, request.GET.dict())
 
         if not all(hasattr(settings, attr) for attr in ["NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"]):
             logger.error("Neo4j connection settings are not fully configured in Nautobot settings.")
@@ -284,19 +290,19 @@ class VPNTopologyNeo4jView(APIView):
         try:
             driver = GraphDatabase.driver(settings.NEO4J_URI, auth=(settings.NEO4J_USER, settings.NEO4J_PASSWORD))
             driver.verify_connectivity()
-        except Exception as e:
-            logger.error(f"Failed to connect to Neo4j for topology view: {e}", exc_info=True)
+        except Exception as exc:
+            logger.error("Failed to connect to Neo4j for topology view: %s", exc, exc_info=True)
             return Response({"error": "Could not connect to graph database."}, status=503)
 
         formatted_nodes = []
         formatted_edges = []
 
         request_filters = request.GET.dict()
-        nodes_cypher, edges_cypher, query_params_base = self._build_cypher_queries_and_params(request_filters)
+        nodes_cypher, edges_cypher, query_params_base = self._build_cypher_queries_and_params(request_filters) # noqa: F841
 
         try:
             with driver.session(database=getattr(settings, "NEO4J_DATABASE", "neo4j")) as session:
-                logger.debug(f"Executing Neo4j Node Query: {nodes_cypher} with params: {query_params_base}")
+                logger.debug("Executing Neo4j Node Query: %s with params: %s", nodes_cypher, query_params_base)
                 node_records = session.run(nodes_cypher, query_params_base)
                 focus_node_ids = set()
                 temp_nodes_dict = {}
@@ -346,7 +352,7 @@ class VPNTopologyNeo4jView(APIView):
                         WHERE n1.id IN $focus_node_ids OR n2.id IN $focus_node_ids
                         RETURN n1.id AS source, n2.id AS target, r AS properties
                     """
-                    logger.debug(f"Executing Neo4j Edge Query: {edge_query} with focus_node_ids: {focus_node_ids}")
+                    logger.debug("Executing Neo4j Edge Query: %s with focus_node_ids: %s", edge_query, focus_node_ids)
                     edge_records = session.run(edge_query, {"focus_node_ids": list(focus_node_ids)})
 
                     all_node_ids = set(focus_node_ids)  # Start with focus nodes
@@ -459,8 +465,8 @@ class VPNTopologyNeo4jView(APIView):
                 else:
                     graph_data_response["meta"]["last_synced_at"] = None
                     graph_data_response["meta"]["last_sync_status"] = "Unknown (No Dashboard Data)"
-            except Exception as e:
-                logger.warning(f"Failed to read VPNDashboard for sync time: {e}")
+            except Exception as exc:
+                logger.warning("Failed to read VPNDashboard for sync time: %s", exc, exc_info=True)
                 graph_data_response["meta"]["last_synced_at"] = None
                 graph_data_response["meta"]["last_sync_status"] = "Error reading status"
 
@@ -472,8 +478,8 @@ class VPNTopologyNeo4jView(APIView):
         except neo4j_exceptions.ServiceUnavailable:
             logger.error("Neo4j Service Unavailable during VPN topology query.", exc_info=True)
             return Response({"error": "Graph database service unavailable during query."}, status=503)
-        except Exception as e:
-            logger.error(f"Error querying or processing data from Neo4j in VPNTopologyNeo4jView: {e}", exc_info=True)
+        except Exception as exc:
+            logger.error("Error querying or processing data from Neo4j in VPNTopologyNeo4jView: %s", exc, exc_info=True)
             return Response({"error": "Could not retrieve topology data from graph database."}, status=500)
         finally:
             if driver:
@@ -497,7 +503,7 @@ class VPNTopologyFilterOptionsView(APIView):
         return None
 
     def get(self, request):
-        logger.debug(f"Filter options GET request from user {request.user}")
+        logger.debug("Filter options GET request from user %s", request.user)
         countries = set()
         ike_versions = set()
         statuses = set()

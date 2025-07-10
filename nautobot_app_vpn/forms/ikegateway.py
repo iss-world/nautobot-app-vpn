@@ -1,4 +1,5 @@
 """Forms for managing IKE Gateway profiles in the Nautobot VPN app."""
+# pylint: disable=too-many-ancestors, too-few-public-methods, too-many-locals, too-many-branches, too-many-statements
 
 import re
 
@@ -9,9 +10,9 @@ from django.db import models
 
 # Import necessary Nautobot form components and models
 from nautobot.apps.forms import (
-    APISelectMultiple,  # Widget for multi-select dynamic fields
-    DynamicModelChoiceField,  # Make sure this is imported
-    DynamicModelMultipleChoiceField,  # Use Multiple Choice variant
+    APISelectMultiple,
+    DynamicModelChoiceField,
+    DynamicModelMultipleChoiceField,
     NautobotFilterForm,
     NautobotModelForm,
     SmallTextarea,
@@ -120,39 +121,7 @@ class IKEGatewayForm(NautobotModelForm):
 
     class Meta:
         model = IKEGateway
-        fields = [
-            "name",
-            "description",
-            "ike_version",
-            "exchange_mode",
-            "local_ip_type",
-            "local_ip",
-            "local_devices",
-            "bind_interface",
-            "local_locations",
-            "local_platform",
-            "local_id_type",
-            "local_id_value",
-            "peer_ip_type",
-            "peer_ip",
-            "peer_devices",
-            "peer_device_manual",
-            "peer_locations",
-            "peer_location_manual",
-            "peer_platform",
-            "peer_id_type",
-            "peer_id_value",
-            "authentication_type",
-            "pre_shared_key",
-            "ike_crypto_profile",
-            "enable_passive_mode",
-            "enable_nat_traversal",
-            "enable_dpd",
-            "dpd_interval",
-            "dpd_retry",
-            "liveness_check_interval",
-            "status",
-        ]
+        fields = "__all__"
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "description": SmallTextarea(attrs={"rows": 3}),
