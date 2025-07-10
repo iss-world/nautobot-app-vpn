@@ -503,6 +503,7 @@ class VPNTopologyFilterOptionsView(APIView):
         return None
 
     def get(self, request):
+        """Handle GET request for available VPN filter options."""
         logger.debug("Filter options GET request from user %s", request.user)
         countries = set()
         ike_versions = set()

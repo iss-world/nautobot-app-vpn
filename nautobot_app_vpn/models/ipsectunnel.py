@@ -15,6 +15,7 @@ from .tunnelmonitor import TunnelMonitorProfile
 
 
 class TunnelRoleChoices(models.TextChoices):
+    """Choices for the role of an IPSec Tunnel in a redundant setup."""
     PRIMARY = "primary", "Primary"
     SECONDARY = "secondary", "Secondary"
     TERTIARY = "tertiary", "Tertiary"
@@ -99,6 +100,7 @@ class IPSECTunnel(PrimaryModel):
 
     @property
     def device_names(self):
+        """Return a comma-separated list of device names associated with this tunnel."""
         return ", ".join([dev.name for dev in self.devices.all()])
 
     def clean(self):

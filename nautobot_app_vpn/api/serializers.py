@@ -440,6 +440,7 @@ class IPSecProxyIDSerializer(BaseModelSerializer):
 
 
 class VPNDashboardSerializer(BaseModelSerializer):
+    """Serializer for VPNDashboard objects."""
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:vpndashboard-detail")
 
     class Meta:

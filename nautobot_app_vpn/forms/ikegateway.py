@@ -262,6 +262,8 @@ class IKEGatewayForm(NautobotModelForm):
 
 # Filter Form definition (No changes needed here unless you want to filter by bind_interface)
 class IKEGatewayFilterForm(NautobotFilterForm):
+    """Filter form for IKE Gateway profiles in the Nautobot VPN app."""
+
     model = IKEGateway
     q = forms.CharField(required=False, label="Search")
     local_devices = DynamicModelMultipleChoiceField(

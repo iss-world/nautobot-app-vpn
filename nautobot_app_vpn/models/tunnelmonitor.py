@@ -8,6 +8,7 @@ from nautobot.extras.utils import extras_features
 
 
 class TunnelMonitorActionChoices(models.TextChoices):
+    """Choices for actions to take when tunnel monitoring detects a failure."""
     WAIT_RECOVER = "wait-recover", "Wait Recover"
     FAIL_OVER = "fail-over", "Fail Over"
 
