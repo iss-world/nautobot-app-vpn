@@ -34,7 +34,7 @@ from nautobot_app_vpn.models.constants import (
 )
 
 
-class BaseFilterSet(StatusModelFilterSetMixin, NautobotFilterSet):
+class BaseFilterSet(StatusModelFilterSetMixin, NautobotFilterSet):  # pylint: disable=nb-no-model-found
     """FilterSet for Base model."""
 
     q = SearchFilter(

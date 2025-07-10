@@ -279,6 +279,7 @@ class VPNTopologyNeo4jView(APIView):
         return nodes_query_string, edges_query_string, query_params
 
     def get(self, request):
+        """Handle GET request for available VPN topology filter options."""
         logger.info("Neo4j VPN Topology GET request from user %s with filters: %s", request.user, request.GET.dict())
 
         if not all(hasattr(settings, attr) for attr in ["NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"]):

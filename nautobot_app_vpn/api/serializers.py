@@ -35,6 +35,12 @@ class DummySerializer(serializers.Serializer):
 
     dummy = serializers.CharField()
 
+    def create(self, validated_data):
+        return validated_data
+
+    def update(self, instance, validated_data):
+        return validated_data
+
 
 class VPNNestedDeviceSerializer(BaseModelSerializer):
     """Nested serializer for referencing a Device object."""
@@ -384,8 +390,8 @@ class IKEGatewaySerializer(BaseModelSerializer):
                             "bind_interface_id": "Selected Bind Interface must belong to one of the selected Local Devices."
                         }
                     )
-            except Interface.DoesNotExist:
-                raise serializers.ValidationError({"bind_interface_id": "Invalid Bind Interface selected."})
+            except Interface.DoesNotExist as exc:
+                raise serializers.ValidationError({"bind_interface_id": "Invalid Bind Interface selected."}) from exc
         return data
 
 
@@ -402,7 +408,7 @@ class TunnelMonitorProfileSerializer(BaseModelSerializer):
 
 
 class IPSecProxyIDSerializer(BaseModelSerializer):
-    """Serializer for IPSec Proxy IDs."""
+    """Serializer for IPSECTunnel model."""
 
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:ipsecproxyid-detail")
     tunnel = VPNNestedIPSECTunnelSerializer(read_only=True)
@@ -588,5 +594,4 @@ class IPSECTunnelSerializer(BaseModelSerializer):
                 raise serializers.ValidationError(
                     {"monitor_profile_id": "Cannot remove Monitor Profile while tunnel monitoring is enabled."}
                 )
-
         return data
