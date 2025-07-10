@@ -35,4 +35,4 @@ class NautobotAppVpnConfig(NautobotAppConfig):
 
 
 # Required for Nautobot to detect the plugin
-config = NautobotAppVpnConfig # noqa: C0103
+config = NautobotAppVpnConfig  # noqa: C0103

@@ -73,6 +73,7 @@ class IPSecCryptoFilterSet(BaseFilterSet):
         model = IPSecCrypto
         fields = "__all__"
 
+
 class IKEGatewayFilterSet(BaseFilterSet):
     """FilterSet for IKEGateway model."""
 
@@ -121,7 +122,7 @@ class IKEGatewayFilterSet(BaseFilterSet):
         model = IKEGateway
         fields = "__all__"
 
-    def do_nothing_filter(self, queryset, name, value): # noqa: ARG002
+    def do_nothing_filter(self, queryset, name, value):  # noqa: ARG002
         """No-op filter method to absorb unsupported filter fields."""
         return queryset
 

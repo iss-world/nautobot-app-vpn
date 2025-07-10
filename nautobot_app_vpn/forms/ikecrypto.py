@@ -1,11 +1,9 @@
 """Forms for managing IKECrypto profiles in the Nautobot VPN app."""
 # pylint: disable=too-many-ancestors, too-few-public-methods, too-many-locals, too-many-branches, too-many-statements
 
-
 from django import forms
 from nautobot.apps.forms import NautobotFilterForm, NautobotModelForm
 from nautobot_app_vpn.models import IKECrypto
-
 
 
 class IKECryptoForm(NautobotModelForm):

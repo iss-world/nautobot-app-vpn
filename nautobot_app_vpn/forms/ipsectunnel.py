@@ -98,7 +98,6 @@ class IPSECTunnelForm(NautobotModelForm):
         if cleaned_data is None:
             return None
 
-
         monitor_enabled = cleaned_data.get("enable_tunnel_monitor")
         dest_ip = cleaned_data.get("monitor_destination_ip")
         profile = cleaned_data.get("monitor_profile")

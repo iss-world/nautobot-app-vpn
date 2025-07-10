@@ -30,7 +30,4 @@ class TunnelMonitorProfileFilterForm(NautobotFilterForm):
     model = TunnelMonitorProfile
     action = forms.MultipleChoiceField(choices=TunnelMonitorActionChoices.choices, required=False)
 
-    fieldsets = (
-        (None, ("q", "action")),
-
-    )
+    fieldsets = ((None, ("q", "action")),)

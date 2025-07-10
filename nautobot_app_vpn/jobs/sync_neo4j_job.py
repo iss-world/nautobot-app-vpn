@@ -156,8 +156,8 @@ class SyncNeo4jJob(Job):
                 try:
                     session.execute_write(lambda tx: tx.run("MATCH (n:VPNNode) DETACH DELETE n"))
                     log_job_info("Successfully cleared VPNNode subgraph.")
-                except Exception as e:
-                    msg = f"Failed to clear Neo4j subgraph: {e}"
+                except Exception as exc:
+                    msg = f"Failed to clear Neo4j subgraph: {exc}"
                     log_job_failure(msg)
                     logger.error("Neo4j Clear Subgraph Exception Details: %s", exc, exc_info=True)
                     raise RuntimeError(msg)

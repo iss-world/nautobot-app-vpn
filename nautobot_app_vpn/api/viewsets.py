@@ -107,7 +107,6 @@ class IKEGatewayViewSet(viewsets.ModelViewSet):
     ]
     pagination_class = StandardResultsSetPagination
 
-
     def perform_create(self, serializer):
         """Create a new VPN object via API."""
         serializer.save()
@@ -298,7 +297,7 @@ class VPNTopologyNeo4jView(APIView):
         formatted_edges = []
 
         request_filters = request.GET.dict()
-        nodes_cypher, edges_cypher, query_params_base = self._build_cypher_queries_and_params(request_filters) # noqa: F841
+        nodes_cypher, edges_cypher, query_params_base = self._build_cypher_queries_and_params(request_filters)  # noqa: F841
 
         try:
             with driver.session(database=getattr(settings, "NEO4J_DATABASE", "neo4j")) as session:
