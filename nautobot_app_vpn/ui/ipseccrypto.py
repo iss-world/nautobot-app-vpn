@@ -27,7 +27,7 @@ class IPSecCryptoUIViewSet(NautobotUIViewSet):
     filterset_form_class = IPSecCryptoFilterForm
     default_return_url = "plugins:nautobot_app_vpn:ipseccrypto_list"
 
-    def bulk_destroy(self, request):
+    def bulk_destroy(self, request, *args, **kwargs):
         """Bulk delete selected IPSec Crypto Profiles."""
         logger.debug("request.POST: %s", request.POST)
         pks = request.POST.getlist("pk")
@@ -45,7 +45,7 @@ class IPSecCryptoUIViewSet(NautobotUIViewSet):
                     messages.success(request, f"Deleted {count} IPSec Crypto profiles.")
                 else:
                     messages.warning(request, "No matching profiles found for deletion.")
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error("Error during bulk deletion of IPSecCrypto: %s", exc)
                 messages.error(request, "Error deleting profiles: An unexpected error occurred.")
         else:

@@ -1,6 +1,7 @@
 """Job to synchronize VPN topology into Neo4j."""
 # pylint: disable=too-many-statements, too-many-branches, too-many-locals, too-few-public-methods, duplicate-code
 # noqa: PLR0915, PLR0912, PLR0914
+# pylint: disable=broad-exception-caught
 
 import json
 import logging
@@ -19,7 +20,7 @@ from nautobot_app_vpn.models import IKEGateway, IPSECTunnel, VPNDashboard
 
 logger = logging.getLogger(__name__)  # Module-level logger
 
-name = "Virtual Private Network (VPN)"
+name = "Virtual Private Network (VPN)"  # pylint: disable=invalid-name
 
 
 class SyncNeo4jJob(Job):
@@ -85,11 +86,11 @@ class SyncNeo4jJob(Job):
             lat_offset = random.uniform(-0.5, 0.5)
             lon_offset = random.uniform(-0.5, 0.5)
             return (base_coords[0] + lat_offset, base_coords[1] + lon_offset)
-        else:
-            # Spread unknowns widely, never exactly at (0, 0)
-            return (random.uniform(-50, 50), random.uniform(-180, 180))
 
-    def run(self, **kwargs):
+        # Spread unknowns widely, never exactly at (0, 0)
+        return (random.uniform(-50, 50), random.uniform(-180, 180))
+
+    def run(self, *args, **kwargs):
         """Main job execution logic."""
 
         has_logger_failure = hasattr(self.logger, "failure")
@@ -188,7 +189,7 @@ class SyncNeo4jJob(Job):
                     if devices_list:
                         # Device group, sort by PKs for stability
                         return f"group:{'|'.join(sorted(str(d.pk) for d in devices_list))}"
-                    elif manual_name:
+                    if manual_name:
                         return f"manual_peer:{manual_name.strip().replace(' ', '_').replace('/', '_').lower()}"
                     return None
 

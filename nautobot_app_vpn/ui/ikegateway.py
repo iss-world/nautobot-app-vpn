@@ -30,7 +30,7 @@ class IKEGatewayUIViewSet(NautobotUIViewSet):
     filterset_form_class = IKEGatewayFilterForm
     default_return_url = "plugins:nautobot_app_vpn:ikegateway_list"
 
-    def bulk_destroy(self, request):
+    def bulk_destroy(self, request, *args, **kwargs):
         """Bulk delete selected IKE Gateways."""
 
         logger.debug("request.POST: %s", request.POST)
@@ -49,7 +49,7 @@ class IKEGatewayUIViewSet(NautobotUIViewSet):
                     messages.success(request, f"Deleted {count} IKE Gateways.")
                 else:
                     messages.warning(request, "No matching gateways found for deletion.")
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error("Error during bulk deletion of IKEGateway: %s", exc)
                 messages.error(request, "Error deleting gateways: An unexpected error occurred.")
         else:

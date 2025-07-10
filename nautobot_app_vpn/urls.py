@@ -5,7 +5,7 @@ import logging
 from nautobot.apps.urls import NautobotUIViewSetRouter
 
 
-from nautobot_app_vpn.ui.dashboard import VPNDashboardViewSet
+from nautobot_app_vpn.ui.dashboard import VPNDashboardUIViewSet
 from nautobot_app_vpn.ui.ikecrypto import IKECryptoUIViewSet
 from nautobot_app_vpn.ui.ikegateway import IKEGatewayUIViewSet
 from nautobot_app_vpn.ui.ipseccrypto import IPSecCryptoUIViewSet
@@ -23,7 +23,7 @@ router.register("ikegateway", IKEGatewayUIViewSet, basename="ikegateway")
 router.register("ipseccrypto", IPSecCryptoUIViewSet, basename="ipseccrypto")
 router.register("ipsectunnel", IPSECTunnelUIViewSet, basename="ipsectunnel")
 router.register("tunnel-monitor-profiles", TunnelMonitorProfileUIViewSet, basename="tunnelmonitorprofile")
-router.register("dashboard", VPNDashboardViewSet, basename="vpn_dashboard")
+router.register("dashboard", VPNDashboardUIViewSet, basename="vpn_dashboard")
 
 
 urlpatterns = [

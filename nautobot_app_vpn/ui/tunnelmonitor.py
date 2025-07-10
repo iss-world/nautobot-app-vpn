@@ -30,7 +30,7 @@ class TunnelMonitorProfileUIViewSet(NautobotUIViewSet):
     default_return_url = "plugins:nautobot_app_vpn:tunnelmonitorprofile_list"
     lookup_field = "pk"
 
-    def bulk_destroy(self, request):
+    def bulk_destroy(self, request, *args, **kwargs):
         """Handle bulk deletion of Tunnel Monitor Profile objects."""
 
         logger.debug("request.POST: %s", request.POST)
@@ -57,7 +57,7 @@ class TunnelMonitorProfileUIViewSet(NautobotUIViewSet):
                     messages.success(request, f"Deleted {count} {model._meta.verbose_name_plural}.")
                 else:
                     messages.warning(request, "No matching profiles found for deletion.")
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error("Error during bulk deletion of %s: %s", model._meta.verbose_name_plural, exc)
                 messages.error(request, "Error deleting profiles: An unexpected error occurred.")
         else:

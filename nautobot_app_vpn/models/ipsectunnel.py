@@ -1,4 +1,5 @@
 """Models for IPSec Tunnel objects and associated attributes."""
+# pylint: disable=too-many-ancestors
 
 from django.core.exceptions import ValidationError  # Import ValidationError
 from django.db import models
@@ -36,7 +37,7 @@ class IPSECTunnel(PrimaryModel):
     """Model representing an IPSec Tunnel configuration."""
 
     name = models.CharField(max_length=100, help_text="Unique name for the IPSec Tunnel.")
-    description = models.TextField(blank=True, null=True, help_text="Optional description.")
+    description = models.TextField(blank=True, help_text="Optional description.")
 
     devices = models.ManyToManyField(
         Device, related_name="ipsec_tunnels", help_text="Firewall device(s) associated with this IPSec Tunnel (for HA)."
@@ -65,7 +66,6 @@ class IPSECTunnel(PrimaryModel):
     monitor_destination_ip = models.CharField(
         max_length=255,
         blank=True,
-        null=True,  # Use CharField for flexibility (IP/FQDN)
         help_text="Destination IP or FQDN to ping for monitoring.",
     )
     natural_key_field_names = ["name"]
@@ -73,7 +73,6 @@ class IPSECTunnel(PrimaryModel):
         TunnelMonitorProfile,
         on_delete=models.SET_NULL,
         related_name="ipsec_tunnels",
-        blank=True,
         null=True,
         help_text="Tunnel Monitor Profile to use.",
     )
@@ -82,14 +81,13 @@ class IPSECTunnel(PrimaryModel):
         max_length=50,
         choices=TunnelRoleChoices.choices,
         blank=True,  # Make it optional
-        null=True,  # Allow null in DB
         help_text="Role of this tunnel if part of a redundant setup (e.g., Primary, Backup).",
     )
 
     status = StatusField(
         on_delete=models.PROTECT, related_name="%(app_label)s_%(class)s_related", default=get_default_status
     )
-    last_sync = models.DateTimeField(null=True, blank=True, help_text="Last synchronization timestamp.")
+    last_sync = models.DateTimeField(blank=True, help_text="Last synchronization timestamp.")
 
     class Meta:
         verbose_name = "IPSec Tunnel"
@@ -121,8 +119,8 @@ class IPSecProxyID(models.Model):
     """Model representing an IPSec Proxy ID configuration."""
 
     tunnel = models.ForeignKey(IPSECTunnel, on_delete=models.CASCADE, related_name="proxy_ids")
-    local_subnet = models.CharField(max_length=50, blank=True, null=True)
-    remote_subnet = models.CharField(max_length=50, blank=True, null=True)
+    local_subnet = models.CharField(max_length=50, blank=True)
+    remote_subnet = models.CharField(max_length=50, blank=True)
     protocol = models.CharField(max_length=10, blank=True, default="any")
     local_port = models.PositiveIntegerField(blank=True, null=True)
     remote_port = models.PositiveIntegerField(blank=True, null=True)

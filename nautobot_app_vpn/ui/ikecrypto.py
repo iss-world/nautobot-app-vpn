@@ -27,7 +27,7 @@ class IKECryptoUIViewSet(NautobotUIViewSet):
     serializer_class = IKECryptoSerializer
     default_return_url = "plugins:nautobot_app_vpn:ikecrypto_list"
 
-    def bulk_destroy(self, request):
+    def bulk_destroy(self, request, *args, **kwargs):
         """Handle bulk deletion of IKECrypto objects with logging and feedback."""
 
         logger.debug("request.POST: %s", request.POST)
@@ -47,7 +47,7 @@ class IKECryptoUIViewSet(NautobotUIViewSet):
                 else:
                     messages.warning(request, "No matching profiles found for deletion.")
 
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error("Error during bulk deletion of IKECrypto: %s", exc)
                 messages.error(request, f"Error deleting profiles: {exc}")
         else:

@@ -1,4 +1,5 @@
 """Models for IPsec Crypto profiles used in VPN configuration."""
+# pylint: disable=too-many-ancestors
 
 from django.db import models
 from nautobot.core.models.generics import PrimaryModel

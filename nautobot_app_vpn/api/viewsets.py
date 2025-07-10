@@ -290,7 +290,7 @@ class VPNTopologyNeo4jView(APIView):
         try:
             driver = GraphDatabase.driver(settings.NEO4J_URI, auth=(settings.NEO4J_USER, settings.NEO4J_PASSWORD))
             driver.verify_connectivity()
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.error("Failed to connect to Neo4j for topology view: %s", exc, exc_info=True)
             return Response({"error": "Could not connect to graph database."}, status=503)
 
@@ -323,13 +323,13 @@ class VPNTopologyNeo4jView(APIView):
                             if x is not None and y is not None:
                                 try:
                                     pos = {"x": float(x), "y": float(y)}
-                                except Exception:
+                                except Exception:  # pylint: disable=broad-exception-caught
                                     pos = None
                             elif lat is not None and lon is not None:
                                 try:
                                     x_map, y_map = latlon_to_xy(float(lat), float(lon), svg_width=2754, svg_height=1398)
                                     pos = {"x": x_map, "y": y_map}
-                                except Exception:
+                                except Exception:  # pylint: disable=broad-exception-caught
                                     pos = {"x": random.uniform(-100, 100), "y": random.uniform(-100, 100)}
                             else:
                                 pos = {"x": random.uniform(-100, 100), "y": random.uniform(-100, 100)}
@@ -408,7 +408,7 @@ class VPNTopologyNeo4jView(APIView):
                                 if x is not None and y is not None:
                                     try:
                                         pos = {"x": float(x), "y": float(y)}
-                                    except Exception:
+                                    except Exception:  # pylint: disable=broad-exception-caught
                                         pos = None
                                 elif lat is not None and lon is not None:
                                     try:
@@ -416,7 +416,7 @@ class VPNTopologyNeo4jView(APIView):
                                             float(lat), float(lon), svg_width=2754, svg_height=1398
                                         )
                                         pos = {"x": x_map, "y": y_map}
-                                    except Exception:
+                                    except Exception:  # pylint: disable=broad-exception-caught
                                         pos = {"x": random.uniform(-100, 100), "y": random.uniform(-100, 100)}
                                 else:
                                     pos = {"x": random.uniform(-100, 100), "y": random.uniform(-100, 100)}
@@ -465,20 +465,20 @@ class VPNTopologyNeo4jView(APIView):
                 else:
                     graph_data_response["meta"]["last_synced_at"] = None
                     graph_data_response["meta"]["last_sync_status"] = "Unknown (No Dashboard Data)"
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.warning("Failed to read VPNDashboard for sync time: %s", exc, exc_info=True)
                 graph_data_response["meta"]["last_synced_at"] = None
                 graph_data_response["meta"]["last_sync_status"] = "Error reading status"
 
             return Response(graph_data_response)
 
-        except neo4j_exceptions.CypherSyntaxError as e:
+        except neo4j_exceptions.CypherSyntaxError as e:  # pylint: disable=broad-exception-caught
             logger.error(f"Neo4j Cypher Syntax Error in VPNTopologyNeo4jView: {e}", exc_info=True)
             return Response({"error": "Error querying graph database (query syntax problem)."}, status=500)
         except neo4j_exceptions.ServiceUnavailable:
             logger.error("Neo4j Service Unavailable during VPN topology query.", exc_info=True)
             return Response({"error": "Graph database service unavailable during query."}, status=503)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.error("Error querying or processing data from Neo4j in VPNTopologyNeo4jView: %s", exc, exc_info=True)
             return Response({"error": "Could not retrieve topology data from graph database."}, status=500)
         finally:

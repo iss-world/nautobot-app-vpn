@@ -60,18 +60,18 @@ class IPSECTunnelUIViewSet(NautobotUIViewSet):
                             return redirect(request.path)
                         return redirect(self.get_return_url(request, instance))
                     else:
-                        logger.error(f"❌ ProxyID Formset validation errors: {formset.errors}")
+                        logger.error("❌ ProxyID Formset validation errors: %s", formset.errors)
                         try:
                             instance.delete()
-                            logger.info(f"Deleted partially created tunnel {instance.pk} due to formset error.")
-                        except Exception as del_err:
+                            logger.info("Deleted partially created tunnel %s due to formset error.", instance.pk)
+                        except Exception as del_err:  # pylint: disable=broad-exception-caught
                             logger.error(f"Error deleting partially created tunnel {instance.pk}: {del_err}")
                         messages.error(request, "❌ Failed to create proxy IDs. Please check the Proxy ID section.")
-                except Exception as e:
-                    logger.error(f"❌ Error saving {object_type}: {e}", exc_info=True)
-                    messages.error(request, f"❌ Failed to create {object_type}: {e}")
+                except Exception as e:  # pylint: disable=broad-exception-caught
+                    logger.error("❌ Error saving %s: %s", object_type, e, exc_info=True)
+                    messages.error(request, "❌ Failed to create %s: %s" % (object_type, e))
             else:
-                logger.error(f"❌ Main Tunnel Form validation errors: {form.errors.as_json()}")
+                logger.error("❌ Main Tunnel Form validation errors: %s", form.errors.as_json())
                 messages.error(request, f"❌ Failed to create {object_type}. Please check the main form.")
 
         return render(
@@ -104,15 +104,15 @@ class IPSECTunnelUIViewSet(NautobotUIViewSet):
                     formset.save()
                     messages.success(request, f"✅ Modified {object_type} '{instance}'.")
                     return redirect(self.get_return_url(request, instance))
-                except Exception as e:
-                    logger.error(f"❌ Error updating {object_type} '{instance}': {e}", exc_info=True)
-                    messages.error(request, f"❌ Failed to update {object_type}: {e}")
+                except Exception as e:  # pylint: disable=broad-exception-caught
+                    logger.error("❌ Error updating %s '%s': %s", object_type, instance, e, exc_info=True)
+                    messages.error(request, "❌ Failed to update %s: %s" % (object_type, e))
             else:
                 if not form.is_valid():
-                    logger.error(f"❌ Main Tunnel Form validation errors: {form.errors.as_json()}")
+                    logger.error("❌ Main Tunnel Form validation errors: %s", form.errors.as_json())
                     messages.error(request, "❌ Failed to update tunnel. Please check the main form.")
                 if not formset.is_valid():
-                    logger.error(f"❌ ProxyID Formset validation errors: {formset.errors}")
+                    logger.error("❌ ProxyID Formset validation errors: %s", formset.errors)
                     messages.error(request, "❌ Failed to update proxy IDs. Please check the Proxy ID section.")
 
         return render(
@@ -128,7 +128,7 @@ class IPSECTunnelUIViewSet(NautobotUIViewSet):
             },
         )
 
-    def bulk_destroy(self, request):
+    def bulk_destroy(self, request, *args, **kwargs):
         """Handle bulk deletion of IPsec Tunnel objects."""
 
         logger.debug("request.POST: %s", request.POST)
@@ -149,7 +149,7 @@ class IPSECTunnelUIViewSet(NautobotUIViewSet):
                     messages.success(request, f"Deleted {count} {model._meta.verbose_name_plural}.")
                 else:
                     messages.warning(request, "No matching tunnels found for deletion.")
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error("Error during bulk deletion of %s: %s", model._meta.verbose_name_plural, exc)
                 messages.error(request, "Error deleting tunnels: An unexpected error occurred.")
         else:

@@ -3,7 +3,7 @@
 import logging
 
 # Import all UI ViewSets for easy reference
-from .dashboard import VPNDashboardViewSet
+from .dashboard import VPNDashboardUIViewSet
 from .ikecrypto import IKECryptoUIViewSet
 from .ikegateway import IKEGatewayUIViewSet
 from .ipseccrypto import IPSecCryptoUIViewSet
@@ -13,7 +13,7 @@ from .tunnelmonitor import TunnelMonitorProfileUIViewSet
 # Define what should be available when importing `ui`
 __all__ = [
     # ✅ UI ViewSets
-    "VPNDashboardViewSet",
+    "VPNDashboardUIViewSet",
     "IKECryptoUIViewSet",
     "IKEGatewayUIViewSet",
     "IPSecCryptoUIViewSet",

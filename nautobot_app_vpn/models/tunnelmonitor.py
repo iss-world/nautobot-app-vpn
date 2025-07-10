@@ -1,4 +1,5 @@
 """Models related to IPSec Tunnel Monitor profiles."""
+# pylint: disable=too-many-ancestors
 
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -49,5 +50,5 @@ class TunnelMonitorProfile(PrimaryModel):
     def __str__(self):
         return self.name
 
-    def get_absolute_url(self):
+    def get_absolute_url(self, request):
         return reverse("plugins:nautobot_app_vpn:tunnelmonitorprofile", kwargs={"pk": self.pk})
