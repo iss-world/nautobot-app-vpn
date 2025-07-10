@@ -16,6 +16,7 @@ from .tunnelmonitor import TunnelMonitorProfile
 
 class TunnelRoleChoices(models.TextChoices):
     """Choices for the role of an IPSec Tunnel in a redundant setup."""
+
     PRIMARY = "primary", "Primary"
     SECONDARY = "secondary", "Secondary"
     TERTIARY = "tertiary", "Tertiary"

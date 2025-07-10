@@ -375,7 +375,7 @@ class IKEGatewaySerializer(BaseModelSerializer):
             "last_sync",
         ]
 
-    def validate(self, data):
+    def validate(self, data):  # pylint: disable=arguments-renamed
         peer_locations = data.get("peer_locations")
         peer_location_manual = data.get("peer_location_manual")
         if peer_locations and peer_location_manual:
@@ -441,6 +441,7 @@ class IPSecProxyIDSerializer(BaseModelSerializer):
 
 class VPNDashboardSerializer(BaseModelSerializer):
     """Serializer for VPNDashboard objects."""
+
     url = serializers.HyperlinkedIdentityField(view_name="plugins-api:nautobot_app_vpn-api:vpndashboard-detail")
 
     class Meta:
@@ -567,7 +568,7 @@ class IPSECTunnelSerializer(BaseModelSerializer):
             "last_sync",
         ]
 
-    def validate(self, data):
+    def validate(self, data):  # pylint: disable=arguments-renamed
         monitor_enabled = data.get(
             "enable_tunnel_monitor", getattr(self.instance, "enable_tunnel_monitor", False) if self.instance else False
         )
