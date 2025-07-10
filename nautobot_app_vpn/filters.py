@@ -122,7 +122,7 @@ class IKEGatewayFilterSet(BaseFilterSet):
         model = IKEGateway
         fields = "__all__"
 
-    def do_nothing_filter(self, queryset, name, value):  # noqa: ARG002
+    def do_nothing_filter(self, queryset, _name, _value):
         """No-op filter method to absorb unsupported filter fields."""
         return queryset
 
@@ -138,7 +138,6 @@ class TunnelMonitorProfileFilterSet(NautobotFilterSet):
 
     class Meta:
         model = TunnelMonitorProfile
-        # 'q' is defined above, 'status' not applicable
         fields = "__all__"
 
 

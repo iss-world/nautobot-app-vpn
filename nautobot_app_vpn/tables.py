@@ -23,7 +23,7 @@ from nautobot_app_vpn.models import (
 )
 
 
-class IKECryptoProfileTable(StatusTableMixin, BaseTable):
+class IKECryptoTable(StatusTableMixin, BaseTable):
     """Table for listing IKE Crypto Profiles."""
 
     pk = ToggleColumn()
@@ -47,7 +47,7 @@ class IKECryptoProfileTable(StatusTableMixin, BaseTable):
         default_columns = ("pk", "name", "encryption", "authentication", "dh_group", "status", "actions")
 
 
-class IPSecCryptoProfileTable(StatusTableMixin, BaseTable):
+class IPSecCryptoTable(StatusTableMixin, BaseTable):
     """Table for listing IPSec Crypto Profiles."""
 
     pk = ToggleColumn()

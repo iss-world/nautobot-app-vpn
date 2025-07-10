@@ -10,7 +10,7 @@ from nautobot_app_vpn.api.serializers import IPSecCryptoSerializer
 from nautobot_app_vpn.filters import IPSecCryptoFilterSet
 from nautobot_app_vpn.forms.ipseccrypto import IPSecCryptoFilterForm, IPSecCryptoForm
 from nautobot_app_vpn.models import IPSecCrypto
-from nautobot_app_vpn.tables import IPSecCryptoProfileTable
+from nautobot_app_vpn.tables import IPSecCryptoTable
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ class IPSecCryptoUIViewSet(NautobotUIViewSet):
     # Keep standard viewset attributes
     queryset = IPSecCrypto.objects.all()
     serializer_class = IPSecCryptoSerializer
-    table_class = IPSecCryptoProfileTable
+    table_class = IPSecCryptoTable
     form_class = IPSecCryptoForm
     filterset_class = IPSecCryptoFilterSet
     filterset_form_class = IPSecCryptoFilterForm
@@ -29,21 +29,24 @@ class IPSecCryptoUIViewSet(NautobotUIViewSet):
 
     def bulk_destroy(self, request):
         """Bulk delete selected IPSec Crypto Profiles."""
-        logger.debug(f"request.POST: {request.POST}")
+        logger.debug("request.POST: %s", request.POST)
         pks = request.POST.getlist("pk")
         if pks:
             try:
                 queryset = self.queryset.filter(pk__in=pks)
                 count = queryset.count()
                 if count > 0:
-                    logger.info(f"Deleting {count} IPSecCrypto objects: {list(queryset.values_list('pk', flat=True))}")
+                    logger.info(
+                        "Deleting %s IPSecCrypto objects: %s",
+                        count,
+                        list(queryset.values_list("pk", flat=True)),
+                    )
                     queryset.delete()
                     messages.success(request, f"Deleted {count} IPSec Crypto profiles.")
                 else:
                     messages.warning(request, "No matching profiles found for deletion.")
-            except Exception as e:
-                logger.error(f"Error during bulk deletion of IPSecCrypto: {e}")
-
+            except Exception as exc:
+                logger.error("Error during bulk deletion of IPSecCrypto: %s", exc)
                 messages.error(request, "Error deleting profiles: An unexpected error occurred.")
         else:
             messages.warning(request, "No profiles selected for deletion.")

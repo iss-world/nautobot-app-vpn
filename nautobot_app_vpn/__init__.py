@@ -25,9 +25,10 @@ class NautobotAppVpnConfig(NautobotAppConfig):
     jobs = "nautobot_app_vpn.jobs"
 
     def ready(self):
+        # Lazy imports to avoid AppRegistryNotReady errors
         super().ready()
-        from nautobot.apps import jobs  # noqa: C0415
-        from .jobs.sync_neo4j_job import SyncNeo4jJob  # noqa: C0415
+        from nautobot.apps import jobs  # pylint: disable=import-outside-toplevel
+        from .jobs.sync_neo4j_job import SyncNeo4jJob  # pylint: disable=import-outside-toplevel
 
         jobs.register_jobs(
             SyncNeo4jJob,
@@ -35,4 +36,4 @@ class NautobotAppVpnConfig(NautobotAppConfig):
 
 
 # Required for Nautobot to detect the plugin
-config = NautobotAppVpnConfig  # noqa: C0103
+config = NautobotAppVpnConfig  # pylint: disable=invalid-name

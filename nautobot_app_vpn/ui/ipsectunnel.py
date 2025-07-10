@@ -131,7 +131,7 @@ class IPSECTunnelUIViewSet(NautobotUIViewSet):
     def bulk_destroy(self, request):
         """Handle bulk deletion of IPsec Tunnel objects."""
 
-        logger.debug(f"request.POST: {request.POST}")
+        logger.debug("request.POST: %s", request.POST)
         pks = request.POST.getlist("pk")
         model = self.queryset.model
         if pks:
@@ -140,14 +140,17 @@ class IPSECTunnelUIViewSet(NautobotUIViewSet):
                 count = queryset.count()
                 if count > 0:
                     logger.info(
-                        f"Deleting {count} {model._meta.verbose_name_plural}: {list(queryset.values_list('pk', flat=True))}"
+                        "Deleting %s %s: %s",
+                        count,
+                        model._meta.verbose_name_plural,
+                        list(queryset.values_list("pk", flat=True)),
                     )
                     queryset.delete()
                     messages.success(request, f"Deleted {count} {model._meta.verbose_name_plural}.")
                 else:
                     messages.warning(request, "No matching tunnels found for deletion.")
-            except Exception as e:
-                logger.error(f"Error during bulk deletion of {model._meta.verbose_name_plural}: {e}")
+            except Exception as exc:
+                logger.error("Error during bulk deletion of %s: %s", model._meta.verbose_name_plural, exc)
                 messages.error(request, "Error deleting tunnels: An unexpected error occurred.")
         else:
             messages.warning(request, "No tunnels selected for deletion.")

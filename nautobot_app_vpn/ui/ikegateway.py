@@ -33,20 +33,24 @@ class IKEGatewayUIViewSet(NautobotUIViewSet):
     def bulk_destroy(self, request):
         """Bulk delete selected IKE Gateways."""
 
-        logger.debug(f"request.POST: {request.POST}")
+        logger.debug("request.POST: %s", request.POST)
         pks = request.POST.getlist("pk")
         if pks:
             try:
                 queryset = self.queryset.model.objects.filter(pk__in=pks)
                 count = queryset.count()
                 if count > 0:
-                    logger.info(f"Deleting {count} IKEGateway objects: {list(queryset.values_list('pk', flat=True))}")
+                    logger.info(
+                        "Deleting %s IKEGateway objects: %s",
+                        count,
+                        list(queryset.values_list("pk", flat=True)),
+                    )
                     queryset.delete()
                     messages.success(request, f"Deleted {count} IKE Gateways.")
                 else:
                     messages.warning(request, "No matching gateways found for deletion.")
-            except Exception as e:
-                logger.error(f"Error during bulk deletion of IKEGateway: {e}")
+            except Exception as exc:
+                logger.error("Error during bulk deletion of IKEGateway: %s", exc)
                 messages.error(request, "Error deleting gateways: An unexpected error occurred.")
         else:
             messages.warning(request, "No gateways selected for deletion.")
