@@ -1,3 +1,5 @@
+"""Custom API permissions for the Nautobot VPN app."""
+
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 

@@ -1,4 +1,5 @@
 """Serializers for Nautobot VPN Plugin."""
+# pylint: disable=too-few-public-methods
 
 from nautobot.apps.api import BaseModelSerializer, ChoiceField
 
