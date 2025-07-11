@@ -13,7 +13,7 @@ ARG NAUTOBOT_VER="2.4.10"
 ARG PYTHON_VER="3.11"
 
 # Retrieve published development image of Nautobot base which should include most CI dependencies
-FROM ghcr.io/nautobot/nautobot-dev:2.4.10-py3.11
+
 FROM ghcr.io/nautobot/nautobot-dev:${NAUTOBOT_VER}-py${PYTHON_VER}
 
 # Runtime argument and environment setup
