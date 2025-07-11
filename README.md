@@ -81,7 +81,7 @@ PLUGINS_CONFIG = {
 If you are using `docker-compose`, include this plugin in your `plugin_requirements.txt`:
 
 ```text
-nautobot-app-vpn
+nautobot_app_vpn
 ```
 
 Then rebuild Nautobot:
