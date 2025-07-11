@@ -50,5 +50,5 @@ class TunnelMonitorProfile(PrimaryModel):
     def __str__(self):
         return self.name
 
-    def get_absolute_url(self, request):
+    def get_absolute_url(self):
         return reverse("plugins:nautobot_app_vpn:tunnelmonitorprofile", kwargs={"pk": self.pk})

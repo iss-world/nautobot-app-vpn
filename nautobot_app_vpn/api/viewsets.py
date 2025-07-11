@@ -473,7 +473,7 @@ class VPNTopologyNeo4jView(APIView):
             return Response(graph_data_response)
 
         except neo4j_exceptions.CypherSyntaxError as e:  # pylint: disable=broad-exception-caught
-            logger.error(f"Neo4j Cypher Syntax Error in VPNTopologyNeo4jView: {e}", exc_info=True)
+            logger.error("Neo4j Cypher Syntax Error in VPNTopologyNeo4jView: %s", e, exc_info=True)
             return Response({"error": "Error querying graph database (query syntax problem)."}, status=500)
         except neo4j_exceptions.ServiceUnavailable:
             logger.error("Neo4j Service Unavailable during VPN topology query.", exc_info=True)

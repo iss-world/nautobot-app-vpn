@@ -132,20 +132,20 @@ class SyncNeo4jJob(Job):
             log_job_failure(msg)
             if driver:
                 driver.close()
-            raise RuntimeError(msg)
+            raise RuntimeError(msg) from e
         except neo4j_exceptions.AuthError as e:
             msg = f"Failed to connect to Neo4j: Authentication Error. {e}"
             log_job_failure(msg)
             if driver:
                 driver.close()
-            raise RuntimeError(msg)
+            raise RuntimeError(msg) from e
         except Exception as e:
             msg = f"Failed to connect to Neo4j: {e}"
             log_job_failure(msg)
             logger.error("Neo4j Connection Exception Details: %s", e, exc_info=True)
             if driver:
                 driver.close()
-            raise RuntimeError(msg)
+            raise RuntimeError(msg) from e
 
         now_utc = datetime.now(UTC)
         processed_node_counts = {"DeviceGroup": 0, "ManualPeer": 0}
@@ -161,7 +161,7 @@ class SyncNeo4jJob(Job):
                     msg = f"Failed to clear Neo4j subgraph: {exc}"
                     log_job_failure(msg)
                     logger.error("Neo4j Clear Subgraph Exception Details: %s", exc, exc_info=True)
-                    raise RuntimeError(msg)
+                    raise RuntimeError(msg) from exc
 
                 device_prefetch_qs = Device.objects.select_related(
                     "platform", "role", "location", "status", "device_type", "primary_ip4"
@@ -216,9 +216,9 @@ class SyncNeo4jJob(Job):
                         )
                     return "UN"
 
-                def sanitize_filename(name):
+                def sanitize_filename(input_name):
                     """Replace spaces and slashes for safe file names."""
-                    return re.sub(r"[^A-Za-z0-9_\-]", "_", name)
+                    return re.sub(r"[^A-Za-z0-9_\-]", "_", input_name)
 
                 for tunnel in tunnels_qs:
                     gw: IKEGateway = tunnel.ike_gateway
@@ -502,7 +502,7 @@ class SyncNeo4jJob(Job):
             except Exception as dash_err:
                 log_job_warning("Failed to update VPNDashboard with error status: %s", dash_err)
 
-            raise RuntimeError(msg)
+            raise RuntimeError(msg) from e
         finally:
             if driver:
                 driver.close()

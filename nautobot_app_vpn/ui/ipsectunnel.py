@@ -59,14 +59,15 @@ class IPSECTunnelUIViewSet(NautobotUIViewSet):
                         if "_add_another" in request.POST:
                             return redirect(request.path)
                         return redirect(self.get_return_url(request, instance))
-                    else:
-                        logger.error("❌ ProxyID Formset validation errors: %s", formset.errors)
-                        try:
-                            instance.delete()
-                            logger.info("Deleted partially created tunnel %s due to formset error.", instance.pk)
-                        except Exception as del_err:  # pylint: disable=broad-exception-caught
-                            logger.error(f"Error deleting partially created tunnel {instance.pk}: {del_err}")
-                        messages.error(request, "❌ Failed to create proxy IDs. Please check the Proxy ID section.")
+
+                    logger.error("❌ ProxyID Formset validation errors: %s", formset.errors)
+                    try:
+                        instance.delete()
+                        logger.info("Deleted partially created tunnel %s due to formset error.", instance.pk)
+                    except Exception as del_err:  # pylint: disable=broad-exception-caught
+                        logger.error("Error deleting partially created tunnel %s: %s", instance.pk, del_err)
+                    messages.error(request, "❌ Failed to create proxy IDs. Please check the Proxy ID section.")
+
                 except Exception as e:  # pylint: disable=broad-exception-caught
                     logger.error("❌ Error saving %s: %s", object_type, e, exc_info=True)
                     messages.error(request, "❌ Failed to create %s: %s" % (object_type, e))
@@ -106,7 +107,7 @@ class IPSECTunnelUIViewSet(NautobotUIViewSet):
                     return redirect(self.get_return_url(request, instance))
                 except Exception as e:  # pylint: disable=broad-exception-caught
                     logger.error("❌ Error updating %s '%s': %s", object_type, instance, e, exc_info=True)
-                    messages.error(request, "❌ Failed to update %s: %s" % (object_type, e))
+                    messages.error(request, f"❌ Failed to update {object_type}: {e}")
             else:
                 if not form.is_valid():
                     logger.error("❌ Main Tunnel Form validation errors: %s", form.errors.as_json())
