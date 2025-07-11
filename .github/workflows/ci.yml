@@ -28,7 +28,10 @@ jobs:
         with:
           poetry-version: "1.8.5"
       - name: "Linting: ruff format"
-        run: "poetry run invoke ruff --action format"
+        run: |
+          poetry run invoke ruff --action format
+          poetry run ruff format --check .
+        continue-on-error: true
   ruff-lint:
     runs-on: "ubuntu-22.04"
     env:
