@@ -1,7 +1,8 @@
 """Job to synchronize VPN topology into Neo4j."""
-# pylint: disable=too-many-statements, too-many-branches, too-many-locals, too-few-public-methods, duplicate-code
+# pylint: disable=too-many-statements, too-many-branches, too-many-locals, too-few-public-methods
 # noqa: PLR0915, PLR0912, PLR0914
 # pylint: disable=broad-exception-caught
+
 
 import json
 import logging
