@@ -88,19 +88,19 @@ The plugin provides a Neo4j-powered dashboard under **Plugins > VPN Dashboard**,
 
 ## Screenshots
 
-![VPN Menu](https://raw.githubusercontent.com/npolisetty26/nautobot-app-vpn/main/docs/images/image.png)
+![VPN Menu](https://raw.githubusercontent.com/iss-world/nautobot-app-vpn/main/docs/images/image.png)
 
-![VPN Dashboard](https://raw.githubusercontent.com/npolisetty26/nautobot-app-vpn/main/docs/images/image-1.png)
+![VPN Dashboard](https://raw.githubusercontent.com/iss-world/nautobot-app-vpn/main/docs/images/image-1.png)
 
-![IKE Crypto](https://raw.githubusercontent.com/npolisetty26/nautobot-app-vpn/main/docs/images/image-2.png)
+![IKE Crypto](https://raw.githubusercontent.com/iss-world/nautobot-app-vpn/main/docs/images/image-2.png)
 
-![IPsec Crypto](https://raw.githubusercontent.com/npolisetty26/nautobot-app-vpn/main/docs/images/image-3.png)
+![IPsec Crypto](https://raw.githubusercontent.com/iss-world/nautobot-app-vpn/main/docs/images/image-3.png)
 
-![IKE Gateway](https://raw.githubusercontent.com/npolisetty26/nautobot-app-vpn/main/docs/images/image-4.png)
+![IKE Gateway](https://raw.githubusercontent.com/iss-world/nautobot-app-vpn/main/docs/images/image-4.png)
 
-![IPSec Tunnel](https://raw.githubusercontent.com/npolisetty26/nautobot-app-vpn/main/docs/images/image-5.png)
+![IPSec Tunnel](https://raw.githubusercontent.com/iss-world/nautobot-app-vpn/main/docs/images/image-5.png)
 
-![Tunnel Monitor](https://raw.githubusercontent.com/npolisetty26/nautobot-app-vpn/main/docs/images/image-6.png)
+![Tunnel Monitor](https://raw.githubusercontent.com/iss-world/nautobot-app-vpn/main/docs/images/image-6.png)
 
 ---
 
@@ -109,7 +109,7 @@ The plugin provides a Neo4j-powered dashboard under **Plugins > VPN Dashboard**,
 ### Clone and install in editable mode:
 
 ```bash
-git clone https://github.com/npolisetty26/nautobot-app-vpn.git
+git clone https://github.com/iss-world/nautobot-app-vpn.git
 cd nautobot-app-vpn
 poetry install
 ```
@@ -131,7 +131,7 @@ Pull requests are welcome! Please ensure code follows Nautobot plugin guidelines
 
 ## License
 
-Apache License 2.0. See [LICENSE](https://github.com/npolisetty26/nautobot-app-vpn/blob/main/LICENSE) for details.
+Apache License 2.0. See [LICENSE](https://github.com/iss-world/nautobot-app-vpn/blob/main/LICENSE) for details.
 
 ---
 

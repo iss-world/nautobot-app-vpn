@@ -5,9 +5,9 @@ description = "VPN APP"
 authors = ["ISS World Services <GITSO-Network@group.issworld.com>"]
 license = "Apache-2.0"
 readme = "README.md"
-homepage = "https://git.noc.issworld.com/narendra.polisetty/nautobot-app-vpn"
-repository = "https://git.noc.issworld.com/narendra.polisetty/nautobot-app-vpn"
-documentation = "https://docs.nautobot.com/projects/nautobot_app_vpn/en/latest/"
+homepage = "https://github.com/iss-world/nautobot-app-vpn"
+repository = "https://github.com/iss-world/nautobot-app-vpn"
+documentation = "https://github.com/iss-world/nautobot-app-vpn?tab=readme-ov-file#readme"
 keywords = ["nautobot", "nautobot-app", "nautobot-plugin"]
 classifiers = [
     "Intended Audience :: Developers",
@@ -218,7 +218,7 @@ directory = "changes"
 filename = "docs/admin/release_notes/version_X.Y.md"
 template = "development/towncrier_template.j2"
 start_string = "<!-- towncrier release notes start -->"
-issue_format = "[#{issue}](https://git.noc.issworld.com/narendra.polisetty/nautobot-app-vpn/issues/{issue})"
+issue_format = "[#{issue}](https://github.com/iss-world/nautobot-app-vpn/issues/{issue})"
 
 [[tool.towncrier.type]]
 directory = "security"

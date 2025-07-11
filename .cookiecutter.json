@@ -8,7 +8,7 @@
         "verbose_name": "VPN APP",
         "app_slug": "nautobot_app_vpn",
         "project_slug": "nautobot-app-vpn",
-        "repo_url": "https://git.noc.issworld.com/narendra.polisetty/nautobot-app-vpn",
+        "repo_url": "https://github.com/iss-world/nautobot-app-vpn",
         "base_url": "nautobot-app-vpn",
         "min_nautobot_version": "2.0.0",
         "max_nautobot_version": "2.9999",
@@ -17,7 +17,7 @@
         "model_class_name": "None",
         "open_source_license": "Apache-2.0",
         "docs_base_url": "https://docs.nautobot.com",
-        "docs_app_url": "https://docs.nautobot.com/projects/nautobot_app_vpn/en/latest",
+        "docs_app_url": "https://github.com/iss-world/nautobot-app-vpn?tab=readme-ov-file#readme",
         "_extensions": [
             "local_extensions.camel_case_to_kebab",
             "local_extensions.camel_case_to_words"
