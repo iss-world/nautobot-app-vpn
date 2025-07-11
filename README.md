@@ -1,7 +1,28 @@
-# Nautobot VPN APP
+# Nautobot VPN App
 
-&#x20;
+<p align="center">
+  <img src="https://raw.githubusercontent.com/iss-world/nautobot-app-vpn/main/docs/images/icon-nautobot_app_vpn.png" width="200" alt="Nautobot VPN App Logo">
+</p>
 
+<p align="center">
+  <a href="https://github.com/iss-world/nautobot-app-vpn/actions/workflows/ci.yml">
+    <img src="https://github.com/iss-world/nautobot-app-vpn/actions/workflows/ci.yml/badge.svg" alt="CI Status">
+  </a>
+  <a href="https://pypi.org/project/nautobot-app-vpn/">
+    <img src="https://img.shields.io/pypi/v/nautobot-app-vpn.svg" alt="PyPI Version">
+  </a>
+  <a href="https://pypi.org/project/nautobot-app-vpn/">
+    <img src="https://img.shields.io/pypi/dm/nautobot-app-vpn.svg" alt="PyPI Downloads">
+  </a>
+</p>
+
+<p align="center">
+  <em>An App for <a href="https://www.nautobot.com">Nautobot</a></em>
+</p>
+
+
+
+## Overview
 A Nautobot plugin designed to model, visualize, and manage VPN infrastructure, including IPSec tunnels, IKE gateways, crypto profiles, and dynamic topology diagrams sourced from Neo4j.
 
 ---
@@ -29,7 +50,7 @@ A Nautobot plugin designed to model, visualize, and manage VPN infrastructure, i
 ### 1. Install via pip
 
 ```bash
-pip install nautobot-app-vpn
+pip install nautobot_app_vpn
 ```
 
 ### 2. Enable the plugin
