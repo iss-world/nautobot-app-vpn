@@ -3,7 +3,7 @@
 
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.urls import reverse  # Ensure reverse is imported
+from django.urls import reverse
 from nautobot.core.models.generics import PrimaryModel
 from nautobot.extras.utils import extras_features
 
@@ -50,5 +50,6 @@ class TunnelMonitorProfile(PrimaryModel):
     def __str__(self):
         return self.name
 
-    def get_absolute_url(self):
+    def get_absolute_url(self, request=None, *args, **kwargs):
+        """Return the absolute URL for the TunnelMonitorProfile."""
         return reverse("plugins:nautobot_app_vpn:tunnelmonitorprofile", kwargs={"pk": self.pk})

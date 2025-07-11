@@ -70,7 +70,7 @@ class IPSECTunnelUIViewSet(NautobotUIViewSet):
 
                 except Exception as e:  # pylint: disable=broad-exception-caught
                     logger.error("❌ Error saving %s: %s", object_type, e, exc_info=True)
-                    messages.error(request, "❌ Failed to create %s: %s" % (object_type, e))
+                    messages.error(request, f"❌ Failed to create {object_type}: {e}")
             else:
                 logger.error("❌ Main Tunnel Form validation errors: %s", form.errors.as_json())
                 messages.error(request, f"❌ Failed to create {object_type}. Please check the main form.")
