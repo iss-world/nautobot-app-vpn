@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "nautobot_app_vpn"
+name = "nautobot-app-vpn"
 version = "1.0.0"
 description = "VPN APP"
 authors = ["ISS World Services <GITSO-Network@group.issworld.com>"]

@@ -8,11 +8,11 @@
   <a href="https://github.com/iss-world/nautobot-app-vpn/actions/workflows/ci.yml">
     <img src="https://github.com/iss-world/nautobot-app-vpn/actions/workflows/ci.yml/badge.svg" alt="CI Status">
   </a>
-  <a href="https://pypi.org/project/nautobot_app_vpn/">
-    <img src="https://img.shields.io/pypi/v/nautobot_app_vpn.svg" alt="PyPI Version">
+  <a href="https://pypi.org/project/nautobot-app-vpn/">
+    <img src="https://img.shields.io/pypi/v/nautobot-app-vpn.svg" alt="PyPI Version">
   </a>
-  <a href="https://pypi.org/project/nautobot_app_vpn/">
-    <img src="https://img.shields.io/pypi/dm/nautobot_app_vpn.svg" alt="PyPI Downloads">
+  <a href="https://pypi.org/project/nautobot-app-vpn/">
+    <img src="https://img.shields.io/pypi/dm/nautobot-app-vpn.svg" alt="PyPI Downloads">
   </a>
 </p>
 
@@ -50,7 +50,7 @@ A Nautobot plugin designed to model, visualize, and manage VPN infrastructure, i
 ### 1. Install via pip
 
 ```bash
-pip install nautobot_app_vpn
+pip install nautobot-app-vpn
 ```
 
 ### 2. Enable the plugin
