@@ -34,29 +34,6 @@ class NautobotAppVpnConfig(NautobotAppConfig):
             SyncNeo4jJob,
         )
 
-        try:
-            from nautobot_app_vpn.models.constants import (
-                EncryptionAlgorithms,
-                AuthenticationAlgorithms,
-                DiffieHellmanGroups,
-            )
-            from nautobot_app_vpn.models.algorithms import (
-                EncryptionAlgorithm,
-                AuthenticationAlgorithm,
-                DiffieHellmanGroup,
-            )
-
-            for code, label in EncryptionAlgorithms.choices:
-                EncryptionAlgorithm.objects.get_or_create(code=code, defaults={"label": label})
-            for code, label in AuthenticationAlgorithms.choices:
-                AuthenticationAlgorithm.objects.get_or_create(code=code, defaults={"label": label})
-            for code, label in DiffieHellmanGroups.choices:
-                DiffieHellmanGroup.objects.get_or_create(code=code, defaults={"label": label})
-        except Exception as err:
-            import logging
-
-            logging.getLogger(__name__).warning("Algorithm lookup table sync failed: %s", err)
-
 
 # Required for Nautobot to detect the plugin
 config = NautobotAppVpnConfig  # pylint: disable=invalid-name

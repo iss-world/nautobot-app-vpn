@@ -4,6 +4,8 @@ from django.db import migrations
 
 
 def create_algorithms(apps, schema_editor):
+    """Populate EncryptionAlgorithm, AuthenticationAlgorithm, and DiffieHellmanGroup lookup tables."""
+
     EncryptionAlgorithm = apps.get_model("nautobot_app_vpn", "EncryptionAlgorithm")
     AuthenticationAlgorithm = apps.get_model("nautobot_app_vpn", "AuthenticationAlgorithm")
     DiffieHellmanGroup = apps.get_model("nautobot_app_vpn", "DiffieHellmanGroup")
@@ -45,11 +47,23 @@ def create_algorithms(apps, schema_editor):
         DiffieHellmanGroup.objects.get_or_create(code=code, defaults={"label": label})
 
 
+def delete_algorithms(apps, schema_editor):
+    """Remove all lookup table records (for backwards migration)."""
+
+    EncryptionAlgorithm = apps.get_model("nautobot_app_vpn", "EncryptionAlgorithm")
+    AuthenticationAlgorithm = apps.get_model("nautobot_app_vpn", "AuthenticationAlgorithm")
+    DiffieHellmanGroup = apps.get_model("nautobot_app_vpn", "DiffieHellmanGroup")
+
+    EncryptionAlgorithm.objects.all().delete()
+    AuthenticationAlgorithm.objects.all().delete()
+    DiffieHellmanGroup.objects.all().delete()
+
+
 class Migration(migrations.Migration):
     dependencies = [
         ("nautobot_app_vpn", "0002_authenticationalgorithm_diffiehellmangroup_and_more"),
     ]
 
     operations = [
-        migrations.RunPython(create_algorithms),
+        migrations.RunPython(create_algorithms, delete_algorithms),
     ]
