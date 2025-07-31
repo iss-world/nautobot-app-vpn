@@ -1,3 +1,6 @@
+"""Forms for managing IKE Crypto profiles in the Nautobot VPN app."""
+# pylint: disable=too-many-ancestors
+
 from django import forms
 from nautobot.apps.forms import (
     NautobotFilterForm,
