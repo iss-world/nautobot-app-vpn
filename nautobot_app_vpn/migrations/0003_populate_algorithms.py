@@ -4,9 +4,9 @@ from django.db import migrations
 
 
 def create_algorithms(apps, schema_editor):
-    EncryptionAlgorithm = apps.get_model('nautobot_app_vpn', 'EncryptionAlgorithm')
-    AuthenticationAlgorithm = apps.get_model('nautobot_app_vpn', 'AuthenticationAlgorithm')
-    DiffieHellmanGroup = apps.get_model('nautobot_app_vpn', 'DiffieHellmanGroup')
+    EncryptionAlgorithm = apps.get_model("nautobot_app_vpn", "EncryptionAlgorithm")
+    AuthenticationAlgorithm = apps.get_model("nautobot_app_vpn", "AuthenticationAlgorithm")
+    DiffieHellmanGroup = apps.get_model("nautobot_app_vpn", "DiffieHellmanGroup")
 
     ENCRYPTION_CHOICES = [
         ("des", "DES (56-bit)"),
@@ -44,10 +44,10 @@ def create_algorithms(apps, schema_editor):
     for code, label in DH_CHOICES:
         DiffieHellmanGroup.objects.get_or_create(code=code, defaults={"label": label})
 
-class Migration(migrations.Migration):
 
+class Migration(migrations.Migration):
     dependencies = [
-        ('nautobot_app_vpn', '0002_authenticationalgorithm_diffiehellmangroup_and_more'),
+        ("nautobot_app_vpn", "0002_authenticationalgorithm_diffiehellmangroup_and_more"),
     ]
 
     operations = [
