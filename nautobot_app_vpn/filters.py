@@ -18,7 +18,7 @@ from nautobot_app_vpn.models import (
     IPSECTunnel,
     TunnelMonitorActionChoices,
     TunnelMonitorProfile,
-    TunnelRoleChoices,  # Import RoleChoices
+    TunnelRoleChoices,
 )
 from nautobot_app_vpn.models.constants import (
     IdentificationTypes,
