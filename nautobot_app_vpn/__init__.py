@@ -5,6 +5,7 @@ from nautobot.apps import NautobotAppConfig
 
 __version__ = metadata.version(__name__)
 
+
 class NautobotAppVpnConfig(NautobotAppConfig):
     """App configuration for the nautobot_app_vpn app."""
 
@@ -52,7 +53,9 @@ class NautobotAppVpnConfig(NautobotAppConfig):
                 DiffieHellmanGroup.objects.get_or_create(code=code, defaults={"label": label})
         except Exception as err:
             import logging
+
             logging.getLogger(__name__).warning("Algorithm lookup table sync failed: %s", err)
+
 
 # Required for Nautobot to detect the plugin
 config = NautobotAppVpnConfig  # pylint: disable=invalid-name

@@ -47,29 +47,36 @@ class DummySerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         return validated_data
 
+
 class EncryptionAlgorithmSerializer(serializers.ModelSerializer):
     """Serializer for EncryptionAlgorithm model."""
 
     display = serializers.CharField(source="label", read_only=True)
+
     class Meta:
         model = EncryptionAlgorithm
         fields = ["id", "code", "label", "display"]
+
 
 class AuthenticationAlgorithmSerializer(serializers.ModelSerializer):
     """Serializer for AuthenticationAlgorithm model."""
 
     display = serializers.CharField(source="label", read_only=True)
+
     class Meta:
         model = AuthenticationAlgorithm
         fields = ["id", "code", "label", "display"]
+
 
 class DiffieHellmanGroupSerializer(serializers.ModelSerializer):
     """Serializer for DiffieHellmanGroup model."""
 
     display = serializers.CharField(source="label", read_only=True)
+
     class Meta:
         model = DiffieHellmanGroup
         fields = ["id", "code", "label", "display"]
+
 
 class VPNNestedDeviceSerializer(BaseModelSerializer):
     """Nested serializer for referencing a Device object."""
@@ -172,7 +179,6 @@ class VPNNestedPlatformSerializer(BaseModelSerializer):
         fields = ["id", "url", "display", "name"]
 
 
-
 class IKECryptoSerializer(BaseModelSerializer):
     """Serializer for IKECrypto objects."""
 
@@ -182,22 +188,13 @@ class IKECryptoSerializer(BaseModelSerializer):
         queryset=Status.objects.all(), source="status", write_only=True, required=False, allow_null=True, label="Status"
     )
     dh_group = serializers.PrimaryKeyRelatedField(
-        queryset=DiffieHellmanGroup.objects.all(),
-        many=True,
-        required=False,
-        label="Diffie-Hellman Groups"
+        queryset=DiffieHellmanGroup.objects.all(), many=True, required=False, label="Diffie-Hellman Groups"
     )
     encryption = serializers.PrimaryKeyRelatedField(
-        queryset=EncryptionAlgorithm.objects.all(),
-        many=True,
-        required=False,
-        label="Encryption Algorithms"
+        queryset=EncryptionAlgorithm.objects.all(), many=True, required=False, label="Encryption Algorithms"
     )
     authentication = serializers.PrimaryKeyRelatedField(
-        queryset=AuthenticationAlgorithm.objects.all(),
-        many=True,
-        required=False,
-        label="Authentication Algorithms"
+        queryset=AuthenticationAlgorithm.objects.all(), many=True, required=False, label="Authentication Algorithms"
     )
 
     class Meta:
@@ -230,22 +227,13 @@ class IPSecCryptoSerializer(BaseModelSerializer):
         queryset=Status.objects.all(), source="status", write_only=True, required=False, allow_null=True, label="Status"
     )
     dh_group = serializers.PrimaryKeyRelatedField(
-        queryset=DiffieHellmanGroup.objects.all(),
-        many=True,
-        required=False,
-        label="Diffie-Hellman Groups"
+        queryset=DiffieHellmanGroup.objects.all(), many=True, required=False, label="Diffie-Hellman Groups"
     )
     encryption = serializers.PrimaryKeyRelatedField(
-        queryset=EncryptionAlgorithm.objects.all(),
-        many=True,
-        required=False,
-        label="Encryption Algorithms"
+        queryset=EncryptionAlgorithm.objects.all(), many=True, required=False, label="Encryption Algorithms"
     )
     authentication = serializers.PrimaryKeyRelatedField(
-        queryset=AuthenticationAlgorithm.objects.all(),
-        many=True,
-        required=False,
-        label="Authentication Algorithms"
+        queryset=AuthenticationAlgorithm.objects.all(), many=True, required=False, label="Authentication Algorithms"
     )
 
     class Meta:

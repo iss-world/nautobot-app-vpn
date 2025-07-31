@@ -32,19 +32,13 @@ class IKECrypto(PrimaryModel):
     description = models.TextField(blank=True, help_text="Optional free-form description or usage notes")
 
     dh_group = models.ManyToManyField(
-        DiffieHellmanGroup,
-        related_name="ikecryptos",
-        help_text="Diffie-Hellman Group(s) used in key exchange"
+        DiffieHellmanGroup, related_name="ikecryptos", help_text="Diffie-Hellman Group(s) used in key exchange"
     )
     encryption = models.ManyToManyField(
-        EncryptionAlgorithm,
-        related_name="ikecryptos",
-        help_text="Encryption algorithm(s) used"
+        EncryptionAlgorithm, related_name="ikecryptos", help_text="Encryption algorithm(s) used"
     )
     authentication = models.ManyToManyField(
-        AuthenticationAlgorithm,
-        related_name="ikecryptos",
-        help_text="Authentication algorithm(s) used"
+        AuthenticationAlgorithm, related_name="ikecryptos", help_text="Authentication algorithm(s) used"
     )
 
     lifetime = models.PositiveIntegerField(help_text="Lifetime duration (must be positive)")

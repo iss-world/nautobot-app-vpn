@@ -4,88 +4,87 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('nautobot_app_vpn', '0001_initial'),
+        ("nautobot_app_vpn", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='AuthenticationAlgorithm',
+            name="AuthenticationAlgorithm",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('code', models.CharField(max_length=32, unique=True)),
-                ('label', models.CharField(max_length=128)),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
+                ("code", models.CharField(max_length=32, unique=True)),
+                ("label", models.CharField(max_length=128)),
             ],
         ),
         migrations.CreateModel(
-            name='DiffieHellmanGroup',
+            name="DiffieHellmanGroup",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('code', models.CharField(max_length=16, unique=True)),
-                ('label', models.CharField(max_length=128)),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
+                ("code", models.CharField(max_length=16, unique=True)),
+                ("label", models.CharField(max_length=128)),
             ],
         ),
         migrations.CreateModel(
-            name='EncryptionAlgorithm',
+            name="EncryptionAlgorithm",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
-                ('code', models.CharField(max_length=32, unique=True)),
-                ('label', models.CharField(max_length=128)),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
+                ("code", models.CharField(max_length=32, unique=True)),
+                ("label", models.CharField(max_length=128)),
             ],
         ),
         migrations.RemoveField(
-            model_name='ikecrypto',
-            name='authentication',
+            model_name="ikecrypto",
+            name="authentication",
         ),
         migrations.RemoveField(
-            model_name='ikecrypto',
-            name='dh_group',
+            model_name="ikecrypto",
+            name="dh_group",
         ),
         migrations.RemoveField(
-            model_name='ikecrypto',
-            name='encryption',
+            model_name="ikecrypto",
+            name="encryption",
         ),
         migrations.RemoveField(
-            model_name='ipseccrypto',
-            name='authentication',
+            model_name="ipseccrypto",
+            name="authentication",
         ),
         migrations.RemoveField(
-            model_name='ipseccrypto',
-            name='dh_group',
+            model_name="ipseccrypto",
+            name="dh_group",
         ),
         migrations.RemoveField(
-            model_name='ipseccrypto',
-            name='encryption',
+            model_name="ipseccrypto",
+            name="encryption",
         ),
         migrations.AddField(
-            model_name='ikecrypto',
-            name='authentication',
-            field=models.ManyToManyField(related_name='ikecryptos', to='nautobot_app_vpn.authenticationalgorithm'),
+            model_name="ikecrypto",
+            name="authentication",
+            field=models.ManyToManyField(related_name="ikecryptos", to="nautobot_app_vpn.authenticationalgorithm"),
         ),
         migrations.AddField(
-            model_name='ikecrypto',
-            name='dh_group',
-            field=models.ManyToManyField(related_name='ikecryptos', to='nautobot_app_vpn.diffiehellmangroup'),
+            model_name="ikecrypto",
+            name="dh_group",
+            field=models.ManyToManyField(related_name="ikecryptos", to="nautobot_app_vpn.diffiehellmangroup"),
         ),
         migrations.AddField(
-            model_name='ikecrypto',
-            name='encryption',
-            field=models.ManyToManyField(related_name='ikecryptos', to='nautobot_app_vpn.encryptionalgorithm'),
+            model_name="ikecrypto",
+            name="encryption",
+            field=models.ManyToManyField(related_name="ikecryptos", to="nautobot_app_vpn.encryptionalgorithm"),
         ),
         migrations.AddField(
-            model_name='ipseccrypto',
-            name='authentication',
-            field=models.ManyToManyField(related_name='ipsec_cryptos', to='nautobot_app_vpn.authenticationalgorithm'),
+            model_name="ipseccrypto",
+            name="authentication",
+            field=models.ManyToManyField(related_name="ipsec_cryptos", to="nautobot_app_vpn.authenticationalgorithm"),
         ),
         migrations.AddField(
-            model_name='ipseccrypto',
-            name='dh_group',
-            field=models.ManyToManyField(related_name='ipsec_cryptos', to='nautobot_app_vpn.diffiehellmangroup'),
+            model_name="ipseccrypto",
+            name="dh_group",
+            field=models.ManyToManyField(related_name="ipsec_cryptos", to="nautobot_app_vpn.diffiehellmangroup"),
         ),
         migrations.AddField(
-            model_name='ipseccrypto',
-            name='encryption',
-            field=models.ManyToManyField(related_name='ipsec_cryptos', to='nautobot_app_vpn.encryptionalgorithm'),
+            model_name="ipseccrypto",
+            name="encryption",
+            field=models.ManyToManyField(related_name="ipsec_cryptos", to="nautobot_app_vpn.encryptionalgorithm"),
         ),
     ]

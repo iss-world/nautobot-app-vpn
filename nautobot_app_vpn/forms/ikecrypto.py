@@ -1,11 +1,17 @@
 from django import forms
-from nautobot.apps.forms import NautobotFilterForm, NautobotModelForm, DynamicModelMultipleChoiceField, APISelectMultiple
+from nautobot.apps.forms import (
+    NautobotFilterForm,
+    NautobotModelForm,
+    DynamicModelMultipleChoiceField,
+    APISelectMultiple,
+)
 from nautobot_app_vpn.models import IKECrypto
 from nautobot_app_vpn.models.algorithms import (
     EncryptionAlgorithm,
     AuthenticationAlgorithm,
     DiffieHellmanGroup,
 )
+
 
 class IKECryptoForm(NautobotModelForm):
     """Form for creating and editing IKE Crypto profiles."""
@@ -14,19 +20,19 @@ class IKECryptoForm(NautobotModelForm):
         queryset=EncryptionAlgorithm.objects.all(),
         widget=APISelectMultiple(attrs={"class": "form-control"}),
         required=False,
-        label="Encryption Algorithms"
+        label="Encryption Algorithms",
     )
     authentication = DynamicModelMultipleChoiceField(
         queryset=AuthenticationAlgorithm.objects.all(),
         widget=APISelectMultiple(attrs={"class": "form-control"}),
         required=False,
-        label="Authentication Algorithms"
+        label="Authentication Algorithms",
     )
     dh_group = DynamicModelMultipleChoiceField(
         queryset=DiffieHellmanGroup.objects.all(),
         widget=APISelectMultiple(attrs={"class": "form-control"}),
         required=False,
-        label="Diffie-Hellman Groups"
+        label="Diffie-Hellman Groups",
     )
 
     class Meta:
@@ -49,6 +55,7 @@ class IKECryptoForm(NautobotModelForm):
             raise forms.ValidationError(f"A profile with the name '{name}' already exists.")
         return name
 
+
 class IKECryptoFilterForm(NautobotFilterForm):
     """Import form for bulk uploading IKE Crypto profiles."""
 
@@ -58,19 +65,19 @@ class IKECryptoFilterForm(NautobotFilterForm):
         queryset=EncryptionAlgorithm.objects.all(),
         widget=APISelectMultiple,
         required=False,
-        label="Encryption Algorithms"
+        label="Encryption Algorithms",
     )
     authentication = DynamicModelMultipleChoiceField(
         queryset=AuthenticationAlgorithm.objects.all(),
         widget=APISelectMultiple,
         required=False,
-        label="Authentication Algorithms"
+        label="Authentication Algorithms",
     )
     dh_group = DynamicModelMultipleChoiceField(
         queryset=DiffieHellmanGroup.objects.all(),
         widget=APISelectMultiple,
         required=False,
-        label="Diffie-Hellman Groups"
+        label="Diffie-Hellman Groups",
     )
 
     fieldsets = (

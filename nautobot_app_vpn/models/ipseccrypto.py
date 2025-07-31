@@ -32,19 +32,13 @@ class IPSecCrypto(PrimaryModel, ChangeLoggedModel):
     description = models.TextField(blank=True, help_text="Optional free-form description or usage notes.")
 
     encryption = models.ManyToManyField(
-        EncryptionAlgorithm,
-        related_name="ipsec_cryptos",
-        help_text="Encryption algorithm(s) used."
+        EncryptionAlgorithm, related_name="ipsec_cryptos", help_text="Encryption algorithm(s) used."
     )
     authentication = models.ManyToManyField(
-        AuthenticationAlgorithm,
-        related_name="ipsec_cryptos",
-        help_text="Authentication algorithm(s) used."
+        AuthenticationAlgorithm, related_name="ipsec_cryptos", help_text="Authentication algorithm(s) used."
     )
     dh_group = models.ManyToManyField(
-        DiffieHellmanGroup,
-        related_name="ipsec_cryptos",
-        help_text="Diffie-Hellman Group(s) for key exchange."
+        DiffieHellmanGroup, related_name="ipsec_cryptos", help_text="Diffie-Hellman Group(s) for key exchange."
     )
 
     protocol = models.CharField(
