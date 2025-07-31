@@ -1,11 +1,9 @@
 """App declaration for nautobot_app_vpn."""
 
 from importlib import metadata
-
 from nautobot.apps import NautobotAppConfig
 
 __version__ = metadata.version(__name__)
-
 
 class NautobotAppVpnConfig(NautobotAppConfig):
     """App configuration for the nautobot_app_vpn app."""
@@ -25,7 +23,7 @@ class NautobotAppVpnConfig(NautobotAppConfig):
     jobs = "nautobot_app_vpn.jobs"
 
     def ready(self):
-        # Lazy imports to avoid AppRegistryNotReady errors
+        # Existing startup logic
         super().ready()
         from nautobot.apps import jobs  # pylint: disable=import-outside-toplevel
         from .jobs.sync_neo4j_job import SyncNeo4jJob  # pylint: disable=import-outside-toplevel
@@ -34,6 +32,27 @@ class NautobotAppVpnConfig(NautobotAppConfig):
             SyncNeo4jJob,
         )
 
+        try:
+            from nautobot_app_vpn.models.constants import (
+                EncryptionAlgorithms,
+                AuthenticationAlgorithms,
+                DiffieHellmanGroups,
+            )
+            from nautobot_app_vpn.models.algorithms import (
+                EncryptionAlgorithm,
+                AuthenticationAlgorithm,
+                DiffieHellmanGroup,
+            )
+
+            for code, label in EncryptionAlgorithms.choices:
+                EncryptionAlgorithm.objects.get_or_create(code=code, defaults={"label": label})
+            for code, label in AuthenticationAlgorithms.choices:
+                AuthenticationAlgorithm.objects.get_or_create(code=code, defaults={"label": label})
+            for code, label in DiffieHellmanGroups.choices:
+                DiffieHellmanGroup.objects.get_or_create(code=code, defaults={"label": label})
+        except Exception as err:
+            import logging
+            logging.getLogger(__name__).warning("Algorithm lookup table sync failed: %s", err)
 
 # Required for Nautobot to detect the plugin
 config = NautobotAppVpnConfig  # pylint: disable=invalid-name

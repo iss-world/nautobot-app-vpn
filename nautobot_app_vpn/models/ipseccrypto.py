@@ -6,13 +6,12 @@ from nautobot.core.models.generics import PrimaryModel
 from nautobot.extras.models import ChangeLoggedModel, StatusField
 from nautobot.extras.utils import extras_features
 
-from nautobot_app_vpn.models.constants import (
-    AuthenticationAlgorithms,
-    DiffieHellmanGroups,
-    EncryptionAlgorithms,
-    IPSECProtocols,
-    LifetimeUnits,
+from nautobot_app_vpn.models.algorithms import (
+    EncryptionAlgorithm,
+    AuthenticationAlgorithm,
+    DiffieHellmanGroup,
 )
+from nautobot_app_vpn.models.constants import IPSECProtocols, LifetimeUnits
 from nautobot_app_vpn.utils import get_default_status
 
 
@@ -30,19 +29,22 @@ class IPSecCrypto(PrimaryModel, ChangeLoggedModel):
     """Global IPSec Crypto Profile shared across firewalls."""
 
     name = models.CharField(max_length=100, unique=True, help_text="Unique name for the IPSec Crypto Profile.")
-
     description = models.TextField(blank=True, help_text="Optional free-form description or usage notes.")
 
-    encryption = models.CharField(
-        max_length=50, choices=EncryptionAlgorithms.choices, help_text="Encryption algorithm used."
+    encryption = models.ManyToManyField(
+        EncryptionAlgorithm,
+        related_name="ipsec_cryptos",
+        help_text="Encryption algorithm(s) used."
     )
-
-    authentication = models.CharField(
-        max_length=50, choices=AuthenticationAlgorithms.choices, help_text="Authentication algorithm used."
+    authentication = models.ManyToManyField(
+        AuthenticationAlgorithm,
+        related_name="ipsec_cryptos",
+        help_text="Authentication algorithm(s) used."
     )
-
-    dh_group = models.CharField(
-        max_length=50, choices=DiffieHellmanGroups.choices, help_text="Diffie-Hellman Group for key exchange."
+    dh_group = models.ManyToManyField(
+        DiffieHellmanGroup,
+        related_name="ipsec_cryptos",
+        help_text="Diffie-Hellman Group(s) for key exchange."
     )
 
     protocol = models.CharField(
@@ -50,7 +52,6 @@ class IPSecCrypto(PrimaryModel, ChangeLoggedModel):
     )
 
     lifetime = models.PositiveIntegerField(help_text="Lifetime duration (must be a positive number).")
-
     lifetime_unit = models.CharField(
         max_length=50,
         choices=LifetimeUnits.choices,

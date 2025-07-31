@@ -48,8 +48,38 @@ from nautobot_app_vpn.models import (
     VPNDashboard,
 )
 
+from nautobot_app_vpn.models.algorithms import (
+    EncryptionAlgorithm,
+    AuthenticationAlgorithm,
+    DiffieHellmanGroup,
+)
+from nautobot_app_vpn.api.serializers import (
+    EncryptionAlgorithmSerializer,
+    AuthenticationAlgorithmSerializer,
+    DiffieHellmanGroupSerializer,
+)
+
+
 logger = logging.getLogger(__name__)
 
+
+class EncryptionAlgorithmViewSet(viewsets.ReadOnlyModelViewSet):
+    """API viewset for Encryption Algorithms."""
+
+    queryset = EncryptionAlgorithm.objects.all()
+    serializer_class = EncryptionAlgorithmSerializer
+
+class AuthenticationAlgorithmViewSet(viewsets.ReadOnlyModelViewSet):
+    """API viewset for Authentication Algorithms."""
+
+    queryset = AuthenticationAlgorithm.objects.all()
+    serializer_class = AuthenticationAlgorithmSerializer
+
+class DiffieHellmanGroupViewSet(viewsets.ReadOnlyModelViewSet):
+    """API viewset for Diffie-Hellman Groups."""
+
+    queryset = DiffieHellmanGroup.objects.all()
+    serializer_class = DiffieHellmanGroupSerializer
 
 class IKECryptoViewSet(viewsets.ModelViewSet):
     """API endpoint for managing IKE Crypto Profiles."""

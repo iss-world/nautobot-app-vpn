@@ -12,6 +12,9 @@ from nautobot_app_vpn.api.viewsets import (
     TunnelMonitorProfileViewSet,
     VPNTopologyFilterOptionsView,
     VPNTopologyNeo4jView,
+    EncryptionAlgorithmViewSet,
+    AuthenticationAlgorithmViewSet,
+    DiffieHellmanGroupViewSet,
 )
 
 app_name = "nautobot_app_vpn_api"
@@ -24,6 +27,9 @@ router.register(r"ikegateway", IKEGatewayViewSet, basename="ikegateway")
 router.register(r"ipsectunnel", IPSECTunnelViewSet, basename="ipsectunnel")
 router.register(r"ipsecproxyid", IPSecProxyIDViewSet, basename="ipsecproxyid")
 router.register(r"tunnel-monitor-profiles", TunnelMonitorProfileViewSet, basename="tunnelmonitorprofile")
+router.register(r"encryptionalgorithms", EncryptionAlgorithmViewSet)
+router.register(r"authenticationalgorithms", AuthenticationAlgorithmViewSet)
+router.register(r"diffiehellmangroups", DiffieHellmanGroupViewSet)
 
 urlpatterns = [
     path("v1/", include(router.urls)),  # ✅ Current versioned API path

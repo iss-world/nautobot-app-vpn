@@ -14,6 +14,11 @@ from .constants import (
     IPSECProtocols,
     LifetimeUnits,
 )
+from .algorithms import (
+    EncryptionAlgorithm,
+    AuthenticationAlgorithm,
+    DiffieHellmanGroup,
+)
 from .ikecrypto import IKECrypto
 from .ikegateway import IKEGateway
 from .ipseccrypto import IPSecCrypto
@@ -36,6 +41,9 @@ __all__ = [
     "EncryptionAlgorithms",
     "AuthenticationAlgorithms",
     "DiffieHellmanGroups",
+    "EncryptionAlgorithm",
+    "AuthenticationAlgorithm",
+    "DiffieHellmanGroup",
     "IKEAuthenticationTypes",
     "IPSECProtocols",
     "LifetimeUnits",

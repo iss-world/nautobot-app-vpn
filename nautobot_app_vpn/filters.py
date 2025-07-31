@@ -33,6 +33,11 @@ from nautobot_app_vpn.models.constants import (
     LifetimeUnits,
 )
 
+from nautobot_app_vpn.models.algorithms import (
+    EncryptionAlgorithm,
+    AuthenticationAlgorithm,
+    DiffieHellmanGroup,
+)
 
 class BaseFilterSet(StatusModelFilterSetMixin, NautobotFilterSet):  # pylint: disable=nb-no-model-found
     """FilterSet for Base model."""
@@ -48,9 +53,15 @@ class BaseFilterSet(StatusModelFilterSetMixin, NautobotFilterSet):  # pylint: di
 class IKECryptoFilterSet(BaseFilterSet):
     """FilterSet for IKECrypto model."""
 
-    dh_group = django_filters.MultipleChoiceFilter(choices=DiffieHellmanGroups.choices)
-    encryption = django_filters.MultipleChoiceFilter(choices=EncryptionAlgorithms.choices)
-    authentication = django_filters.MultipleChoiceFilter(choices=AuthenticationAlgorithms.choices)
+    dh_group = django_filters.ModelMultipleChoiceFilter(
+        queryset=DiffieHellmanGroup.objects.all(), label="DH Group"
+    )
+    encryption = django_filters.ModelMultipleChoiceFilter(
+        queryset=EncryptionAlgorithm.objects.all()
+    )
+    authentication = django_filters.ModelMultipleChoiceFilter(
+        queryset=AuthenticationAlgorithm.objects.all()
+    )
     lifetime = django_filters.RangeFilter()
     lifetime_unit = django_filters.ChoiceFilter(choices=LifetimeUnits.choices)
 
@@ -62,9 +73,15 @@ class IKECryptoFilterSet(BaseFilterSet):
 class IPSecCryptoFilterSet(BaseFilterSet):
     """FilterSet for IPSecCrypto model."""
 
-    encryption = django_filters.MultipleChoiceFilter(choices=EncryptionAlgorithms.choices)
-    authentication = django_filters.MultipleChoiceFilter(choices=AuthenticationAlgorithms.choices)
-    dh_group = django_filters.MultipleChoiceFilter(choices=DiffieHellmanGroups.choices)
+    encryption = django_filters.ModelMultipleChoiceFilter(
+        queryset=EncryptionAlgorithm.objects.all()
+    )
+    authentication = django_filters.ModelMultipleChoiceFilter(
+        queryset=AuthenticationAlgorithm.objects.all()
+    )
+    dh_group = django_filters.ModelMultipleChoiceFilter(
+        queryset=DiffieHellmanGroup.objects.all()
+    )
     protocol = django_filters.MultipleChoiceFilter(choices=IPSECProtocols.choices)
     lifetime = django_filters.RangeFilter()
     lifetime_unit = django_filters.ChoiceFilter(choices=LifetimeUnits.choices)
