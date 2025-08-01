@@ -83,11 +83,12 @@ class IKEGateway(PrimaryModel, ChangeLoggedModel):
         max_length=20,
         choices=IdentificationTypes.choices,
         blank=True,
-        default="",
+        null=True,
+        default=None,
         help_text="Type of local identifier (optional).",
     )
     local_id_value = models.CharField(
-        max_length=255, blank=True, default="", help_text="Value of the local identifier (IP, FQDN, etc.)."
+        max_length=255, blank=True, null=True, default=None, help_text="Value of the local identifier (IP, FQDN, etc.)."
     )
 
     # Peer Side
@@ -128,11 +129,12 @@ class IKEGateway(PrimaryModel, ChangeLoggedModel):
         max_length=20,
         choices=IdentificationTypes.choices,
         blank=True,
-        default="",
+        null=True,
+        default=None,
         help_text="Type of peer identifier (optional).",
     )
     peer_id_value = models.CharField(
-        max_length=255, blank=True, default="", help_text="Value of the peer identifier (IP, FQDN, etc.)."
+        max_length=255, blank=True, null=True, default=None, help_text="Value of the peer identifier (IP, FQDN, etc.)."
     )
 
     # Authentication
