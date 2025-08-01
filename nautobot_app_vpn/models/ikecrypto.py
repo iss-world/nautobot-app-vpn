@@ -29,7 +29,7 @@ class IKECrypto(PrimaryModel):
     """IKE Crypto profile model for defining encryption and authentication parameters."""
 
     name = models.CharField(max_length=100, unique=True, help_text="Unique name for the IKE Crypto Profile")
-    description = models.TextField(blank=True, help_text="Optional free-form description or usage notes")
+    description = models.TextField(blank=True, default="", help_text="Optional free-form description or usage notes")
 
     dh_group = models.ManyToManyField(
         DiffieHellmanGroup, related_name="ikecryptos", help_text="Diffie-Hellman Group(s) used in key exchange"

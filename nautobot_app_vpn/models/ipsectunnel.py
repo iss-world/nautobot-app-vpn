@@ -1,5 +1,6 @@
 """Models for IPSec Tunnel objects and associated attributes."""
 # pylint: disable=too-many-ancestors
+# pylint: disable=nb-string-field-blank-null
 
 from django.core.exceptions import ValidationError  # Import ValidationError
 from django.db import models
@@ -37,7 +38,7 @@ class IPSECTunnel(PrimaryModel):
     """Model representing an IPSec Tunnel configuration."""
 
     name = models.CharField(max_length=100, help_text="Unique name for the IPSec Tunnel.")
-    description = models.TextField(blank=True, null=True, help_text="Optional description.")
+    description = models.TextField(blank=True, default="", help_text="Optional description.")
 
     devices = models.ManyToManyField(
         Device, related_name="ipsec_tunnels", help_text="Firewall device(s) associated with this IPSec Tunnel (for HA)."
@@ -66,7 +67,7 @@ class IPSECTunnel(PrimaryModel):
     monitor_destination_ip = models.CharField(
         max_length=255,
         blank=True,
-        null=True,
+        default="",
         help_text="Destination IP or FQDN to ping for monitoring.",
     )
     natural_key_field_names = ["name"]
@@ -82,8 +83,8 @@ class IPSECTunnel(PrimaryModel):
     role = models.CharField(
         max_length=50,
         choices=TunnelRoleChoices.choices,
-        null=True,
-        blank=True,  # Make it optional
+        blank=True,
+        default="",
         help_text="Role of this tunnel if part of a redundant setup (e.g., Primary, Backup).",
     )
 
@@ -122,8 +123,8 @@ class IPSecProxyID(models.Model):
     """Model representing an IPSec Proxy ID configuration."""
 
     tunnel = models.ForeignKey(IPSECTunnel, on_delete=models.CASCADE, related_name="proxy_ids")
-    local_subnet = models.CharField(max_length=50, blank=True)
-    remote_subnet = models.CharField(max_length=50, blank=True)
+    local_subnet = models.CharField(max_length=50, blank=True, default="")
+    remote_subnet = models.CharField(max_length=50, blank=True, default="")
     protocol = models.CharField(max_length=10, blank=True, default="any")
     local_port = models.PositiveIntegerField(blank=True, null=True)
     remote_port = models.PositiveIntegerField(blank=True, null=True)
