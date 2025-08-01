@@ -34,6 +34,4 @@ class NautobotAppVpnConfig(NautobotAppConfig):
             SyncNeo4jJob,
         )
 
-
-# Required for Nautobot to detect the plugin
 config = NautobotAppVpnConfig  # pylint: disable=invalid-name
