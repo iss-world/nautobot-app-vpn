@@ -37,7 +37,7 @@ class IKEGateway(PrimaryModel, ChangeLoggedModel):
 
     name = models.CharField(
         max_length=100,
-        help_text="Unique name for the IKE Gateway profile.",
+        help_text="Name for the IKE Gateway profile.",
     )
     description = models.TextField(
         blank=True, default="", help_text="Optional description or purpose for this IKE Gateway."
@@ -161,14 +161,18 @@ class IKEGateway(PrimaryModel, ChangeLoggedModel):
         to=Platform,
         on_delete=models.SET_NULL,
         related_name="local_ike_gateways",
+        blank=True,
         null=True,
+        default=None,
         verbose_name="Local Device Platform",
     )
     peer_platform = models.ForeignKey(
         to=Platform,
         on_delete=models.SET_NULL,
         related_name="peer_ike_gateways",
+        blank=True,
         null=True,
+        default=None,
         verbose_name="Peer Device Platform",
     )
 

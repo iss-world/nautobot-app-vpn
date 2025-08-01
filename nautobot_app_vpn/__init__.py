@@ -34,4 +34,5 @@ class NautobotAppVpnConfig(NautobotAppConfig):
             SyncNeo4jJob,
         )
 
+
 config = NautobotAppVpnConfig  # pylint: disable=invalid-name

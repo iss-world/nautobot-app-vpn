@@ -31,10 +31,10 @@ class IPSECTunnelForm(NautobotModelForm):
     """Form for creating and editing IPSec Tunnel configurations."""
 
     devices = DynamicModelMultipleChoiceField(
-        queryset=Device.objects.filter(platform__name="PanOS"),  # Filter by platform name is safer
+        queryset=Device.objects.all(),
         label="Firewall Devices",
         required=True,
-        widget=APISelectMultiple(attrs={"class": "form-control"}),  # Correct widget for M2M
+        widget=APISelectMultiple(attrs={"class": "form-control"}),
     )
     ike_gateway = DynamicModelChoiceField(
         queryset=IKEGateway.objects.all(),

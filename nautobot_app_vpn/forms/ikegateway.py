@@ -33,7 +33,7 @@ class IKEGatewayForm(NautobotModelForm):
     """Form for creating and editing IKE Gateway profiles."""
 
     local_devices = DynamicModelMultipleChoiceField(
-        queryset=Device.objects.filter(platform__name="PanOS"),  # Base queryset
+        queryset=Device.objects.all(),
         label="Local Devices",
         required=True,  # Restore requirement
         widget=APISelectMultiple(attrs={"class": "form-control"}),
@@ -121,7 +121,39 @@ class IKEGatewayForm(NautobotModelForm):
 
     class Meta:
         model = IKEGateway
-        fields = "__all__"
+        fields = [
+            "name",
+            "description",
+            "ike_version",
+            "exchange_mode",  # General
+            "local_ip_type",
+            "local_ip",
+            "local_devices",
+            "local_locations",
+            "bind_interface",
+            "local_platform",
+            "local_id_type",
+            "local_id_value",  # Local
+            "peer_ip_type",
+            "peer_ip",
+            "peer_devices",
+            "peer_device_manual",
+            "peer_locations",
+            "peer_location_manual",
+            "peer_platform",
+            "peer_id_type",
+            "peer_id_value",  # Peer
+            "authentication_type",
+            "pre_shared_key",
+            "ike_crypto_profile",  # Auth
+            "enable_passive_mode",
+            "enable_nat_traversal",  # Advanced
+            "enable_dpd",
+            "dpd_interval",
+            "dpd_retry",  # DPD
+            "liveness_check_interval",  # Liveness
+            "status",  # Nautobot Status
+        ]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "description": SmallTextarea(attrs={"rows": 3}),

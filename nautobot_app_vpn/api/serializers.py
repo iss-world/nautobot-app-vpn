@@ -270,7 +270,6 @@ class IKEGatewaySerializer(BaseModelSerializer):
     peer_locations = VPNNestedLocationSerializer(many=True, read_only=True, required=False)
     ike_crypto_profile = VPNNestedIKECryptoSerializer(read_only=True, required=False, allow_null=True)
     status = VPNNestedStatusSerializer(read_only=True, required=False, allow_null=True)
-    # <<< ADDED: bind_interface read-only nested representation
     bind_interface = VPNNestedInterfaceSerializer(read_only=True, required=False, allow_null=True)
     local_platform = VPNNestedPlatformSerializer(read_only=True, required=False, allow_null=True)
     peer_platform = VPNNestedPlatformSerializer(read_only=True, required=False, allow_null=True)
@@ -352,7 +351,8 @@ class IKEGatewaySerializer(BaseModelSerializer):
     peer_ip_type = ChoiceField(choices=IPAddressTypes.choices, required=False)
     local_id_type = ChoiceField(choices=IdentificationTypes.choices, required=False, allow_null=True)
     peer_id_type = ChoiceField(choices=IdentificationTypes.choices, required=False, allow_null=True)
-    authentication_type = ChoiceField(choices=IKEAuthenticationTypes.choices, required=False)
+    authentication_type = ChoiceField(choices=IKEAuthenticationTypes.choices, required=True, allow_null=False)
+    name = serializers.CharField(required=True, allow_blank=False)
 
     # Other Fields
     pre_shared_key = serializers.CharField(
