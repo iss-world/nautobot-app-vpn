@@ -1,4 +1,4 @@
-"""App declaration for nautobot_app_vpn."""
+"""App declaration for nautobot_app_vpn. 1.0.4"""
 # pylint: disable=import-outside-toplevel
 
 from importlib import metadata
