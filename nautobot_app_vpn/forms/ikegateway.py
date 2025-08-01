@@ -1,5 +1,6 @@
 """Forms for managing IKE Gateway profiles in the Nautobot VPN app."""
 # pylint: disable=too-many-ancestors, too-few-public-methods, too-many-locals, too-many-branches, too-many-statements
+# pylint: disable=nb-use-fields-all
 
 import re
 
