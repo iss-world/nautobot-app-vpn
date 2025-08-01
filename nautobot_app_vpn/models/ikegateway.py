@@ -39,7 +39,9 @@ class IKEGateway(PrimaryModel, ChangeLoggedModel):
         # Consider if unique=True is still appropriate or needs adjustment
         help_text="Unique name for the IKE Gateway profile.",
     )
-    description = models.TextField(blank=True, help_text="Optional description or purpose for this IKE Gateway.")
+    description = models.TextField(
+        blank=True, null=True, help_text="Optional description or purpose for this IKE Gateway."
+    )
 
     # General Settings (No changes needed here)
     ike_version = models.CharField(
@@ -63,7 +65,7 @@ class IKEGateway(PrimaryModel, ChangeLoggedModel):
         help_text="Type of Local IP Address identification.",
     )
     local_ip = models.CharField(
-        max_length=255, blank=True, help_text="Local IP address or FQDN (leave blank if type is Dynamic)."
+        max_length=255, blank=True, null=True, help_text="Local IP address or FQDN (leave blank if type is Dynamic)."
     )
     # --- MODIFIED: ForeignKey to ManyToManyField ---
     local_devices = models.ManyToManyField(
@@ -72,8 +74,7 @@ class IKEGateway(PrimaryModel, ChangeLoggedModel):
         help_text="Associated local firewall devices (can select multiple for HA).",
         blank=False,  # Typically require at least one local device
     )
-    # --- REMOVED: local_location CharField ---
-    # --- ADDED: ManyToManyField for local locations ---
+
     local_locations = models.ManyToManyField(
         Location,
         related_name="local_ike_gateway_locations",
@@ -84,10 +85,11 @@ class IKEGateway(PrimaryModel, ChangeLoggedModel):
         max_length=20,
         choices=IdentificationTypes.choices,
         blank=True,
+        null=True,
         help_text="Type of local identifier (optional).",
     )
     local_id_value = models.CharField(
-        max_length=255, blank=True, help_text="Value of the local identifier (IP, FQDN, etc.)."
+        max_length=255, blank=True, null=True, help_text="Value of the local identifier (IP, FQDN, etc.)."
     )
 
     # 🔹 Peer Side Modifications
@@ -98,7 +100,7 @@ class IKEGateway(PrimaryModel, ChangeLoggedModel):
         help_text="Type of Peer IP Address identification.",
     )
     peer_ip = models.CharField(
-        max_length=255, blank=True, help_text="Peer IP address or FQDN (leave blank if type is Dynamic)."
+        max_length=255, blank=True, null=True, help_text="Peer IP address or FQDN (leave blank if type is Dynamic)."
     )
     # --- MODIFIED: ForeignKey to ManyToManyField ---
     peer_devices = models.ManyToManyField(
@@ -110,6 +112,7 @@ class IKEGateway(PrimaryModel, ChangeLoggedModel):
     peer_device_manual = models.CharField(
         max_length=255,
         blank=True,
+        null=True,
         help_text="Specify Peer Name manually if Peer Devices are not selected or are external.",
     )
 
@@ -123,16 +126,18 @@ class IKEGateway(PrimaryModel, ChangeLoggedModel):
     peer_location_manual = models.CharField(
         max_length=255,
         blank=True,
+        null=True,
         help_text="Specify Peer Location manually if not selecting from existing Locations in the dropdown.",
     )
     peer_id_type = models.CharField(
         max_length=20,
         choices=IdentificationTypes.choices,
         blank=True,
+        null=True,
         help_text="Type of peer identifier (optional).",
     )
     peer_id_value = models.CharField(
-        max_length=255, blank=True, help_text="Value of the peer identifier (IP, FQDN, etc.)."
+        max_length=255, blank=True, null=True, help_text="Value of the peer identifier (IP, FQDN, etc.)."
     )
 
     # Authentication (No changes needed here)
@@ -140,7 +145,7 @@ class IKEGateway(PrimaryModel, ChangeLoggedModel):
         max_length=20, choices=IKEAuthenticationTypes.choices, help_text="Authentication method for the IKE Gateway."
     )
     pre_shared_key = models.TextField(
-        blank=True, help_text="Pre-Shared Key (⚠️ Store securely; consider Nautobot secrets integration)."
+        blank=True, null=True, help_text="Pre-Shared Key (⚠️ Store securely; consider Nautobot secrets integration)."
     )
     ike_crypto_profile = models.ForeignKey(
         IKECrypto,
@@ -191,6 +196,7 @@ class IKEGateway(PrimaryModel, ChangeLoggedModel):
     )
     liveness_check_interval = models.PositiveIntegerField(
         blank=True,
+        null=True,
         default=5,
         validators=[MinValueValidator(1)],
         help_text="IKEv2 Liveness Check interval in seconds (optional, overrides DPD if set).",
@@ -200,7 +206,9 @@ class IKEGateway(PrimaryModel, ChangeLoggedModel):
     status = StatusField(
         on_delete=models.PROTECT, related_name="%(app_label)s_%(class)s_related", default=get_default_status
     )
-    last_sync = models.DateTimeField(blank=True, help_text="Last synchronization timestamp from the firewall.")
+    last_sync = models.DateTimeField(
+        null=True, blank=True, help_text="Last synchronization timestamp from the firewall."
+    )
 
     class Meta:
         verbose_name = "IKE Gateway"
