@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nautobot-app-vpn"
-version = "1.0.3"
+version = "1.0.4"
 description = "VPN APP"
 authors = ["ISS World Services <GITSO-Network@group.issworld.com>"]
 license = "Apache-2.0"

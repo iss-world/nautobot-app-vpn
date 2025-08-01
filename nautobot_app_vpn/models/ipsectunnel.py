@@ -67,6 +67,7 @@ class IPSECTunnel(PrimaryModel):
     monitor_destination_ip = models.CharField(
         max_length=255,
         blank=True,
+        null=True,
         default="",
         help_text="Destination IP or FQDN to ping for monitoring.",
     )
@@ -84,6 +85,7 @@ class IPSECTunnel(PrimaryModel):
         max_length=50,
         choices=TunnelRoleChoices.choices,
         blank=True,
+        null=True,
         default="",
         help_text="Role of this tunnel if part of a redundant setup (e.g., Primary, Backup).",
     )
