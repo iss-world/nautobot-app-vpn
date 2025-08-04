@@ -64,7 +64,11 @@ class IKEGateway(PrimaryModel, ChangeLoggedModel):
         help_text="Type of Local IP Address identification.",
     )
     local_ip = models.CharField(
-        max_length=255, blank=True, default="", help_text="Local IP address or FQDN (leave blank if type is Dynamic)."
+        max_length=255,
+        blank=True,
+        null=True,
+        default="",
+        help_text="Local IP address or FQDN (leave blank if type is Dynamic).",
     )
     local_devices = models.ManyToManyField(
         Device,
@@ -99,7 +103,11 @@ class IKEGateway(PrimaryModel, ChangeLoggedModel):
         help_text="Type of Peer IP Address identification.",
     )
     peer_ip = models.CharField(
-        max_length=255, blank=True, default="", help_text="Peer IP address or FQDN (leave blank if type is Dynamic)."
+        max_length=255,
+        blank=True,
+        null=True,
+        default="",
+        help_text="Peer IP address or FQDN (leave blank if type is Dynamic).",
     )
     peer_devices = models.ManyToManyField(
         Device,
@@ -110,6 +118,7 @@ class IKEGateway(PrimaryModel, ChangeLoggedModel):
     peer_device_manual = models.CharField(
         max_length=255,
         blank=True,
+        null=True,
         default="",
         help_text="Specify Peer Name manually if Peer Devices are not selected or are external.",
     )
@@ -122,6 +131,7 @@ class IKEGateway(PrimaryModel, ChangeLoggedModel):
     peer_location_manual = models.CharField(
         max_length=255,
         blank=True,
+        null=True,
         default="",
         help_text="Specify Peer Location manually if not selecting from existing Locations in the dropdown.",
     )
@@ -142,7 +152,10 @@ class IKEGateway(PrimaryModel, ChangeLoggedModel):
         max_length=20, choices=IKEAuthenticationTypes.choices, help_text="Authentication method for the IKE Gateway."
     )
     pre_shared_key = models.TextField(
-        blank=True, default="", help_text="Pre-Shared Key (⚠️ Store securely; consider Nautobot secrets integration)."
+        blank=True,
+        null=True,
+        default="",
+        help_text="Pre-Shared Key (⚠️ Store securely; consider Nautobot secrets integration).",
     )
     ike_crypto_profile = models.ForeignKey(
         IKECrypto,
