@@ -39,7 +39,7 @@ A Nautobot plugin designed to model, visualize, and manage VPN infrastructure, i
 
 ## Requirements
 
-- Nautobot >= 2.2.0
+- Nautobot >= 2.4.0
 - Python >= 3.8
 - Neo4j >= 5.0 (for topology view)
 
