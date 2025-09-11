@@ -1,4 +1,3 @@
----
 name: "Nautobot Upstream Monitor"
 
 on:  # yamllint disable-line rule:truthy rule:comments
@@ -6,9 +5,8 @@ on:  # yamllint disable-line rule:truthy rule:comments
     - cron: "0 4 * * 1"  # every Monday at 04:00 UTC
   workflow_dispatch:
 
-# (optional but nice) avoid overlapping runs if someone triggers it manually
 concurrency:
-  group: upstream-upstream-monitor
+  group: "upstream-upstream-monitor"  # was unquoted; yamllint wants double quotes
   cancel-in-progress: true
 
 jobs:
