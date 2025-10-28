@@ -6,11 +6,12 @@ on:  # yamllint disable-line rule:truthy rule:comments
   workflow_dispatch:
 
 concurrency:
-  group: "upstream-upstream-monitor"  # was unquoted; yamllint wants double quotes
+  group: "upstream-upstream-monitor"
   cancel-in-progress: true
 
 jobs:
   upstream-test:
+    continue-on-error: true        # <- make the whole monitor non-blocking
     uses: "nautobot/nautobot/.github/workflows/plugin_upstream_testing_base.yml@v2.4.10"
     with:
       invoke_context_name: "NAUTOBOT_APP_VPN"

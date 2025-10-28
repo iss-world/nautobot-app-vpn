@@ -14,7 +14,8 @@ from nautobot.apps.forms import (
     NautobotModelForm,
 )
 from nautobot.dcim.models import Device, Interface
-from nautobot.extras.models import Status
+from nautobot.extras.models import Status, Tag
+from nautobot.tenancy.models import Tenant, TenantGroup
 
 # Import local models
 from nautobot_app_vpn.models import (
@@ -30,6 +31,17 @@ from nautobot_app_vpn.models import (
 class IPSECTunnelForm(NautobotModelForm):
     """Form for creating and editing IPSec Tunnel configurations."""
 
+    tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        required=False,
+        label="Tenant Group",
+    )
+    tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label="Tenant",
+        query_params={"tenant_group_id": "$tenant_group"},
+    )
     devices = DynamicModelMultipleChoiceField(
         queryset=Device.objects.all(),
         label="Firewall Devices",
@@ -55,13 +67,6 @@ class IPSECTunnelForm(NautobotModelForm):
         help_text="Select an existing tunnel interface. Filtered by selected devices.",
         query_params={"device_id": "$devices"},
     )
-    status = forms.ModelChoiceField(  # <--- Explicitly defined
-        queryset=Status.objects.all().order_by("name"),
-        label="Status",
-        required=True,
-        widget=forms.Select(attrs={"class": "form-control"}),
-    )
-
     role = forms.ChoiceField(
         choices=TunnelRoleChoices.choices,
         required=False,  # Make role optional
@@ -89,6 +94,31 @@ class IPSECTunnelForm(NautobotModelForm):
             "description": forms.Textarea(attrs={"rows": 3, "class": "form-control"}),
             # No widget needed for bind_interface as it's removed
         }
+    fieldsets = (
+        (
+            "IPSec Tunnel",
+            (
+                "name",
+                "description",
+                "tenant_group",
+                "tenant",
+                "devices",
+                "ike_gateway",
+                "ipsec_crypto_profile",
+                "tunnel_interface",
+                "role",
+                "status",
+            ),
+        ),
+        (
+            "Monitoring",
+            (
+                "enable_tunnel_monitor",
+                "monitor_destination_ip",
+                "monitor_profile",
+            ),
+        ),
+    )
 
     def clean(self):
         """Ensure selected interface exists and is valid."""
@@ -173,6 +203,16 @@ class IPSECTunnelFilterForm(NautobotFilterForm):
     """Filter form for IPSECTunnel objects."""
 
     model = IPSECTunnel
+    tenant_group = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(), required=False, label="Tenant Group"
+    )
+    tenant = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label="Tenant",
+        query_params={"tenant_group_id": "$tenant_group"},
+    )
+    tags = DynamicModelMultipleChoiceField(queryset=Tag.objects.all(), required=False, label="Tags")
     role = forms.MultipleChoiceField(choices=TunnelRoleChoices.choices, required=False)
     devices = DynamicModelMultipleChoiceField(queryset=Device.objects.all(), required=False, label="Devices")
     ike_gateway = DynamicModelChoiceField(queryset=IKEGateway.objects.all(), required=False, label="IKE Gateway")
@@ -188,6 +228,6 @@ class IPSECTunnelFilterForm(NautobotFilterForm):
     status = forms.ModelMultipleChoiceField(queryset=Status.objects.all(), required=False)
     # bind_interface field was not here, so no removal needed
     fieldsets = (
-        ("Tunnel Filters", ("q", "devices", "ike_gateway", "role", "status")),
+        ("Tunnel Filters", ("q", "tenant_group", "tenant", "tags", "devices", "ike_gateway", "role", "status")),
         ("Monitoring", ("enable_tunnel_monitor", "monitor_profile")),
     )

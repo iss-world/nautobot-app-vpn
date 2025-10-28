@@ -1,0 +1,258 @@
+/* --- Global Layout Reset --- */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden !important;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8f9fa;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Fullscreen fluid container */
+.container-fluid {
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 100%;
+  width: 100%;
+  min-width: 0;
+}
+
+/* --- Cytoscape Canvas --- */
+#cy {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  border-top: 1px solid #dee2e6;
+  border-bottom: 1px solid #dee2e6;
+  box-shadow: 0 4px 18px 0 rgba(0,0,0,0.09);
+  z-index: 1;
+  transition: background 0.18s, box-shadow 0.2s;
+  min-height: 340px;
+  min-width: 250px;
+}
+
+/* --- Filter/Search Bar & Controls --- */
+.filter-bar, .d-flex {
+  background: #fff;
+  border-bottom: 1px solid #e3e5e7;
+  padding: 8px 12px;
+  gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  min-height: 44px;
+  max-width: 100vw;
+  overflow-x: auto;
+  font-size: 0.98rem;
+}
+.d-flex > select,
+.d-flex > button,
+.d-flex > input {
+  font-size: 1rem;
+  height: 36px;
+  border: 1px solid #b7bfc7;
+  background: #fff;
+  color: #232c38;
+  padding: 2.5px 12px;
+  margin: 2px 2px;
+  border-radius: 6px;
+  outline: none;
+  min-width: 120px;
+  max-width: 240px;
+  box-sizing: border-box;
+  transition: border 0.16s, background 0.15s;
+}
+.d-flex > select:focus,
+.d-flex > input:focus {
+  border: 2px solid #2d7ff9;
+  background: #f6faff;
+}
+.d-flex > button {
+  background: #3076ed;
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1.5px 6px rgba(44,88,199,0.09);
+  transition: background 0.14s, color 0.12s;
+}
+.d-flex > button:active,
+.d-flex > button:focus {
+  outline: 1.5px solid #183e80;
+}
+.d-flex > button:hover {
+  background: #1853d3;
+}
+#apply-filters { margin-right: 4px; }
+#reset-filters { margin-right: 12px; background: #6c757d; }
+#reset-filters:hover { background: #444; }
+#search-nodes { width: 190px !important; margin-left: 4px; }
+#clear-search { margin-right: auto; }
+#export-png, #export-json { min-width: 120px; }
+
+/* Select2, if used */
+.select2-container--default .select2-selection--single {
+  background: #fff;
+  border: 1px solid #b7bfc7;
+  border-radius: 6px;
+  height: 36px;
+  font-size: 1rem;
+}
+
+/* --- Tooltip Styling --- */
+.cy-tooltip {
+  position: absolute;
+  background: #23272f;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 7px;
+  font-size: 1.02rem;
+  font-family: inherit;
+  white-space: pre-line;
+  max-width: 350px;
+  z-index: 9999;
+  box-shadow: 0 4px 28px rgba(22,32,64,0.19);
+  pointer-events: none;
+  display: none;
+  border: 2px solid #3788ef;
+  opacity: 0.98;
+  line-height: 1.55;
+  filter: drop-shadow(0 1.5px 8px #2d3fa710);
+  user-select: text;
+}
+.cy-tooltip.active {
+  display: block;
+  animation: fadeIn 0.14s;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 0.98; }
+}
+
+/* --- Highlight on Hover or Click (for future) --- */
+.cy-hover, .cy-selected {
+  cursor: pointer !important;
+  filter: brightness(1.18) drop-shadow(0 2px 8px rgba(55, 126, 242, 0.16));
+  border-color: #1976d2 !important;
+  z-index: 2 !important;
+  outline: 2.5px solid #3182ce;
+  transition: filter 0.13s, border-color 0.13s, outline 0.16s;
+}
+
+/* --- Loading Bar / Notice --- */
+#cy-loading {
+  font-size: 1rem;
+  font-style: italic;
+  text-align: center;
+  padding: 12px;
+  color: #0062b3;
+  background: #f8fafd;
+  border-bottom: 1px solid #e3e5e7;
+  letter-spacing: 0.04em;
+}
+
+/* --- Stats Bar (topology summary) --- */
+#topo-stats {
+  font-weight: 600;
+  font-size: 0.97rem;
+  color: #232c38;
+  background: #f5f7fa;
+  padding: 10px 15px 8px 17px;
+  border-top: 1px solid #e3e5e7;
+  min-height: 38px;
+  letter-spacing: 0.01em;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+#topology-container {
+  position: relative;
+  width: 100vw;
+  height: calc(100vh - 170px); /* or 100% if you want full height */
+  min-height: 350px;
+}
+#world-map-bg {
+  pointer-events: none;
+  user-select: none;
+}
+.cy-focus {
+  outline: 3px solid #ff9800 !important;
+  border-color: #ff9800 !important;
+  filter: drop-shadow(0 0 8px #ff9800b3);
+  z-index: 10 !important;
+}
+
+/* --- Responsive Layout --- */
+@media (max-width: 900px) {
+  #cy { height: 55vw; min-height: 230px; }
+  .filter-bar, .d-flex { gap: 4px; padding: 5px 2px; }
+  #topo-stats { font-size: 0.85rem; padding: 6px 8px 5px 8px; }
+}
+@media (max-width: 600px) {
+  .filter-bar, .d-flex, #topo-stats { font-size: 0.78rem; }
+  #cy { height: 40vw; min-height: 120px; }
+}
+
+/* --- Dark Mode Support --- */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #14161c;
+    color: #e0e2ef;
+  }
+  #cy {
+    background: #181c23;
+    border-color: #242539;
+    box-shadow: 0 6px 30px 0 rgba(20,24,42,0.19);
+  }
+  .filter-bar, .d-flex {
+    background: #222736;
+    border-color: #363854;
+    color: #f5f6fa;
+  }
+  .d-flex > select,
+  .d-flex > button,
+  .d-flex > input {
+    background: #222535;
+    color: #f5f6fa;
+    border-color: #49547c;
+  }
+  .d-flex > button {
+    background: #3065bb;
+    color: #fff;
+  }
+  #topo-stats {
+    background: #191b27;
+    color: #c1c9e7;
+    border-color: #242539;
+  }
+  #cy-loading {
+    background: #222536;
+    color: #7ec6ff;
+    border-color: #232542;
+  }
+  .cy-tooltip {
+    background: #181c23;
+    color: #f5f6fa;
+    border-color: #47aaff;
+  }
+}
+
+/* --- Hide number spinners (for clean input look) --- */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] { -moz-appearance: textfield; }
+
+/* --- Optional: Animation for graph elements (fade in) --- */
+.cy-fade-in {
+  animation: cyFadeIn .25s cubic-bezier(.32,1.3,.62,1) 1;
+}
+@keyframes cyFadeIn {
+  from { opacity: 0; transform: scale(0.97);}
+  to   { opacity: 1; transform: scale(1);}
+}

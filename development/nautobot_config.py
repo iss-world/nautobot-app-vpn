@@ -126,8 +126,29 @@ NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "testneo4j")
 # Enable installed Apps. Add the name of each App to the list.
 PLUGINS = ["nautobot_app_vpn"]
 
+# PLUGINS_CONFIG = {
+#   "nautobot_app_vpn": {
+#     "map": {
+#       "style_url": "https://demotiles.maplibre.org/style.json",
+#       "attribution": "&copy; OpenStreetMap contributors",
+#       "initial_lat": 20,
+#       "initial_lon": 0,
+#       "initial_zoom": 1.7,
+#       "initial_pitch": 0,
+#       "initial_bearing": 0,
+#     }
+#   }
+# }
+
+
+
 PLUGINS_CONFIG = {
-    "nautobot_app_vpn": {},
+  "nautobot_app_vpn": {
+    "map": {
+      "style_url": "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+      "attribution": "&copy; OpenStreetMap contributors &copy; CARTO"
+    }
+  }
 }
 
 # Apps configuration settings. These settings are used by various Apps that the user may have installed.

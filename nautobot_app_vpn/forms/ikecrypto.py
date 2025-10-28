@@ -3,11 +3,14 @@
 
 from django import forms
 from nautobot.apps.forms import (
+    APISelectMultiple,
+    DynamicModelChoiceField,
+    DynamicModelMultipleChoiceField,
     NautobotFilterForm,
     NautobotModelForm,
-    DynamicModelMultipleChoiceField,
-    APISelectMultiple,
 )
+from nautobot.extras.models import Tag
+from nautobot.tenancy.models import Tenant, TenantGroup
 from nautobot_app_vpn.models import IKECrypto
 from nautobot_app_vpn.models.algorithms import (
     EncryptionAlgorithm,
@@ -19,6 +22,17 @@ from nautobot_app_vpn.models.algorithms import (
 class IKECryptoForm(NautobotModelForm):
     """Form for creating and editing IKE Crypto profiles."""
 
+    tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        required=False,
+        label="Tenant Group",
+    )
+    tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label="Tenant",
+        query_params={"tenant_group_id": "$tenant_group"},
+    )
     encryption = DynamicModelMultipleChoiceField(
         queryset=EncryptionAlgorithm.objects.all(),
         widget=APISelectMultiple(attrs={"class": "form-control"}),
@@ -64,6 +78,22 @@ class IKECryptoFilterForm(NautobotFilterForm):
 
     model = IKECrypto
 
+    tenant_group = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(),
+        required=False,
+        label="Tenant Group",
+    )
+    tenant = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label="Tenant",
+        query_params={"tenant_group_id": "$tenant_group"},
+    )
+    tags = DynamicModelMultipleChoiceField(
+        queryset=Tag.objects.all(),
+        required=False,
+        label="Tags",
+    )
     encryption = DynamicModelMultipleChoiceField(
         queryset=EncryptionAlgorithm.objects.all(),
         widget=APISelectMultiple,
@@ -86,6 +116,17 @@ class IKECryptoFilterForm(NautobotFilterForm):
     fieldsets = (
         (
             "IKE Crypto Filters",
-            ("q", "encryption", "authentication", "dh_group", "lifetime", "lifetime_unit", "status"),
+            (
+                "q",
+                "tenant_group",
+                "tenant",
+                "tags",
+                "encryption",
+                "authentication",
+                "dh_group",
+                "lifetime",
+                "lifetime_unit",
+                "status",
+            ),
         ),
     )

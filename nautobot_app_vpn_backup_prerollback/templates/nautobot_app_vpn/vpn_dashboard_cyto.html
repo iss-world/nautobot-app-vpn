@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block base_container %}container-fluid{% endblock %}
+{% block title %}VPN Topology Dashboard (Neo4j + Cytoscape.js){% endblock %}
+
+{% block head %}
+  <!-- 🌐 External Libraries -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'nautobot_app_vpn/css/dashboard_cytoscape.css' %}" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js" defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+  <!-- 📘 Header -->
+  <div class="py-3 px-4 bg-light border-bottom">
+    <h1 class="h2 mb-0">VPN Topology Dashboard</h1>
+  </div>
+
+  <!-- 🧰 Filters + Search + Actions -->
+  <div class="d-flex align-items-center bg-white px-3 py-2 border-bottom gap-2 filter-bar" style="overflow-x: auto;">
+    <select id="filter-country" class="form-select form-select-sm" style="width: 150px;" aria-label="Country Filter">
+      <option value="">All Countries</option>
+    </select>
+    <select id="filter-role" class="form-select form-select-sm" style="width: 150px;" aria-label="Role Filter">
+      <option value="">All Roles</option>
+    </select>
+    <select id="filter-status" class="form-select form-select-sm" style="width: 150px;" aria-label="Status Filter">
+      <option value="">All Statuses</option>
+    </select>
+    <select id="filter-ike_version" class="form-select form-select-sm" style="width: 150px;" aria-label="IKE Version Filter">
+      <option value="">All IKE Versions</option>
+    </select>
+    <select id="filter-location" class="form-select form-select-sm" style="width: 150px;" aria-label="Location Filter">
+      <option value="">All Locations</option>
+    </select>
+    <select id="filter-device" class="form-select form-select-sm" style="width: 150px;" aria-label="Device Filter">
+      <option value="">All Devices</option>
+    </select>
+    <select id="filter-platform" class="form-select form-select-sm" style="width: 150px;" aria-label="Platform Filter">
+      <option value="">All Platforms</option>
+    </select>
+
+    <button id="apply-filters" class="btn btn-sm btn-primary" aria-label="Apply Filters">Apply</button>
+    <button id="reset-filters" class="btn btn-sm btn-outline-secondary" aria-label="Reset Filters">Reset</button>
+
+    <input id="search-nodes" type="text" placeholder="🔍 Search devices..." class="form-control form-control-sm" style="width: 180px;" aria-label="Search Nodes" />
+    <button id="clear-search" class="btn btn-sm btn-outline-dark" aria-label="Clear Search">Clear</button>
+
+    <div class="ms-auto d-flex gap-2">
+      <button id="export-png" class="btn btn-sm btn-outline-info" aria-label="Export as PNG">Export PNG</button>
+      <button id="export-json" class="btn btn-sm btn-outline-success" aria-label="Export as JSON">Export JSON</button>
+    </div>
+  </div>
+
+  <!-- 📊 Stats Bar (populated via JS) -->
+  <div id="topo-stats" class="text-muted small px-3 py-1 border-bottom"></div>
+
+  <!-- 🔄 Loading Notice -->
+  <div id="cy-loading" class="text-center py-2 text-muted" style="display: none;">
+    Loading VPN topology...
+  </div>
+  <!-- Topology + Map: WRAP IN RELATIVE CONTAINER -->
+  <div id="topology-container" style="position: relative; width: 100%; height: calc(100vh - 170px); min-height: 350px;">
+    <img id="world-map-bg" src="{% static 'nautobot_app_vpn/img/world.svg' %}" style="
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.16;
+    ">
+    <div id="cy" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'nautobot_app_vpn/js/dashboard_cytoscape.js' %}"></script>
+<script>
+  // Select2 Initialization (for all filters)
+  document.addEventListener("DOMContentLoaded", function () {
+    ['country','role','status','ike_version','location','device','platform'].forEach(id => {
+      const el = document.getElementById(`filter-${id}`);
+      if (el && window.jQuery && $(el).select2) {
+        $(`#filter-${id}`).select2({
+          width: 'style',
+          allowClear: true,
+          placeholder: `All ${id.charAt(0).toUpperCase() + id.slice(1)}`
+        });
+      }
+    });
+  });
+</script>
+{% endblock %}

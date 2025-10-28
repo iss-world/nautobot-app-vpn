@@ -3,11 +3,14 @@
 
 from django import forms
 from nautobot.apps.forms import (
+    APISelectMultiple,
+    DynamicModelChoiceField,
+    DynamicModelMultipleChoiceField,
     NautobotFilterForm,
     NautobotModelForm,
-    DynamicModelMultipleChoiceField,
-    APISelectMultiple,
 )
+from nautobot.extras.models import Tag
+from nautobot.tenancy.models import Tenant, TenantGroup
 from nautobot_app_vpn.models import IPSecCrypto
 from nautobot_app_vpn.models.algorithms import (
     EncryptionAlgorithm,
@@ -19,6 +22,17 @@ from nautobot_app_vpn.models.algorithms import (
 class IPSecCryptoForm(NautobotModelForm):
     """Form for adding and editing IPSec Crypto Profiles."""
 
+    tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        required=False,
+        label="Tenant Group",
+    )
+    tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label="Tenant",
+        query_params={"tenant_group_id": "$tenant_group"},
+    )
     encryption = DynamicModelMultipleChoiceField(
         queryset=EncryptionAlgorithm.objects.all(),
         widget=APISelectMultiple(attrs={"class": "form-control"}),
@@ -65,6 +79,22 @@ class IPSecCryptoFilterForm(NautobotFilterForm):
 
     model = IPSecCrypto
 
+    tenant_group = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(),
+        required=False,
+        label="Tenant Group",
+    )
+    tenant = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label="Tenant",
+        query_params={"tenant_group_id": "$tenant_group"},
+    )
+    tags = DynamicModelMultipleChoiceField(
+        queryset=Tag.objects.all(),
+        required=False,
+        label="Tags",
+    )
     encryption = DynamicModelMultipleChoiceField(
         queryset=EncryptionAlgorithm.objects.all(),
         widget=APISelectMultiple,
@@ -89,6 +119,9 @@ class IPSecCryptoFilterForm(NautobotFilterForm):
             "IPSec Crypto Profile Filters",
             (
                 "q",
+                "tenant_group",
+                "tenant",
+                "tags",
                 "encryption",
                 "authentication",
                 "dh_group",

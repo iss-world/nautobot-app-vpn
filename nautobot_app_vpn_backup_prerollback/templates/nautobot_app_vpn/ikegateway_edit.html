@@ -1,0 +1,103 @@
+{# nautobot_app_vpn/templates/nautobot_app_vpn/ikegateway_edit.html #}
+{% extends 'generic/object_edit.html' %}
+{% load form_helpers %}
+
+{# You might override other blocks like 'form' if needed, but often just scripts #}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    // --- Helper Function to Toggle IP/FQDN Field Visibility ---
+    // (Keep this function as it's still relevant)
+    function toggleFieldVisibility(typeFieldId, valueFieldId) {
+        const typeField = document.getElementById(typeFieldId);
+        // Ensure valueFieldId exists before trying to find its wrapper
+        const valueFieldElement = document.getElementById(valueFieldId);
+        if (!valueFieldElement) return; // Exit if value field not found
+        const valueFieldWrapper = valueFieldElement.closest('.form-group');
+
+        if (!typeField || !valueFieldWrapper) {
+             console.warn(`ToggleFieldVisibility: Could not find elements for ${typeFieldId} or ${valueFieldId}`);
+             return;
+        }
+
+        const toggle = () => {
+            const selectedType = typeField.value;
+            // Show value field only if type is IP ('ip') or FQDN ('fqdn')
+            if (selectedType === 'ip' || selectedType === 'fqdn') {
+                valueFieldWrapper.style.display = ''; // Show
+            } else {
+                valueFieldWrapper.style.display = 'none'; // Hide
+                // Optionally clear the value field when hiding
+                // valueFieldElement.value = '';
+            }
+        };
+
+        toggle(); // Run on initial load
+        typeField.addEventListener('change', toggle); // Run when type field changes
+    }
+
+    // --- NEW: Helper Function for Peer Locations vs Manual Peer Location ---
+    function handlePeerLocationChange(locationSelectId, manualLocationInputId) {
+        // Note: APISelectMultiple uses Select2. We target the underlying <select> element.
+        const locationSelect = document.getElementById(locationSelectId);
+        const manualLocationInput = document.getElementById(manualLocationInputId);
+
+        if (!locationSelect || !manualLocationInput) {
+            console.warn(`HandlePeerLocationChange: Could not find elements for ${locationSelectId} or ${manualLocationInputId}`);
+            return; // Exit if fields not found
+        }
+        const manualLocationWrapper = manualLocationInput.closest('.form-group');
+        if (!manualLocationWrapper) return; // Exit if wrapper not found
+
+        const toggleManualLocation = () => {
+            // Check if any option is selected in the multi-select
+            // For Select2, checking the value might require accessing its data or checking selected options length
+            // A simpler check is often to see if the underlying select element has a value (might need adjustment based on widget behavior)
+             let hasSelection = false;
+             // Standard check for multi-select value (might be array or null)
+             if (locationSelect.value && locationSelect.selectedOptions.length > 0) {
+                 hasSelection = true;
+             }
+             // Alternative for Select2 - might need jQuery if standard doesn't work: $(locationSelect).val() && $(locationSelect).val().length > 0
+
+            if (hasSelection) {
+                // If locations are selected via dropdown, hide the manual input field
+                manualLocationWrapper.style.display = 'none';
+                // Optionally clear the manual input when hiding it
+                // manualLocationInput.value = '';
+            } else {
+                // If no locations are selected via dropdown, show the manual input field
+                manualLocationWrapper.style.display = '';
+            }
+        };
+
+        toggleManualLocation(); // Run on initial load
+
+        // Listen for changes on the Select2 widget.
+        // Standard 'change' might work, but often Select2 requires jQuery's event handling.
+        locationSelect.addEventListener('change', toggleManualLocation);
+
+        // If standard 'change' doesn't work reliably with the Select2 widget,
+        // and if jQuery is available in your Nautobot instance, you might use:
+        // $(locationSelect).on('change', toggleManualLocation);
+        // Make sure jQuery is loaded before this script if you use this approach.
+    }
+
+
+    // --- Initialize Toggles ---
+    // Keep the IP type/value toggles
+    toggleFieldVisibility('id_local_ip_type', 'id_local_ip');
+    toggleFieldVisibility('id_peer_ip_type', 'id_peer_ip');
+
+    // --- Initialize New Peer Location Toggle ---
+    handlePeerLocationChange('id_peer_locations', 'id_peer_location_manual');
+
+    // --- REMOVED Old Peer Device / Location Logic ---
+    // The functions handlePeerDeviceChange and fetchDeviceLocation are removed.
+    // The initialization for them is also removed.
+
+});
+</script>
+{% endblock extra_scripts %}

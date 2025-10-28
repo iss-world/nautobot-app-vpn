@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block base_container %}container-fluid{% endblock %}
+{% block title %}VPN Topology Dashboard (MapLibre){% endblock %}
+
+{% block head %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.css" rel="stylesheet" />
+<style>
+  /* Map fills the remaining viewport; JS will set exact height on load/resize */
+  #map {
+    width: 100%;
+    min-height: 560px;
+    display: block;
+    position: relative;
+  }
+
+  .maplibregl-map,
+  .maplibregl-canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Top toolbar */
+  .filter-bar {
+    position: sticky;
+    top: 0;
+    /* keeps filters visible while scrolling */
+    z-index: 10;
+    background: #fff;
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: .5rem;
+    border-bottom: 1px solid #e9ecef;
+  }
+
+  .maplibregl-map {
+    background: #f8f9fa;
+    /* pleasant backdrop while tiles load */
+  }
+
+  /* Ensure MapLibre popups layer above surrounding layout */
+  .maplibregl-popup {
+    z-index: 10000;
+  }
+
+  /* optional: make select2 match compact height */
+  .select2-container .select2-selection--single {
+    height: 30px;
+  }
+
+  .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 28px;
+  }
+
+  .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 28px;
+  }
+
+  .map-wrapper {
+    position: relative;
+  }
+
+  .map-wrapper .maplibregl-map {
+    position: relative;
+    z-index: 1;
+  }
+
+  .map-legend-control.maplibregl-ctrl {
+    font-size: 0.75rem;
+    min-width: 180px;
+    max-width: 240px;
+    line-height: 1.3;
+  }
+
+  .map-legend-control details {
+    margin: 0;
+    padding: 0;
+  }
+
+  .map-legend-control summary {
+    cursor: pointer;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-size: 0.7rem;
+    list-style: none;
+  }
+
+  .map-legend-control summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .map-legend-control summary::after {
+    content: "▾";
+    float: right;
+    font-size: 0.8rem;
+    transition: transform 0.2s ease;
+  }
+
+  .map-legend-control details[open] summary::after {
+    transform: rotate(180deg);
+  }
+
+  .map-legend-control .legend-body {
+    margin-top: 0.5rem;
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .map-legend-control .legend-section {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding-top: 0.45rem;
+  }
+
+  .map-legend-control .legend-section:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .map-legend-control .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .map-legend-control .legend-line {
+    width: 30px;
+    border-top: 3px solid #6c757d;
+    opacity: 0.8;
+  }
+
+  .map-legend-control .legend-line.secondary {
+    border-top-style: dashed;
+  }
+
+  .map-legend-control .legend-line.tertiary {
+    border-top-style: dotted;
+  }
+
+  .map-legend-control .legend-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+
+  .map-legend-control .legend-swatch.internal {
+    background: #1971c2;
+  }
+
+  .map-legend-control .legend-swatch.external {
+    background: #2f9e44;
+  }
+
+  .map-legend-control .legend-swatch.failed {
+    background: #e03131;
+  }
+
+  .map-legend-control .legend-swatch.planned {
+    background: #f59f00;
+  }
+
+  .map-legend-control .legend-node {
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    display: inline-block;
+    border: 1px solid rgba(52, 58, 64, 0.25);
+  }
+
+  .map-legend-control .legend-node.ok {
+    background: #2f9e44;
+  }
+
+  .map-legend-control .legend-node.degraded {
+    background: #f59f00;
+  }
+
+  .map-legend-control .legend-node.down {
+    background: #e03131;
+  }
+
+  .map-legend-control .legend-node.highlight {
+    background: #00bcd4;
+    border-color: #003b4a;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+  <div class="py-3 px-4 bg-light border-bottom">
+    <h1 class="h2 mb-0">VPN Topology Dashboard</h1>
+  </div>
+
+  <!-- Filters -->
+  <div class="d-flex align-items-center px-3 py-2 filter-bar">
+    <select id="filter-country" class="form-select form-select-sm" style="width: 150px;">
+      <option value="">All Countries</option>
+    </select>
+    <select id="filter-role" class="form-select form-select-sm" style="width: 150px;">
+      <option value="">All Roles</option>
+    </select>
+    <select id="filter-status" class="form-select form-select-sm" style="width: 150px;">
+      <option value="">All Statuses</option>
+    </select>
+    <select id="filter-ike_version" class="form-select form-select-sm" style="width: 150px;">
+      <option value="">All IKE Versions</option>
+    </select>
+    <select id="filter-location" class="form-select form-select-sm" style="width: 150px;">
+      <option value="">All Locations</option>
+    </select>
+    <select id="filter-device" class="form-select form-select-sm" style="width: 180px;">
+      <option value="">All Devices</option>
+    </select>
+    <select id="filter-platform" class="form-select form-select-sm" style="width: 160px;">
+      <option value="">All Platforms</option>
+    </select>
+    <select id="filter-scope" class="form-select form-select-sm" style="width: 150px;">
+      <option value="">All Scopes</option>
+      <option value="internal">Internal</option>
+      <option value="external">External</option>
+    </select>
+
+    <button id="apply-filters" class="btn btn-sm btn-primary ms-2">Apply</button>
+    <button id="reset-filters" class="btn btn-sm btn-outline-secondary ms-1">Reset</button>
+
+    <input id="search-nodes" type="text" placeholder="Search devices…" class="form-control form-control-sm ms-2"
+      style="width: 200px;" />
+    <button id="clear-search" class="btn btn-sm btn-outline-dark ms-1">Clear</button>
+
+    <div class="ms-auto d-flex gap-2">
+      <button id="export-png" class="btn btn-sm btn-outline-info">Export PNG</button>
+      <button id="export-json" class="btn btn-sm btn-outline-success">Export JSON</button>
+    </div>
+  </div>
+
+  <!-- Stats bar -->
+  <div id="topo-stats" class="text-muted small px-3 py-1 border-bottom"></div>
+
+  <!-- Loading -->
+  <div id="map-loading" class="text-center py-2 text-muted" style="display:none;">Loading VPN topology…</div>
+
+  <!-- Map -->
+  <div class="map-wrapper">
+    <div id="map"
+      data-style-url="{{ MAP_STYLE_URL|default:'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json' }}"
+      data-attribution="{{ MAP_ATTRIBUTION|default:'&copy; OpenStreetMap contributors &copy; CARTO'|safe }}"
+      data-initial-lat="{{ MAP_INITIAL_LAT|default:'20' }}" data-initial-lon="{{ MAP_INITIAL_LON|default:'0' }}"
+      data-initial-zoom="{{ MAP_INITIAL_ZOOM|default:'1.7' }}" data-initial-pitch="{{ MAP_INITIAL_PITCH|default:'0' }}"
+      data-initial-bearing="{{ MAP_INITIAL_BEARING|default:'0' }}"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js" defer></script>
+<script src="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.js" defer></script>
+<script src="{% static 'nautobot_app_vpn/js/dashboard_maplibre.js' %}" defer></script>
+
+  <script defer>
+    document.addEventListener("DOMContentLoaded", function () {
+    // enhance selects with Select2 (keeps widths you set inline)
+    ["#filter-country", "#filter-role", "#filter-status", "#filter-ike_version",
+      "#filter-location", "#filter-device", "#filter-platform", "#filter-scope"]
+      .forEach(sel => {
+        const el = document.querySelector(sel);
+        if (el && window.$ && $(el).select2) $(el).select2({ width: "resolve" });
+      });
+      // No 4K export; default PNG exports the full map canvas only.
+    });
+  </script>
+{% endblock %}

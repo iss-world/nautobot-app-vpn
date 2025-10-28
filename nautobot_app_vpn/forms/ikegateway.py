@@ -19,7 +19,8 @@ from nautobot.apps.forms import (
     SmallTextarea,
 )
 from nautobot.dcim.models import Device, Interface, Location, Platform  # Need Location AND Interface
-from nautobot.extras.models import Status
+from nautobot.extras.models import Status, Tag
+from nautobot.tenancy.models import Tenant, TenantGroup
 
 # Import local models and constants
 from nautobot_app_vpn.models import IKECrypto, IKEGateway
@@ -33,6 +34,17 @@ from nautobot_app_vpn.models.constants import (
 class IKEGatewayForm(NautobotModelForm):
     """Form for creating and editing IKE Gateway profiles."""
 
+    tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        required=False,
+        label="Tenant Group",
+    )
+    tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label="Tenant",
+        query_params={"tenant_group_id": "$tenant_group"},
+    )
     local_devices = DynamicModelMultipleChoiceField(
         queryset=Device.objects.all(),
         label="Local Devices",
@@ -125,6 +137,9 @@ class IKEGatewayForm(NautobotModelForm):
         fields = [
             "name",
             "description",
+            "tenant_group",
+            "tenant",
+            "tags",
             "ike_version",
             "exchange_mode",  # General
             "local_ip_type",
@@ -266,7 +281,7 @@ class IKEGatewayForm(NautobotModelForm):
             return cleaned_data
 
         temp_instance = self.instance if self.instance.pk else self.Meta.model()
-        m2m_fields = ["local_devices", "peer_devices", "local_locations", "peer_locations"]
+        m2m_fields = ["local_devices", "peer_devices", "local_locations", "peer_locations", "tags"]
         # Ensure 'bind_interface' is included in fields_to_set if it wasn't already
         fields_to_set = [f for f in self.Meta.fields if f not in m2m_fields]
 
@@ -299,6 +314,18 @@ class IKEGatewayFilterForm(NautobotFilterForm):
 
     model = IKEGateway
     q = forms.CharField(required=False, label="Search")
+    tenant_group = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(),
+        required=False,
+        label="Tenant Group",
+    )
+    tenant = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label="Tenant",
+        query_params={"tenant_group_id": "$tenant_group"},
+    )
+    tags = DynamicModelMultipleChoiceField(queryset=Tag.objects.all(), required=False, label="Tags")
     local_devices = DynamicModelMultipleChoiceField(
         queryset=Device.objects.filter(platform__name="PanOS"), required=False, label="Local Devices"
     )
@@ -320,6 +347,7 @@ class IKEGatewayFilterForm(NautobotFilterForm):
 
     fieldsets = (
         ("Search", ("q",)),
+        ("Tenancy", ("tenant_group", "tenant", "tags")),
         (
             "Identification",
             ("local_devices", "peer_devices", "local_locations", "peer_locations", "peer_location_manual"),
