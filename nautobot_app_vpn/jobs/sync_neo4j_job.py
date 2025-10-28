@@ -12,10 +12,11 @@ from ipaddress import ip_address, ip_interface
 
 from django.conf import settings
 from django.db.models import Prefetch
-from nautobot.dcim.models import Device
-from nautobot.extras.jobs import Job
 from neo4j import GraphDatabase
 from neo4j import exceptions as neo4j_exceptions
+
+from nautobot.dcim.models import Device
+from nautobot.extras.jobs import Job
 
 # ✅ Nautobot IPAM model uses `host` + `mask_length` (not `address`)
 from nautobot.ipam.models import IPAddress
@@ -96,11 +97,17 @@ class SyncNeo4jJob(Job):
 
         def log_job_failure(message):
             full_message = f"JOB_FAILURE: {message}"
-            self.logger.failure(full_message) if has_logger_failure else self.logger.error(full_message)
+            if has_logger_failure:
+                self.logger.failure(full_message)
+            else:
+                self.logger.error(full_message)
 
         def log_job_success(message):
             full_message = f"JOB_SUCCESS: {message}"
-            self.logger.success(full_message) if has_logger_success else self.logger.info(full_message)
+            if has_logger_success:
+                self.logger.success(full_message)
+            else:
+                self.logger.info(full_message)
 
         log_job_info = self.logger.info
         log_job_warning = self.logger.warning

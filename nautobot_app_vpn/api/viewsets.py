@@ -4,6 +4,7 @@
 import logging
 from django.apps import apps
 from django.conf import settings
+from django.db import DatabaseError
 from django.db.models import Count, Q
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -312,6 +313,7 @@ class VPNTopologyNeo4jView(APIView):
         return conds
 
     def get(self, request):
+        """Return VPN topology GeoJSON and summary metadata sourced from Neo4j."""
         logger.info("Neo4j VPN Topology GET request from user %s with filters: %s", request.user, request.GET.dict())
 
         # Settings check
@@ -339,7 +341,7 @@ class VPNTopologyNeo4jView(APIView):
             ("planned", "Planned"),
         ]
         status_counts = {slug: 0 for slug, _ in tracked_status}
-        status_labels = {slug: label for slug, label in tracked_status}
+        status_labels = dict(tracked_status)
         status_order = [slug for slug, _ in tracked_status]
 
         role_labels = {
@@ -358,8 +360,8 @@ class VPNTopologyNeo4jView(APIView):
             status_filter = (params_in.get("status") or "").strip()
             role_filter = (params_in.get("role") or "").strip()
 
-            Status = apps.get_model("extras", "Status")
-            status_fields = {f.name for f in Status._meta.get_fields()}
+            status_model = apps.get_model("extras", "Status")
+            status_fields = {f.name for f in status_model._meta.get_fields()}
             has_status_slug = "slug" in status_fields
 
             if status_filter:
@@ -393,7 +395,7 @@ class VPNTopologyNeo4jView(APIView):
                     role_order.append(role_value)
 
             total_tunnels = tunnels_qs.count()
-        except Exception as agg_exc:  # noqa: BLE001
+        except (DatabaseError, LookupError) as agg_exc:
             logger.error("Failed to compute relational tunnel statistics: %s", agg_exc, exc_info=True)
 
         qp = {}
@@ -587,8 +589,12 @@ class VPNTopologyNeo4jView(APIView):
                     last_synced_iso = dash.last_sync_time.isoformat()
                 if dash and dash.last_sync_status:
                     last_sync_status = dash.last_sync_status
-            except Exception:  # noqa: BLE001
-                pass
+            except DatabaseError as db_error:
+                logger.debug(
+                    "Unable to load VPNDashboard sync metadata due to database error: %s",
+                    db_error,
+                    exc_info=True,
+                )
 
             meta = {
                 "devices_count": len(devices_fc["features"]),
@@ -650,6 +656,7 @@ class VPNTopologyFilterOptionsView(APIView):
         return None
 
     def get(self, request):
+        """Return available filter values derived from relational VPN data."""
         logger.debug("Filter options GET request from user %s", request.user)
         countries = set()
         ike_versions = set()
