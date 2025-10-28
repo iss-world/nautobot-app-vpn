@@ -1,5 +1,6 @@
 """FilterSet classes for Nautobot VPN plugin models."""
 # pylint: disable=too-many-ancestors
+# pylint: disable=not-callable
 
 import django_filters
 from django_filters import BooleanFilter, CharFilter, ModelMultipleChoiceFilter
