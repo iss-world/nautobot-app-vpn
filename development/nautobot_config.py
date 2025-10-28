@@ -141,14 +141,13 @@ PLUGINS = ["nautobot_app_vpn"]
 # }
 
 
-
 PLUGINS_CONFIG = {
-  "nautobot_app_vpn": {
-    "map": {
-      "style_url": "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
-      "attribution": "&copy; OpenStreetMap contributors &copy; CARTO"
+    "nautobot_app_vpn": {
+        "map": {
+            "style_url": "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+            "attribution": "&copy; OpenStreetMap contributors &copy; CARTO",
+        }
     }
-  }
 }
 
 # Apps configuration settings. These settings are used by various Apps that the user may have installed.

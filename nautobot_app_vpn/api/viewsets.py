@@ -2,7 +2,6 @@
 # pylint: disable=too-many-ancestors, too-many-locals, too-many-branches, too-many-statements, too-many-nested-blocks
 
 import logging
-import random
 from django.apps import apps
 from django.conf import settings
 from django.db.models import Count, Q
@@ -229,6 +228,7 @@ class IPSecProxyIDViewSet(viewsets.ModelViewSet):
 # VPN TOPOLOGY (UPDATED ONLY)
 # -----------------------------
 
+
 def latlon_to_xy(lat, lon, svg_width=2754, svg_height=1398):
     """Map latitude and longitude to SVG x, y coordinates (equirectangular)."""
     x = (lon + 180) * (svg_width / 360.0)
@@ -453,7 +453,11 @@ class VPNTopologyNeo4jView(APIView):
                     }
 
                     devices_fc["features"].append(
-                        {"type": "Feature", "geometry": {"type": "Point", "coordinates": [float(lon), float(lat)]}, "properties": props}
+                        {
+                            "type": "Feature",
+                            "geometry": {"type": "Point", "coordinates": [float(lon), float(lat)]},
+                            "properties": props,
+                        }
                     )
 
                 # ---- Edges (include peers even if they don't match the node filters) ----

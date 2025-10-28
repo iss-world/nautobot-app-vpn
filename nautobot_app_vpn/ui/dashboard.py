@@ -34,26 +34,18 @@ class VPNDashboardUIViewSet(NautobotUIViewSet):
     action_buttons = ()
 
     def _map_context(self):
-        map_cfg = (
-            getattr(settings, "PLUGINS_CONFIG", {})
-            .get("nautobot_app_vpn", {})
-            .get("map", {})
-        )
+        map_cfg = getattr(settings, "PLUGINS_CONFIG", {}).get("nautobot_app_vpn", {}).get("map", {})
 
         return {
             # Back-compat (Leaflet-era keys)
-            "MAP_TILES_URL": map_cfg.get(
-                "tiles_url", "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            ),
+            "MAP_TILES_URL": map_cfg.get("tiles_url", "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"),
             "MAP_ATTRIBUTION": map_cfg.get(
                 "attribution",
                 "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
             ),
             "MAP_MAX_ZOOM": map_cfg.get("max_zoom", 19),
             # MapLibre
-            "MAP_STYLE_URL": map_cfg.get(
-                "style_url", "https://demotiles.maplibre.org/style.json"
-            ),
+            "MAP_STYLE_URL": map_cfg.get("style_url", "https://demotiles.maplibre.org/style.json"),
             "MAP_INITIAL_LAT": map_cfg.get("initial_lat", 20),
             "MAP_INITIAL_LON": map_cfg.get("initial_lon", 0),
             "MAP_INITIAL_ZOOM": map_cfg.get("initial_zoom", 1.7),

@@ -12,7 +12,7 @@ from ipaddress import ip_address, ip_interface
 
 from django.conf import settings
 from django.db.models import Prefetch
-from nautobot.dcim.models import Device, Interface
+from nautobot.dcim.models import Device
 from nautobot.extras.jobs import Job
 from neo4j import GraphDatabase
 from neo4j import exceptions as neo4j_exceptions
@@ -362,11 +362,17 @@ class SyncNeo4jJob(Job):
                     ):
                         manual_peer_label = (gw.peer_device_manual or gw.peer_location_manual).strip()
                         # normalized id uses spaces and slashes replacement (consistent with get_node_id)
-                        peer_node_id_val = f"manual_peer:{manual_peer_label.strip().lower().replace(' ', '_').replace('/', '_')}"
+                        peer_node_id_val = (
+                            f"manual_peer:{manual_peer_label.strip().lower().replace(' ', '_').replace('/', '_')}"
+                        )
                         icon_f = "unknown.svg"
                         if getattr(gw, "peer_platform", None) and getattr(gw.peer_platform, "name", None):
                             platform_name = gw.peer_platform.name.strip()
-                            icon_f = f"{sanitize_filename(platform_name)}.svg" if platform_name and platform_name.lower() != "unknown" else "unknown.svg"
+                            icon_f = (
+                                f"{sanitize_filename(platform_name)}.svg"
+                                if platform_name and platform_name.lower() != "unknown"
+                                else "unknown.svg"
+                            )
 
                         peer_node_label_val = manual_peer_label
                         if peer_node_id_val not in neo4j_nodes_to_create:
@@ -381,7 +387,8 @@ class SyncNeo4jJob(Job):
                                 "longitude": lon,
                                 "lat": lat,
                                 "lon": lon,
-                                "platform_name": getattr(getattr(gw, "peer_platform", None), "name", "Unknown") or "Unknown",
+                                "platform_name": getattr(getattr(gw, "peer_platform", None), "name", "Unknown")
+                                or "Unknown",
                                 "icon_filename": icon_f,
                                 "status": "Manual",
                                 "role": "External",
@@ -415,8 +422,10 @@ class SyncNeo4jJob(Job):
                             "Role": str(getattr(tunnel, "role", "") or "") or "Unknown",
                             "IKE Gateway": getattr(gw, "name", "") or "N/A",
                             "IKE Version": str(getattr(gw, "ike_version", "") or "") or "Unknown",
-                            "IPsec Profile": getattr(getattr(tunnel, "ipsec_crypto_profile", None), "name", None) or "N/A",
-                            "Tunnel Interface": getattr(getattr(tunnel, "tunnel_interface", None), "name", None) or "N/A",
+                            "IPsec Profile": getattr(getattr(tunnel, "ipsec_crypto_profile", None), "name", None)
+                            or "N/A",
+                            "Tunnel Interface": getattr(getattr(tunnel, "tunnel_interface", None), "name", None)
+                            or "N/A",
                             "Description": tunnel.description or "",
                             "Local IP": local_ip_str or "N/A",
                             "Peer IP": peer_ip_str or "N/A",
@@ -435,8 +444,10 @@ class SyncNeo4jJob(Job):
                             "role": str(getattr(tunnel, "role", "") or "") or "Unknown",
                             "ike_gateway_name": getattr(gw, "name", "") or "N/A",
                             "ike_version": str(getattr(gw, "ike_version", "") or "") or "Unknown",
-                            "ipsec_profile_name": getattr(getattr(tunnel, "ipsec_crypto_profile", None), "name", None) or "N/A",
-                            "tunnel_interface": getattr(getattr(tunnel, "tunnel_interface", None), "name", None) or "N/A",
+                            "ipsec_profile_name": getattr(getattr(tunnel, "ipsec_crypto_profile", None), "name", None)
+                            or "N/A",
+                            "tunnel_interface": getattr(getattr(tunnel, "tunnel_interface", None), "name", None)
+                            or "N/A",
                             "description": tunnel.description or "",
                             "synced_at_utc": now_utc.isoformat(),
                             "local_ip": local_ip_str or "N/A",
