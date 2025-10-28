@@ -3,6 +3,7 @@
 
 import django_filters
 from django_filters import BooleanFilter, CharFilter, ModelMultipleChoiceFilter
+from drf_spectacular.drainage import set_override
 from nautobot.apps.filters import (
     NautobotFilterSet,
     SearchFilter,
@@ -39,6 +40,37 @@ from nautobot_app_vpn.models.algorithms import (
 )
 
 
+def _array_schema(item_type="string", item_format=None):
+    """Return a fresh OpenAPI schema describing an array of primitive values."""
+    schema = {"type": "array", "items": {"type": item_type}}
+    if item_format:
+        schema["items"]["format"] = item_format
+    return schema
+
+
+class _SchemaModelMultipleChoiceFilter(ModelMultipleChoiceFilter):
+    """ModelMultipleChoiceFilter that advertises a specific OpenAPI schema."""
+
+    schema_factory = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.schema_factory:
+            set_override(self, "field", self.schema_factory())
+
+
+class UUIDModelMultipleChoiceFilter(_SchemaModelMultipleChoiceFilter):
+    """ModelMultipleChoiceFilter that yields an array of UUIDs in the schema."""
+
+    schema_factory = staticmethod(lambda: _array_schema(item_format="uuid"))
+
+
+class IntegerModelMultipleChoiceFilter(_SchemaModelMultipleChoiceFilter):
+    """ModelMultipleChoiceFilter that yields an array of integers in the schema."""
+
+    schema_factory = staticmethod(lambda: _array_schema(item_type="integer"))
+
+
 class BaseFilterSet(StatusModelFilterSetMixin, NautobotFilterSet):  # pylint: disable=nb-no-model-found
     """FilterSet for Base model."""
 
@@ -53,12 +85,12 @@ class BaseFilterSet(StatusModelFilterSetMixin, NautobotFilterSet):  # pylint: di
 class IKECryptoFilterSet(BaseFilterSet):
     """FilterSet for IKECrypto model."""
 
-    tenant_group = django_filters.ModelMultipleChoiceFilter(queryset=TenantGroup.objects.all(), label="Tenant Group")
-    tenant = django_filters.ModelMultipleChoiceFilter(queryset=Tenant.objects.all(), label="Tenant")
-    tags = django_filters.ModelMultipleChoiceFilter(field_name="tags", queryset=Tag.objects.all(), label="Tags")
-    dh_group = django_filters.ModelMultipleChoiceFilter(queryset=DiffieHellmanGroup.objects.all(), label="DH Group")
-    encryption = django_filters.ModelMultipleChoiceFilter(queryset=EncryptionAlgorithm.objects.all())
-    authentication = django_filters.ModelMultipleChoiceFilter(queryset=AuthenticationAlgorithm.objects.all())
+    tenant_group = UUIDModelMultipleChoiceFilter(queryset=TenantGroup.objects.all(), label="Tenant Group")
+    tenant = UUIDModelMultipleChoiceFilter(queryset=Tenant.objects.all(), label="Tenant")
+    tags = UUIDModelMultipleChoiceFilter(field_name="tags", queryset=Tag.objects.all(), label="Tags")
+    dh_group = IntegerModelMultipleChoiceFilter(queryset=DiffieHellmanGroup.objects.all(), label="DH Group")
+    encryption = IntegerModelMultipleChoiceFilter(queryset=EncryptionAlgorithm.objects.all())
+    authentication = IntegerModelMultipleChoiceFilter(queryset=AuthenticationAlgorithm.objects.all())
     lifetime = django_filters.RangeFilter()
     lifetime_unit = django_filters.ChoiceFilter(choices=LifetimeUnits.choices)
 
@@ -70,12 +102,12 @@ class IKECryptoFilterSet(BaseFilterSet):
 class IPSecCryptoFilterSet(BaseFilterSet):
     """FilterSet for IPSecCrypto model."""
 
-    tenant_group = django_filters.ModelMultipleChoiceFilter(queryset=TenantGroup.objects.all(), label="Tenant Group")
-    tenant = django_filters.ModelMultipleChoiceFilter(queryset=Tenant.objects.all(), label="Tenant")
-    tags = django_filters.ModelMultipleChoiceFilter(field_name="tags", queryset=Tag.objects.all(), label="Tags")
-    encryption = django_filters.ModelMultipleChoiceFilter(queryset=EncryptionAlgorithm.objects.all())
-    authentication = django_filters.ModelMultipleChoiceFilter(queryset=AuthenticationAlgorithm.objects.all())
-    dh_group = django_filters.ModelMultipleChoiceFilter(queryset=DiffieHellmanGroup.objects.all())
+    tenant_group = UUIDModelMultipleChoiceFilter(queryset=TenantGroup.objects.all(), label="Tenant Group")
+    tenant = UUIDModelMultipleChoiceFilter(queryset=Tenant.objects.all(), label="Tenant")
+    tags = UUIDModelMultipleChoiceFilter(field_name="tags", queryset=Tag.objects.all(), label="Tags")
+    encryption = IntegerModelMultipleChoiceFilter(queryset=EncryptionAlgorithm.objects.all())
+    authentication = IntegerModelMultipleChoiceFilter(queryset=AuthenticationAlgorithm.objects.all())
+    dh_group = IntegerModelMultipleChoiceFilter(queryset=DiffieHellmanGroup.objects.all())
     protocol = django_filters.MultipleChoiceFilter(choices=IPSECProtocols.choices)
     lifetime = django_filters.RangeFilter()
     lifetime_unit = django_filters.ChoiceFilter(choices=LifetimeUnits.choices)
@@ -88,26 +120,28 @@ class IPSecCryptoFilterSet(BaseFilterSet):
 class IKEGatewayFilterSet(BaseFilterSet):
     """FilterSet for IKEGateway model."""
 
-    tenant_group = django_filters.ModelMultipleChoiceFilter(queryset=TenantGroup.objects.all(), label="Tenant Group")
-    tenant = django_filters.ModelMultipleChoiceFilter(queryset=Tenant.objects.all(), label="Tenant")
-    tags = django_filters.ModelMultipleChoiceFilter(field_name="tags", queryset=Tag.objects.all(), label="Tags")
-    local_devices = ModelMultipleChoiceFilter(
+    tenant_group = UUIDModelMultipleChoiceFilter(queryset=TenantGroup.objects.all(), label="Tenant Group")
+    tenant = UUIDModelMultipleChoiceFilter(queryset=Tenant.objects.all(), label="Tenant")
+    tags = UUIDModelMultipleChoiceFilter(field_name="tags", queryset=Tag.objects.all(), label="Tags")
+    local_devices = UUIDModelMultipleChoiceFilter(
         field_name="local_devices", queryset=Device.objects.all(), label="Local Devices"
     )
-    peer_devices = ModelMultipleChoiceFilter(
+    peer_devices = UUIDModelMultipleChoiceFilter(
         queryset=Device.objects.all(), label="Peer Devices", required=False
     )  # Allow filtering with no peer
-    local_locations = ModelMultipleChoiceFilter(
+    local_locations = UUIDModelMultipleChoiceFilter(
         queryset=Location.objects.all(), label="Local Locations", required=False
     )
-    peer_locations = ModelMultipleChoiceFilter(queryset=Location.objects.all(), label="Peer Locations", required=False)
+    peer_locations = UUIDModelMultipleChoiceFilter(
+        queryset=Location.objects.all(), label="Peer Locations", required=False
+    )
     peer_location_manual = django_filters.CharFilter(lookup_expr="icontains", label="Manual Peer Location")
     local_ip = django_filters.CharFilter(lookup_expr="icontains", label="Local IP/FQDN")
     peer_ip = django_filters.CharFilter(lookup_expr="icontains", label="Peer IP/FQDN")
     authentication_type = django_filters.MultipleChoiceFilter(
         choices=IKEAuthenticationTypes.choices, label="Authentication Type"
     )
-    ike_crypto_profile = ModelMultipleChoiceFilter(queryset=IKECrypto.objects.all(), label="IKE Crypto Profile")
+    ike_crypto_profile = UUIDModelMultipleChoiceFilter(queryset=IKECrypto.objects.all(), label="IKE Crypto Profile")
     ike_version = django_filters.MultipleChoiceFilter(choices=IKEVersions.choices, label="IKE Version")
     exchange_mode = django_filters.MultipleChoiceFilter(choices=IKEExchangeModes.choices, label="Exchange Mode")
     local_ip_type = django_filters.MultipleChoiceFilter(choices=IPAddressTypes.choices, label="Local IP Type")
@@ -115,14 +149,14 @@ class IKEGatewayFilterSet(BaseFilterSet):
     local_id_type = django_filters.MultipleChoiceFilter(choices=IdentificationTypes.choices, label="Local ID Type")
     peer_id_type = django_filters.MultipleChoiceFilter(choices=IdentificationTypes.choices, label="Peer ID Type")
     peer_device_manual = django_filters.CharFilter(lookup_expr="icontains", label="Manual Peer Name")
-    bind_interface = ModelMultipleChoiceFilter(queryset=Interface.objects.all(), label="Bind Interface")
+    bind_interface = UUIDModelMultipleChoiceFilter(queryset=Interface.objects.all(), label="Bind Interface")
     enable_passive_mode = django_filters.BooleanFilter(label="Passive Mode Enabled")
     enable_nat_traversal = django_filters.BooleanFilter(label="NAT Traversal Enabled")
     enable_dpd = django_filters.BooleanFilter(label="DPD Enabled")
-    local_platform = ModelMultipleChoiceFilter(
+    local_platform = UUIDModelMultipleChoiceFilter(
         field_name="local_platform", queryset=Platform.objects.all(), label="Local Platform(s)"
     )
-    peer_platform = ModelMultipleChoiceFilter(
+    peer_platform = UUIDModelMultipleChoiceFilter(
         field_name="peer_platform", queryset=Platform.objects.all(), label="Peer Platform(s)"
     )
 
@@ -146,9 +180,9 @@ class TunnelMonitorProfileFilterSet(NautobotFilterSet):
 
     # Explicitly define q filter here
     q = SearchFilter(filter_predicates={"name": "icontains"}, label="Search")
-    tenant_group = django_filters.ModelMultipleChoiceFilter(queryset=TenantGroup.objects.all(), label="Tenant Group")
-    tenant = django_filters.ModelMultipleChoiceFilter(queryset=Tenant.objects.all(), label="Tenant")
-    tags = django_filters.ModelMultipleChoiceFilter(field_name="tags", queryset=Tag.objects.all(), label="Tags")
+    tenant_group = UUIDModelMultipleChoiceFilter(queryset=TenantGroup.objects.all(), label="Tenant Group")
+    tenant = UUIDModelMultipleChoiceFilter(queryset=Tenant.objects.all(), label="Tenant")
+    tags = UUIDModelMultipleChoiceFilter(field_name="tags", queryset=Tag.objects.all(), label="Tags")
     action = django_filters.MultipleChoiceFilter(choices=TunnelMonitorActionChoices.choices, label="Action")
     interval = django_filters.RangeFilter(label="Interval (seconds)")
     threshold = django_filters.RangeFilter(label="Threshold")
@@ -161,17 +195,21 @@ class TunnelMonitorProfileFilterSet(NautobotFilterSet):
 class IPSECTunnelFilterSet(BaseFilterSet):
     """FilterSet for IPSECTunnel model."""
 
-    tenant_group = django_filters.ModelMultipleChoiceFilter(queryset=TenantGroup.objects.all(), label="Tenant Group")
-    tenant = django_filters.ModelMultipleChoiceFilter(queryset=Tenant.objects.all(), label="Tenant")
-    tags = django_filters.ModelMultipleChoiceFilter(field_name="tags", queryset=Tag.objects.all(), label="Tags")
+    tenant_group = UUIDModelMultipleChoiceFilter(queryset=TenantGroup.objects.all(), label="Tenant Group")
+    tenant = UUIDModelMultipleChoiceFilter(queryset=Tenant.objects.all(), label="Tenant")
+    tags = UUIDModelMultipleChoiceFilter(field_name="tags", queryset=Tag.objects.all(), label="Tags")
     role = django_filters.MultipleChoiceFilter(choices=TunnelRoleChoices.choices, label="Tunnel Role")
-    devices = ModelMultipleChoiceFilter(queryset=Device.objects.all(), label="Devices")
-    ike_gateway = ModelMultipleChoiceFilter(queryset=IKEGateway.objects.all(), label="IKE Gateway")
-    ipsec_crypto_profile = ModelMultipleChoiceFilter(queryset=IPSecCrypto.objects.all(), label="IPSec Crypto Profile")
-    tunnel_interface = ModelMultipleChoiceFilter(queryset=Interface.objects.all(), label="Tunnel Interface")
+    devices = UUIDModelMultipleChoiceFilter(queryset=Device.objects.all(), label="Devices")
+    ike_gateway = UUIDModelMultipleChoiceFilter(queryset=IKEGateway.objects.all(), label="IKE Gateway")
+    ipsec_crypto_profile = UUIDModelMultipleChoiceFilter(
+        queryset=IPSecCrypto.objects.all(), label="IPSec Crypto Profile"
+    )
+    tunnel_interface = UUIDModelMultipleChoiceFilter(queryset=Interface.objects.all(), label="Tunnel Interface")
     enable_tunnel_monitor = BooleanFilter(label="Monitor Enabled")
     monitor_destination_ip = django_filters.CharFilter(lookup_expr="icontains", label="Monitor Destination IP")
-    monitor_profile = ModelMultipleChoiceFilter(queryset=TunnelMonitorProfile.objects.all(), label="Monitor Profile")
+    monitor_profile = UUIDModelMultipleChoiceFilter(
+        queryset=TunnelMonitorProfile.objects.all(), label="Monitor Profile"
+    )
 
     class Meta:
         model = IPSECTunnel
@@ -181,7 +219,7 @@ class IPSECTunnelFilterSet(BaseFilterSet):
 class IPSecProxyIDFilterSet(NautobotFilterSet):
     """FilterSet for IPSecProxyID model."""
 
-    tunnel = ModelMultipleChoiceFilter(queryset=IPSECTunnel.objects.all(), label="IPSec Tunnel")
+    tunnel = UUIDModelMultipleChoiceFilter(queryset=IPSECTunnel.objects.all(), label="IPSec Tunnel")
     local_subnet = django_filters.CharFilter(lookup_expr="icontains")
     remote_subnet = django_filters.CharFilter(lookup_expr="icontains")
     protocol = django_filters.CharFilter(lookup_expr="icontains")
