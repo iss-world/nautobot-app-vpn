@@ -96,7 +96,7 @@ docker-compose build nautobot
 
 ### Topology View
 
-The plugin provides a Neo4j-powered dashboard under **Plugins > VPN Dashboard**, enabling visualization of active IPSec tunnels and their metadata using Open street Map.
+The plugin provides a Neo4j-powered dashboard under **Plugins > VPN Dashboard**, enabling visualization of active IPSec tunnels and their metadata using Open Street Map.
 
 ### Forms for Provisioning
 
