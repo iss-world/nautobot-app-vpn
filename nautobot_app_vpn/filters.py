@@ -55,7 +55,7 @@ class _SchemaModelMultipleChoiceFilter(ModelMultipleChoiceFilter):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.schema_factory:
+        if callable(self.schema_factory):
             set_override(self, "field", self.schema_factory())
 
 
