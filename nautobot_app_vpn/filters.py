@@ -55,8 +55,9 @@ class _SchemaModelMultipleChoiceFilter(ModelMultipleChoiceFilter):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if callable(self.schema_factory):
-            set_override(self, "field", self.schema_factory())
+        factory = getattr(type(self), "schema_factory", None)
+        if callable(factory):
+            set_override(self, "field", factory())
 
 
 class UUIDModelMultipleChoiceFilter(_SchemaModelMultipleChoiceFilter):
