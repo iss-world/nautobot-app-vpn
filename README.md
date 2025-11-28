@@ -39,8 +39,8 @@ A Nautobot plugin designed to model, visualize, and manage VPN infrastructure, i
 
 ## Requirements
 
-- Nautobot >= 2.4.0
-- Python >= 3.8
+- Nautobot >= 3.0.0 (validated on 3.0.1)
+- Python >= 3.11
 - Neo4j >= 5.0 (for topology view)
 
 ---
@@ -57,6 +57,10 @@ pip install nautobot-app-vpn
 
 In your `nautobot_config.py`, add to `PLUGINS` and configure Neo4j settings:
 
+NEO4J_URI = "bolt://neo4j:7687"
+NEO4J_USER = "neo4j"
+NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "testneo4j")
+
 ```python
 PLUGINS = [
     "nautobot_app_vpn",
@@ -65,12 +69,11 @@ PLUGINS = [
 
 PLUGINS_CONFIG = {
     "nautobot_app_vpn": {
-        "neo4j": {
-            "uri": "bolt://neo4j:7687",
-            "user": "neo4j",
-            "password": "testneo4j",  # Change this
+        "map": {
+        "style_url": "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+        "attribution": "&copy; OpenStreetMap contributors &copy; CARTO"
         }
-    }
+    },
 }
 ```
 

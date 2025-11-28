@@ -53,7 +53,7 @@ namespace = Collection("nautobot_app_vpn")
 namespace.configure(
     {
         "nautobot_app_vpn": {
-            "nautobot_ver": "2.4.10",
+            "nautobot_ver": "3.0.1",
             "project_name": "nautobot_app_vpn",
             "python_ver": "3.11",
             "local": False,

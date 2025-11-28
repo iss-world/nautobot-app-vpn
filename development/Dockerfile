@@ -1,5 +1,5 @@
 
-ARG NAUTOBOT_VER="2.4.10"
+ARG NAUTOBOT_VER="3.0.1"
 
 # Accepts a desired Python version as build argument, default to 3.11
 ARG PYTHON_VER="3.11"

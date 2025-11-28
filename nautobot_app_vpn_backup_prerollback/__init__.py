@@ -17,8 +17,8 @@ class NautobotAppVpnConfig(NautobotAppConfig):
     description = "Virtual Private Network"
     base_url = "nautobot_app_vpn"
     required_settings = []
-    min_version = "2.4.0"
-    max_version = "2.9999"
+    min_version = "3.0.0"
+    max_version = "3.0.99"
     default_settings = {}
     caching_config = {}
     docs_view_name = "plugins:nautobot_app_vpn:docs"
