@@ -49,6 +49,47 @@ class DummySerializer(serializers.Serializer):
         return validated_data
 
 
+class VPNAdjacencySerializer(serializers.Serializer):
+    """Serializer for normalized VPN adjacency objects."""
+
+    tunnel_name = serializers.CharField()
+    tunnel_id = serializers.CharField()
+    ike_gateway = serializers.CharField(allow_blank=True)
+    local_device = serializers.CharField(allow_blank=True)
+    local_device_id = serializers.CharField(allow_blank=True)
+    local_site = serializers.CharField(allow_blank=True)
+    local_interface = serializers.CharField(allow_blank=True)
+    tunnel_interface = serializers.CharField(allow_blank=True)
+    peer_name = serializers.CharField(allow_blank=True)
+    peer_device = serializers.CharField(allow_blank=True)
+    peer_device_id = serializers.CharField(allow_blank=True)
+    peer_site = serializers.CharField(allow_blank=True)
+    peer_address = serializers.CharField(allow_blank=True)
+    local_proxy_ids = serializers.ListField(child=serializers.CharField(), required=False)
+    remote_proxy_ids = serializers.ListField(child=serializers.CharField(), required=False)
+    local_interesting_traffic = serializers.ListField(child=serializers.CharField(), required=False)
+    remote_interesting_traffic = serializers.ListField(child=serializers.CharField(), required=False)
+    status = serializers.CharField(allow_blank=True)
+    freshness = serializers.CharField(allow_blank=True)
+    confidence = serializers.CharField(allow_blank=True)
+    source_system = serializers.CharField()
+    source_key = serializers.CharField()
+    metadata = serializers.DictField(required=False)
+
+
+class VPNAdjacencyLookupSerializer(serializers.Serializer):
+    """Serializer for VPN adjacency lookup responses."""
+
+    status = serializers.CharField()
+    contract_version = serializers.CharField()
+    query = serializers.DictField()
+    adjacency_count = serializers.IntegerField()
+    adjacencies = VPNAdjacencySerializer(many=True)
+    warnings = serializers.ListField(child=serializers.CharField(), required=False)
+    evidence = serializers.ListField(child=serializers.DictField(), required=False)
+    debug = serializers.DictField(required=False)
+
+
 class EncryptionAlgorithmSerializer(serializers.ModelSerializer):
     """Serializer for EncryptionAlgorithm model."""
 

@@ -15,6 +15,7 @@ from nautobot_app_vpn.api.viewsets import (
     EncryptionAlgorithmViewSet,
     AuthenticationAlgorithmViewSet,
     DiffieHellmanGroupViewSet,
+    VPNAdjacencyView,
 )
 
 app_name = "nautobot_app_vpn_api"
@@ -33,6 +34,7 @@ router.register(r"diffiehellmangroups", DiffieHellmanGroupViewSet)
 
 urlpatterns = [
     path("v1/", include(router.urls)),  # ✅ Current versioned API path
+    path("v1/vpn-adjacencies/", VPNAdjacencyView.as_view(), name="vpn-adjacencies"),
     path("v1/topology-neo4j/", VPNTopologyNeo4jView.as_view(), name="vpn-topology-neo4j"),
     path("v1/topology-filters/", VPNTopologyFilterOptionsView.as_view(), name="vpn-topology-filters"),
 ]

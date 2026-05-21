@@ -29,6 +29,7 @@ from nautobot_app_vpn.api.serializers import (
     IPSECTunnelSerializer,
     TunnelMonitorProfileSerializer,
     DummySerializer,
+    VPNAdjacencyLookupSerializer,
 )
 
 from nautobot_app_vpn.filters import (
@@ -49,6 +50,7 @@ from nautobot_app_vpn.models import (
     TunnelMonitorProfile,
     VPNDashboard,
 )
+from nautobot_app_vpn.services.adjacency import find_vpn_adjacencies
 
 from nautobot_app_vpn.models.algorithms import (
     EncryptionAlgorithm,
@@ -223,6 +225,23 @@ class IPSecProxyIDViewSet(viewsets.ModelViewSet):
     ordering_fields = ["tunnel__name", "local_subnet", "remote_subnet", "protocol"]
     search_fields = ["local_subnet", "remote_subnet", "protocol"]
     pagination_class = StandardResultsSetPagination
+
+
+class VPNAdjacencyView(APIView):
+    """Read-only API endpoint for normalized VPN adjacency lookups."""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        payload = find_vpn_adjacencies(
+            source=request.query_params.get("source"),
+            destination=request.query_params.get("destination"),
+            device=request.query_params.get("device"),
+            site=request.query_params.get("site"),
+            environment=request.query_params.get("environment") or "production",
+        )
+        serializer = VPNAdjacencyLookupSerializer(payload)
+        return Response(serializer.data)
 
 
 # -----------------------------

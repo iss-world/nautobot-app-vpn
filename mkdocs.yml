@@ -109,6 +109,7 @@ nav:
       - Using the App: "user/app_use_cases.md"
       - Frequently Asked Questions: "user/faq.md"
       - External Interactions: "user/external_interactions.md"
+      - VPN Adjacency API: "user/vpn_adjacency_api.md"
   - Administrator Guide:
       - Install and Configure: "admin/install.md"
       - Upgrade: "admin/upgrade.md"
